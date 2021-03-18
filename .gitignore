@@ -4,6 +4,7 @@ package-lock.json
 *.log
 *.bak
 certs/*
+logs/*
 config/adobe.js
 config/libCal.js
 config/appConf.js
