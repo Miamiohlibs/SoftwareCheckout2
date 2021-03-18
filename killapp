@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+DO_RESTART=false;
+while getopts ":r" opt; do
+    case ${opt} in
+	r ) DO_RESTART=true;
+	    ;;
+	\? ) echo "Usage: killapp [-r]"
+	    ;;
+    esac
+done
+
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+YELLOW='\033[1;33m'
+CYAN='\033[0;36m'
+NC='\033[0m' # No Color
+procline=`ps ax | grep node | grep -i "software-checkout"`
+proc=`ps ax | grep node | grep -i "software-checkout" | { read a _; echo "$a"; }`
+kill $proc
+reset
+echo $procline
+printf "${YELLOW}killing $proc ...${NC}\n"
+printf "${GREEN}done${NC}\n"
+
+if [ $DO_RESTART = true ]; then
+    printf "${YELLOW}\nRESTARTING SERVER...${NC}\n";
+    npm run server
+else 
+    printf "restart server with: ${CYAN}npm run server${NC}\n\n"
+fi

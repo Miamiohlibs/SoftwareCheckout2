@@ -1,0 +1,12 @@
+node_modules/
+*~
+package-lock.json
+*.log
+*.bak
+logs/
+certs/*
+config/adobe.js
+config/libCal.js
+config/appConf.js
+config/campusConf.js
+

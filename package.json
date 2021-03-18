@@ -1,0 +1,31 @@
+{
+  "name": "software-checkout",
+  "version": "1.0.0",
+  "description": "Connect LibCal checkouts with Active Directory groups",
+  "main": "app.js",
+  "scripts": {
+    "test": "jest --watch",
+    "start": "node app",
+    "server": "node app --listen --name=software-checkout >> logs/app.log 2>&1 &",
+    "dev": "nodemon app"
+  },
+  "author": "Ken Irwin",
+  "license": "MIT",
+  "dependencies": {
+    "@adobe/jwt-auth": "^0.3.1",
+    "async": "^3.2.0",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "moment": "^2.24.0",
+    "nodemon": "^2.0.2",
+    "querystring": "^0.2.0",
+    "simple-oauth2": "^3.3.0"
+  },
+  "devDependencies": {
+    "babel-jest": "^25.2.4",
+    "bufferutil": "^4.0.1",
+    "canvas": "^2.6.1",
+    "jest": "^25.2.4",
+    "utf-8-validate": "^5.0.2"
+  }
+}
