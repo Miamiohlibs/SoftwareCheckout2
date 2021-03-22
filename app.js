@@ -1,7 +1,7 @@
 const https = require('https');
 const fs = require('fs');
 const async = require('async');
-const express = require('express');
+// const express = require('express');
 const moment = require('moment');
 const LibCalApi = require('./classes/LibCalApi');
 const libCalConf = require('./config/libCal');
@@ -9,7 +9,7 @@ const appConf = require('./config/appConf');
 const adobeConf = require('./config/adobe');
 const AdobeApi = require('./classes/AdobeUserMgmtApi');
 const utils = require('./scripts/utils');
-const util = require('util');
+// const util = require('util');
 
 utils.Divider();
 console.log(
@@ -20,64 +20,59 @@ console.log(
 // uncomment this line to suppress debug messages
 console.debug = () => {};
 
-/* SERVER SETUP */
-// is this running on the server, or on another machine
-// (if on a webserver, we'll want an SSL certificate below)
-if (
-  !appConf.hasOwnProperty('server') ||
-  !appConf.server.hasOwnProperty('name')
-) {
-  global.onServer = false;
-} else if (process.env.HOSTNAME === appConf.server.name) {
-  global.onServer = true;
-} else {
-  global.onServer = false;
-}
-console.log(`On Server? : ${global.onServer}`);
+// /* SERVER SETUP */
+// // is this running on the server, or on another machine
+// // (if on a webserver, we'll want an SSL certificate below)
+// if (
+//   !appConf.hasOwnProperty('server') ||
+//   !appConf.server.hasOwnProperty('name')
+// ) {
+//   global.onServer = false;
+// } else if (process.env.HOSTNAME === appConf.server.name) {
+//   global.onServer = true;
+// } else {
+//   global.onServer = false;
+// }
+// console.log(`On Server? : ${global.onServer}`);
 
-// parse command line args; if --listen, start express server
-const myArgs = process.argv.slice(2);
-if (myArgs.includes('--listen')) {
-  const app = express();
-  const PORT = appConf.nodePort || 9000;
+// // parse command line args; if --listen, start express server
+// const myArgs = process.argv.slice(2);
+// if (myArgs.includes('--listen')) {
+//   const app = express();
+//   const PORT = appConf.nodePort || 9000;
 
-  if (global.onServer === true) {
-    const server = {
-      key: '/etc/ssl/certs/ulblwebt03.lib.miamioh.edu.key',
-      cert: '/etc/ssl/certs/ulblwebt03.lib.miamioh.edu.crt',
-    };
-
-    https
-      .createServer(
-        {
-          key: fs.readFileSync(appConf.server.key),
-          cert: fs.readFileSync(appConf.server.cert),
-        },
-        app
-      )
-      .listen(PORT, function () {
-        console.log(
-          `SoftwareCheckout app listening on port ${PORT}! Go to https://${process.env.HOSTNAME}:${PORT}/`
-        );
-      });
-  } else {
-    // if not on server, just serve without ssl
-    app.listen(PORT, function () {
-      console.log(
-        `SoftwareCheckout app listening on port ${PORT}! Go to https://localhost:${PORT}/`
-      );
-    });
-  }
-  // listen for requests
-  app.get('/', (req, res) => {
-    TheBusiness();
-    res.send(
-      'Updating permissions groups at: ' +
-        moment().format('YYYY-MM-DD HH:mm:ss')
-    );
-  });
-}
-/* END SERVER SETUP */
+//   if (global.onServer === true) {
+//     https
+//       .createServer(
+//         {
+//           key: fs.readFileSync(appConf.server.key),
+//           cert: fs.readFileSync(appConf.server.cert),
+//         },
+//         app
+//       )
+//       .listen(PORT, function () {
+//         console.log(
+//           `SoftwareCheckout app listening on port ${PORT}! Go to https://${process.env.HOSTNAME}:${PORT}/`
+//         );
+//       });
+//   } else {
+//     // if not on server, just serve without ssl
+//     app.listen(PORT, function () {
+//       console.log(
+//         `SoftwareCheckout app listening on port ${PORT}! Go to https://localhost:${PORT}/`
+//       );
+//     });
+//   }
+//   // listen for requests
+//   app.get('/', (req, res) => {
+//     TheBusiness();
+//     res.send(
+//       'Updating permissions groups at: ' +
+//         moment().format('YYYY-MM-DD HH:mm:ss')
+//     );
+//   });
+// }
+// /* END SERVER SETUP */
 
 // on startup, run TheBusiness once, then wait for subsequent Express requests
 TheBusiness();
