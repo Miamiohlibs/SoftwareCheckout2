@@ -15,3 +15,29 @@
       - addNewEntitlements(newBookings)
       - revokeExpiredEntitlements
   - Report Successes/Failures
+
+---
+
+## Proposed file structure
+
+- certs/
+  - SSL certificates, gitignored
+- classes/
+  - LibCal
+  - Adobe
+  - Apple
+  - MiamiEmail
+- config/
+  - appConf
+    - defines which services are turned on
+  - adobeConf
+  - libCalConf
+  - appleConf
+    - these individual service confs should include: API keys, endpoints to be called by services, some defaults (baseurl, port, etc + opportunity to override for specific calls if necessary)
+- logs/
+  - possibly a separate log per day, and a cleanup mechanism after a month
+  - timestamp each line?
+- services/
+  - getUniqidFromEmail (checks cache, db, or performs query)
+- test/
+  - [tests for each class]
