@@ -5,9 +5,9 @@ const AdobeUserMgmtApi = require('../classes/AdobeUserMgmtApi');
 // const bookingsToAdd = require('./sample-data/libCalBookingsToAdd2Adobe');
 
 describe('Initialization', () => {
-  beforeEach(() => {
-    api = new AdobeUserMgmtApi(realConf);
-  });
+  // beforeEach(() => {
+  api = new AdobeUserMgmtApi(realConf);
+  // });
 
   it('should initialize with a conf file', () => {
     expect(typeof api.credentials).toBe('object');
@@ -23,6 +23,19 @@ describe('Initialization', () => {
     await api.getToken();
     expect(typeof api.accessToken).toBe('string');
     expect(api.accessToken.length).toBeGreaterThan(200);
+  });
+});
+
+describe('getQueryHeaders', () => {
+  it('should set the queryHeaders', async () => {
+    await api.getToken();
+    console.log(api);
+    let queryHeaders = api.getQueryHeaders();
+    expect(typeof queryHeaders).toBe('object');
+    expect(queryHeaders).toHaveProperty('x-api-key');
+    expect(queryHeaders['x-api-key']).toBe(api.credentials.clientId);
+    expect(queryHeaders).toHaveProperty('Authorization');
+    expect(queryHeaders.Authorization).toMatch(/^Bearer [a-zA-Z0-9\-\_]+/);
   });
 });
 

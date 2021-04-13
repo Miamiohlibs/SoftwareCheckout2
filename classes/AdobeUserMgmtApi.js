@@ -3,6 +3,7 @@ const axios = require('axios');
 const jwtAuth = require('@adobe/jwt-auth');
 const path = require('path');
 const fs = require('fs');
+// const { queryConf } = require('../config/adobe');
 
 module.exports = class AdobeUserMgmtApi {
   constructor(conf) {
@@ -20,6 +21,22 @@ module.exports = class AdobeUserMgmtApi {
   async getToken() {
     let tokenResponse = await jwtAuth(this.credentials);
     this.accessToken = tokenResponse.access_token;
+  }
+
+  getQueryHeaders() {
+    return {
+      Authorization: `Bearer ${this.accessToken}`,
+      'x-api-key': `${this.credentials.clientId}`,
+    };
+  }
+
+  async getQueryResults(method, url) {
+    let queryConf = {
+      method: method,
+      url: url,
+    };
+    console.log(axios.defaults.headers.common);
+    // return (await axios(queryConf)).data;
   }
 
   // // start with a basic set of options, add or overwrite with new options
