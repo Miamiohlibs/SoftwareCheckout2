@@ -39,6 +39,27 @@ module.exports = class AdobeUserMgmtApi {
     };
   }
 
+  // async performGetGroups() {
+
+  // }
+
+  // async getPaginatedResults(method, url, container) {
+  //   let lastPage = false;
+  //   while ((lastPage = false)) {
+  //     res = await this.getQueryResults(method, url);
+  //     lastPage = res.lastPage;
+  //     if (!lastPage) {
+  //       url = this.getNextUrl(url);
+  //     }
+  //   }
+  // }
+
+  getNextUrl(url) {
+    let [first, page, last] = url.split(/\/(\d)\//);
+    page = parseInt(page);
+    page++;
+    return first + '/' + page + '/' + last;
+  }
   // // start with a basic set of options, add or overwrite with new options
   // querySetup(baseOpts, opts = null) {
   //   this.currOpts = JSON.parse(

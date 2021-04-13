@@ -29,7 +29,6 @@ describe('Initialization', () => {
 describe('getAuthHeaders', () => {
   it('should set the authHeaders', async () => {
     await api.getToken();
-    console.log(api);
     let authHeaders = api.getAuthHeaders();
     expect(typeof authHeaders).toBe('object');
     expect(authHeaders).toHaveProperty('x-api-key');
@@ -39,6 +38,20 @@ describe('getAuthHeaders', () => {
   });
 });
 
+describe('getNextUrl', () => {
+  it('should correctly increment /0/ to /1/', () => {
+    let url = 'https://adobe.io/usermanagement/groups/bogusId/0/';
+    let intended = 'https://adobe.io/usermanagement/groups/bogusId/1/';
+    let result = api.getNextUrl(url);
+    expect(result).toBe(intended);
+  });
+  it('should correctly increment /1/ to /2/', () => {
+    let url = 'https://adobe.io/usermanagement/users/bogusId/1/';
+    let intended = 'https://adobe.io/usermanagement/users/bogusId/2/';
+    let result = api.getNextUrl(url);
+    expect(result).toBe(intended);
+  });
+});
 // describe('getAdobeLists', () => {
 //   beforeEach(() => {
 //     api = new AdobeUserMgmtApi(realConf);
