@@ -23,20 +23,20 @@ module.exports = class AdobeUserMgmtApi {
     this.accessToken = tokenResponse.access_token;
   }
 
-  getQueryHeaders() {
-    return {
-      Authorization: `Bearer ${this.accessToken}`,
-      'x-api-key': `${this.credentials.clientId}`,
-    };
-  }
-
   async getQueryResults(method, url) {
     let queryConf = {
       method: method,
       url: url,
+      headers: this.getAuthHeaders(),
     };
-    console.log(axios.defaults.headers.common);
-    // return (await axios(queryConf)).data;
+    return (await axios(queryConf)).data;
+  }
+
+  getAuthHeaders() {
+    return {
+      Authorization: `Bearer ${this.accessToken}`,
+      'x-api-key': `${this.credentials.clientId}`,
+    };
   }
 
   // // start with a basic set of options, add or overwrite with new options

@@ -26,16 +26,16 @@ describe('Initialization', () => {
   });
 });
 
-describe('getQueryHeaders', () => {
-  it('should set the queryHeaders', async () => {
+describe('getAuthHeaders', () => {
+  it('should set the authHeaders', async () => {
     await api.getToken();
     console.log(api);
-    let queryHeaders = api.getQueryHeaders();
-    expect(typeof queryHeaders).toBe('object');
-    expect(queryHeaders).toHaveProperty('x-api-key');
-    expect(queryHeaders['x-api-key']).toBe(api.credentials.clientId);
-    expect(queryHeaders).toHaveProperty('Authorization');
-    expect(queryHeaders.Authorization).toMatch(/^Bearer [a-zA-Z0-9\-\_]+/);
+    let authHeaders = api.getAuthHeaders();
+    expect(typeof authHeaders).toBe('object');
+    expect(authHeaders).toHaveProperty('x-api-key');
+    expect(authHeaders['x-api-key']).toBe(api.credentials.clientId);
+    expect(authHeaders).toHaveProperty('Authorization');
+    expect(authHeaders.Authorization).toMatch(/^Bearer [a-zA-Z0-9\-\_]+/);
   });
 });
 
