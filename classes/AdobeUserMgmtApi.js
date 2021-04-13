@@ -43,19 +43,24 @@ module.exports = class AdobeUserMgmtApi {
 
   // }
 
-  // async getPaginatedResults(method, url, container) {
-  //   let lastPage = false;
-  //   while ((lastPage = false)) {
-  //     res = await this.getQueryResults(method, url);
-  //     lastPage = res.lastPage;
-  //     if (!lastPage) {
-  //       url = this.getNextUrl(url);
-  //     }
-  //   }
-  // }
+  async getPaginatedResults(method, url, container) {
+    let allResults = [];
+    let lastPage = false;
+    while (lastPage == false) {
+      console.log('starting query:', url);
+      let res = await this.getQueryResults(method, url);
+      allResults = allResults.concat(res[container]);
+      console.log('Length:', allResults.length);
+      lastPage = res.lastPage;
+      if (!lastPage) {
+        url = this.getNextUrl(url);
+      }
+    }
+    return allResults;
+  }
 
   getNextUrl(url) {
-    let [first, page, last] = url.split(/\/(\d)\//);
+    let [first, page, last] = url.split(/\/(\d+)\//);
     page = parseInt(page);
     page++;
     return first + '/' + page + '/' + last;
