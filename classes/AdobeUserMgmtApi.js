@@ -8,6 +8,7 @@ const sleep = require('sleep');
 
 module.exports = class AdobeUserMgmtApi {
   constructor(conf) {
+    this.baseUrl = 'https://usermanagement.adobe.io/v2/usermanagement/';
     this.credentials = conf.credentials;
     this.addPrivateKeyToCredentials(conf);
     //throttle settings:
@@ -38,7 +39,7 @@ module.exports = class AdobeUserMgmtApi {
     NOTE: when this gets a non-200 result back, it just 
     spews the response to the console. Let's do better... 
     */
-    res = await axios(queryConf);
+    let res = await axios(queryConf);
     return res.data;
   }
 
@@ -79,6 +80,15 @@ module.exports = class AdobeUserMgmtApi {
     page++;
     return first + '/' + page + '/' + last;
   }
+
+  async getGroupMembers(group) {
+    let url =
+      this.baseUrl + 'users' + '/' + this.credentials.orgId + '/0/' + group;
+    let res = await this.getPaginatedResults('GET', url, 'users');
+    return res;
+  }
+  //GET /v2/usermanagement/users/{orgId}/{page}/{groupName}
+
   // // start with a basic set of options, add or overwrite with new options
   // querySetup(baseOpts, opts = null) {
   //   this.currOpts = JSON.parse(
