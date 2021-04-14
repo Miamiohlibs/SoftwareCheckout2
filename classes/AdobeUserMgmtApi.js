@@ -52,21 +52,24 @@ module.exports = class AdobeUserMgmtApi {
     let allResults = [];
     let lastPage = false;
     while (lastPage == false) {
-      if (this.numberReqsSincePause > this.maxReqsPerCycle) {
-        sleep.sleep(this.secondsPerCycle);
-        this.numberReqsSincePause = 0;
-      }
-      console.log('starting query:', url);
+      await this.throttlePauseIfNeeded();
       let res = await this.getQueryResults(method, url);
       this.numberReqsSincePause++;
       allResults = allResults.concat(res[container]);
-      console.log('Length:', allResults.length);
       lastPage = res.lastPage;
       if (!lastPage) {
         url = this.getNextUrl(url);
       }
     }
     return allResults;
+  }
+
+  throttlePauseIfNeeded() {
+    if (this.numberReqsSincePause > this.maxReqsPerCycle) {
+      sleep.sleep(this.secondsPerCycle);
+      this.numberReqsSincePause = 0;
+    }
+    return true;
   }
 
   getNextUrl(url) {
