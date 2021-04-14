@@ -34,6 +34,10 @@ module.exports = class AdobeUserMgmtApi {
       url: url,
       headers: this.getAuthHeaders(),
     };
+    /* 
+    NOTE: when this gets a non-200 result back, it just 
+    spews the response to the console. Let's do better... 
+    */
     return (await axios(queryConf)).data;
   }
 
