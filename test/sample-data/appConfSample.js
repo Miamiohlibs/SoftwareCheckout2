@@ -1,43 +1,23 @@
 module.exports = {
   nodePort: 9000,
-  softwareMixed: [
+  software: [
     {
-      provider: 'Adobe',
-      name: 'Adobe Photoshop', // libcal list name 
+      vendor: 'Adobe',
+      libCalName: 'Adobe Photoshop', // libcal list name
       shortName: 'photoshop',
-      adobeGroupName: 'Library Patron Photoshop api'
+      vendorGroupName: 'Library Patron Photoshop api',
     },
     {
-      provider: 'Adobe',
-      name: 'Adobe Illustrator',
+      vendor: 'Adobe',
+      libCalName: 'Adobe Illustrator',
       shortName: 'illustrator',
-      // adobeGroupName: //deliberately omitted for testing purposes
+      vendorGroupName: 'Library Patron Illustrator api',
     },
     {
-      provider: 'Some other Company',
-      name: 'WidgetWare',
+      vendor: 'WidgetCo',
+      libCalName: 'WidgetWare',
       shortName: 'widgets',
-      // adobeGroupName: //deliberately omitted for testing purposes
-    }
+      vendorGroupName: 'WidgetGroup',
+    },
   ],
-  softwareAllGood: [
-    {
-      provider: 'Adobe',
-      name: 'Adobe Photoshop', // libcal list name 
-      shortName: 'photoshop',
-      adobeGroupName: 'Library Patron Photoshop api'
-    },
-    {
-      provider: 'Adobe',
-      name: 'Adobe Illustrator',
-      shortName: 'illustrator',
-      adobeGroupName: 'Library Patron Illustrator api'
-    },
-    {
-      provider: 'Some other Company',
-      name: 'WidgetWare',
-      shortName: 'widgets',
-      // adobeGroupName: //deliberately omitted for testing purposes
-    }
-  ]
-}
+};
