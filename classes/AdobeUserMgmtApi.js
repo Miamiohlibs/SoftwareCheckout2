@@ -3,12 +3,17 @@ const axios = require('axios');
 const jwtAuth = require('@adobe/jwt-auth');
 const path = require('path');
 const fs = require('fs');
+const sleep = require('sleep');
 // const { queryConf } = require('../config/adobe');
 
 module.exports = class AdobeUserMgmtApi {
   constructor(conf) {
     this.credentials = conf.credentials;
     this.addPrivateKeyToCredentials(conf);
+    //throttle settings:
+    this.numberReqsSincePause = 0;
+    this.maxReqsPerCycle = 25;
+    this.secondsPerCycle = 60;
   }
 
   addPrivateKeyToCredentials(conf) {
@@ -47,8 +52,13 @@ module.exports = class AdobeUserMgmtApi {
     let allResults = [];
     let lastPage = false;
     while (lastPage == false) {
+      if (this.numberReqsSincePause > this.maxReqsPerCycle) {
+        sleep.sleep(this.secondsPerCycle);
+        this.numberReqsSincePause = 0;
+      }
       console.log('starting query:', url);
       let res = await this.getQueryResults(method, url);
+      this.numberReqsSincePause++;
       allResults = allResults.concat(res[container]);
       console.log('Length:', allResults.length);
       lastPage = res.lastPage;
