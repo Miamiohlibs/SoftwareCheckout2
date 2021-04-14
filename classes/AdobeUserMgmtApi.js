@@ -38,7 +38,8 @@ module.exports = class AdobeUserMgmtApi {
     NOTE: when this gets a non-200 result back, it just 
     spews the response to the console. Let's do better... 
     */
-    return (await axios(queryConf)).data;
+    res = await axios(queryConf);
+    return res.data;
   }
 
   getAuthHeaders() {
@@ -47,10 +48,6 @@ module.exports = class AdobeUserMgmtApi {
       'x-api-key': `${this.credentials.clientId}`,
     };
   }
-
-  // async performGetGroups() {
-
-  // }
 
   async getPaginatedResults(method, url, container) {
     let allResults = [];
