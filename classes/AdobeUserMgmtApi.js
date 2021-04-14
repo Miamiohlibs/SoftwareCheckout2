@@ -65,8 +65,8 @@ module.exports = class AdobeUserMgmtApi {
   }
 
   throttlePauseIfNeeded() {
-    if (this.numberReqsSincePause > this.maxReqsPerCycle) {
-      sleep.sleep(this.secondsPerCycle);
+    if (this.numberReqsSincePause >= this.maxReqsPerCycle) {
+      sleep.sleep(this.secondsPerCycle + 5);
       this.numberReqsSincePause = 0;
     }
     return true;
