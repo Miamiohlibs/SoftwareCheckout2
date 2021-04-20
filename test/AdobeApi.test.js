@@ -1,7 +1,8 @@
 // const appConfMissingStuff = require('./sample-data/appConfSample');
 const realConf = require('../config/adobe');
 const AdobeUserMgmtApi = require('../classes/AdobeUserMgmtApi');
-// const sampleGroupMembers = require('./sample-data/adobeGroupMembers');
+const testGroupName = 'Library API test';
+const sampleGroupMembers = require('./sample-data/adobeGroupMembers');
 // const bookingsToAdd = require('./sample-data/libCalBookingsToAdd2Adobe');
 
 describe('Initialization', () => {
@@ -46,6 +47,46 @@ describe('getNextUrl', () => {
     expect(result).toBe(intended);
   });
 });
+
+describe('AdobeUserMmgtApi: getEmailsFromGroupMembers()', () => {
+  let res = api.getEmailsFromGroupMembers(sampleGroupMembers);
+  let expected = ['bomholmm@miamioh.edu', 'irwinkr@miamioh.edu'];
+  expect(res).toEqual(expected);
+});
+
+describe('AdobeUserMmgtApi: createAddJsonBody', () => {
+  it('should create JSON body with action 1 from only two inputs', () => {
+    let expected1 = {
+      user: 'doejohn@test.edu',
+      requestID: 'action_1',
+      do: [
+        {
+          add: {
+            group: 'Library API test',
+          },
+        },
+      ],
+    };
+    let res = api.createAddJsonBody('doejohn@test.edu', testGroupName);
+    expect(res).toEqual(expected1);
+  });
+  it('should create JSON body with action 33 from three inputs', () => {
+    let expected2 = {
+      user: 'doejane@test.edu',
+      requestID: 'action_33',
+      do: [
+        {
+          add: {
+            group: 'Library API test',
+          },
+        },
+      ],
+    };
+    let res = api.createAddJsonBody('doejane@test.edu', testGroupName, 33);
+    expect(res).toEqual(expected2);
+  });
+});
+
 // describe('getAdobeLists', () => {
 //   beforeEach(() => {
 //     api = new AdobeUserMgmtApi(realConf);

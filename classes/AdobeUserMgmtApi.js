@@ -30,11 +30,12 @@ module.exports = class AdobeUserMgmtApi {
     this.accessToken = tokenResponse.access_token;
   }
 
-  async getQueryResults(method, url) {
+  async getQueryResults(method, url, testOnly = false) {
     debug('starting getQueryResults for ', url);
     let queryConf = {
       method: method,
       url: url,
+      testOnly: testOnly,
       headers: this.getAuthHeaders(),
     };
     /* 
@@ -88,10 +89,26 @@ module.exports = class AdobeUserMgmtApi {
     debug('starting getGroupMembers())');
     let url =
       this.baseUrl + 'users' + '/' + this.credentials.orgId + '/0/' + group;
-    // debug('getGroupMembers url:', url);
+    debug('getGroupMembers url:', url);
     let res = await this.getPaginatedResults('GET', url, 'users');
     return res;
   }
+
+  getEmailsFromGroupMembers(data) {
+    return data.map((i) => i.email);
+  }
+
+  createAddJsonBody(user, groups, n = 1) {
+    let doObj = [
+      {
+        add: {
+          group: groups,
+        },
+      },
+    ];
+    return { user: user, requestID: 'action_' + n, do: doObj };
+  }
+
   //GET /v2/usermanagement/users/{orgId}/{page}/{groupName}
 
   // // start with a basic set of options, add or overwrite with new options
