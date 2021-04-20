@@ -12,6 +12,7 @@ module.exports = class AdobeUserMgmtApi {
     this.baseUrl = 'https://usermanagement.adobe.io/v2/usermanagement/';
     this.credentials = conf.credentials;
     this.addPrivateKeyToCredentials(conf);
+    this.actionUrl = this.baseUrl + 'action' + '/' + this.credentials.orgId;
     //throttle settings:
     this.numberReqsSincePause = 0;
     this.maxReqsPerCycle = 25;
@@ -108,15 +109,18 @@ module.exports = class AdobeUserMgmtApi {
     return data.map((i) => i.email);
   }
 
-  createAddJsonBody(user, groups, n = 1) {
-    let doObj = [
-      {
-        add: {
-          group: groups,
-        },
-      },
-    ];
-    return { user: user, requestID: 'action_' + n, do: doObj };
+  async addMembersToGroup(emailsToAdd, listName, testOnly = null) {
+    try {
+      let reqBody = this.prepBulkAddUsers2AdobeGroup(emailsToAdd, listName);
+      let url = this.actionUrl;
+      if (testOnly == 'test') {
+        url = url + '?testOnly=true';
+      }
+      return await this.getQueryResults('post', url, { data: reqBody });
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
   }
 
   prepBulkAddUsers2AdobeGroup(emailsToAdd, listName) {
@@ -127,6 +131,17 @@ module.exports = class AdobeUserMgmtApi {
       i++;
     });
     return jsonBody;
+  }
+
+  createAddJsonBody(user, groups, n = 1) {
+    let doObj = [
+      {
+        add: {
+          group: groups,
+        },
+      },
+    ];
+    return { user: user, requestID: 'action_' + n, do: doObj };
   }
 
   //GET /v2/usermanagement/users/{orgId}/{page}/{groupName}
