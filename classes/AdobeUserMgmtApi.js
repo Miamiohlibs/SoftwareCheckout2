@@ -109,6 +109,16 @@ module.exports = class AdobeUserMgmtApi {
     return { user: user, requestID: 'action_' + n, do: doObj };
   }
 
+  prepBulkAddUsers2AdobeGroup(emailsToAdd, listName) {
+    let i = 1;
+    let jsonBody = [];
+    emailsToAdd.forEach((email) => {
+      jsonBody.push(this.createAddJsonBody(email, [listName], i));
+      i++;
+    });
+    return jsonBody;
+  }
+
   //GET /v2/usermanagement/users/{orgId}/{page}/{groupName}
 
   // // start with a basic set of options, add or overwrite with new options
@@ -259,43 +269,6 @@ module.exports = class AdobeUserMgmtApi {
 
   // filterUsersToRevoke(libCalEmails, adobeEmails) {
   //   return adobeEmails.filter((email) => !libCalEmails.includes(email));
-  // }
-
-  // createAddJsonBody(user, country, firstName, lastName, groups, n = 1) {
-  //   let doObj = [
-  //     {
-  //       //      'createFederatedID': {
-  //       //        email: user,
-  //       //        country: country,
-  //       //        firstname: firstName,
-  //       //        lastname: lastName,
-  //       //        option: 'ignoreIfAlreadyExists'
-  //       //      },
-  //       add: {
-  //         group: groups,
-  //       },
-  //     },
-  //   ];
-  //   return { user: user, requestID: 'action_' + n, do: doObj };
-  // }
-
-  // prepBulkAddFromLibCal2Adobe(bookings, listName) {
-  //   let i = 1;
-  //   let jsonBody = [];
-  //   bookings.forEach((item) => {
-  //     jsonBody.push(
-  //       this.createAddJsonBody(
-  //         item.email,
-  //         'US',
-  //         item.firstName,
-  //         item.lastName,
-  //         [listName],
-  //         i
-  //       )
-  //     );
-  //     i++;
-  //   });
-  //   return jsonBody;
   // }
 
   // createRevokeJsonBody(user, groups, n = 1000) {

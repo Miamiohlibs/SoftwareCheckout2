@@ -87,6 +87,22 @@ describe('AdobeUserMmgtApi: createAddJsonBody', () => {
   });
 });
 
+describe('AdobeUserMgmtApi: prepBulkAddUsers2AdobeGroup', () => {
+  let emails = ['email1@test.org', 'email2@test.org', 'email3@test.org'];
+  let res = api.prepBulkAddUsers2AdobeGroup(emails, testGroupName);
+  it('should get an array', () => {
+    expect(res.length).toBe(3);
+  });
+  it('the first array item should be an object with user:email1@test.org and requestID:request_1', () => {
+    expect(res[0].user).toBe('email1@test.org');
+    expect(res[0].requestID).toBe('action_1');
+  });
+  it('the first array item should be an object with user:email3@test.org and requestID:request_3', () => {
+    expect(res[2].user).toBe('email3@test.org');
+    expect(res[2].requestID).toBe('action_3');
+  });
+});
+
 // describe('getAdobeLists', () => {
 //   beforeEach(() => {
 //     api = new AdobeUserMgmtApi(realConf);
