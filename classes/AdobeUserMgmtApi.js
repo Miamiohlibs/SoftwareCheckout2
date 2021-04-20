@@ -30,20 +30,30 @@ module.exports = class AdobeUserMgmtApi {
     this.accessToken = tokenResponse.access_token;
   }
 
-  async getQueryResults(method, url, testOnly = false) {
+  async getQueryResults(method, url, addedParams = {}) {
     debug('starting getQueryResults for ', url);
     let queryConf = {
       method: method,
       url: url,
-      testOnly: testOnly,
       headers: this.getAuthHeaders(),
     };
+    queryConf = this.addQueryParams(queryConf, addedParams);
     /* 
     NOTE: when this gets a non-200 result back, it just 
     spews the response to the console. Let's do better... 
     */
     let res = await axios(queryConf);
     return res.data;
+  }
+
+  addQueryParams(queryConf, addedParams) {
+    let allowedParams = ['testOnly', 'data'];
+    allowedParams.forEach((p) => {
+      if (addedParams.hasOwnProperty(p)) {
+        queryConf[p] = addedParams[p];
+      }
+    });
+    return queryConf;
   }
 
   getAuthHeaders() {

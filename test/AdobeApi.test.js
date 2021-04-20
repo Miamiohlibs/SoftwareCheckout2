@@ -33,6 +33,42 @@ describe('getAuthHeaders', () => {
   });
 });
 
+describe('addQueryParams', () => {
+  it('should be able to add a testOnly query param', () => {
+    let conf = { method: 'get' };
+    let addedParams = { testOnly: true };
+    let res = api.addQueryParams(conf, addedParams);
+    expect(res).toHaveProperty('testOnly');
+    expect(res.testOnly).toBe(true);
+  });
+  it('should be able to add a data query param', () => {
+    let conf = { method: 'get' };
+    let addedParams = { data: { thing1: true, thing2: false } };
+    let res = api.addQueryParams(conf, addedParams);
+    expect(res).toHaveProperty('data');
+    expect(res.data.thing1).toBe(true);
+    expect(res.data.thing2).toBe(false);
+  });
+  it('should reject a bogus query param', () => {
+    let conf = { method: 'get' };
+    let addedParams = { bogus: 'green' };
+    let res = api.addQueryParams(conf, addedParams);
+    expect(res).not.toHaveProperty('bogus');
+  });
+  it('should take multiple valid params and reject extras', () => {
+    let conf = { method: 'get' };
+    let addedParams = {
+      testOnly: true,
+      data: { thing1: true, thing2: false },
+      bogus: 'green',
+    };
+    let res = api.addQueryParams(conf, addedParams);
+    expect(res).toHaveProperty('testOnly');
+    expect(res).toHaveProperty('data');
+    expect(res).not.toHaveProperty('bogus');
+  });
+});
+
 describe('getNextUrl', () => {
   it('should correctly increment /0/ to /1/', () => {
     let url = 'https://adobe.io/usermanagement/groups/bogusId/0/';
