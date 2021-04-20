@@ -18,23 +18,17 @@ describe('Initialization', () => {
     expect(api.credentials).toHaveProperty('privateKey');
     expect(typeof api.credentials.privateKey).toBe('string');
   });
-
-  it('should get an accessToken upon being initialized', async () => {
-    await api.getToken();
-    expect(typeof api.accessToken).toBe('string');
-    expect(api.accessToken.length).toBeGreaterThan(200);
-  });
 });
 
 describe('getAuthHeaders', () => {
   it('should set the authHeaders', async () => {
-    await api.getToken();
+    api.accessToken = 'thisisafaketoken';
     let authHeaders = api.getAuthHeaders();
     expect(typeof authHeaders).toBe('object');
     expect(authHeaders).toHaveProperty('x-api-key');
     expect(authHeaders['x-api-key']).toBe(api.credentials.clientId);
     expect(authHeaders).toHaveProperty('Authorization');
-    expect(authHeaders.Authorization).toMatch(/^Bearer [a-zA-Z0-9\-\_]+/);
+    expect(authHeaders.Authorization).toMatch(/^Bearer thisisafaketoken$/);
   });
 });
 
