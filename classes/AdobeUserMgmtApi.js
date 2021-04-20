@@ -4,6 +4,7 @@ const jwtAuth = require('@adobe/jwt-auth');
 const path = require('path');
 const fs = require('fs');
 const sleep = require('sleep');
+const debug = require('debug')('AdobeUserMgmtApi');
 // const { queryConf } = require('../config/adobe');
 
 module.exports = class AdobeUserMgmtApi {
@@ -30,6 +31,7 @@ module.exports = class AdobeUserMgmtApi {
   }
 
   async getQueryResults(method, url) {
+    debug('starting getQueryResults for ', url);
     let queryConf = {
       method: method,
       url: url,
@@ -51,6 +53,7 @@ module.exports = class AdobeUserMgmtApi {
   }
 
   async getPaginatedResults(method, url, container) {
+    debug('starting getPaginatedResults...');
     let allResults = [];
     let lastPage = false;
     while (lastPage == false) {
@@ -82,8 +85,10 @@ module.exports = class AdobeUserMgmtApi {
   }
 
   async getGroupMembers(group) {
+    debug('starting getGroupMembers())');
     let url =
       this.baseUrl + 'users' + '/' + this.credentials.orgId + '/0/' + group;
+    // debug('getGroupMembers url:', url);
     let res = await this.getPaginatedResults('GET', url, 'users');
     return res;
   }
