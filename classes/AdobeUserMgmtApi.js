@@ -12,7 +12,6 @@ module.exports = class AdobeUserMgmtApi {
     this.baseUrl = 'https://usermanagement.adobe.io/v2/usermanagement/';
     this.credentials = conf.credentials;
     this.addPrivateKeyToCredentials(conf);
-    this.credentials.privateKey += 'sss';
     this.actionUrl = this.baseUrl + 'action' + '/' + this.credentials.orgId;
     //throttle settings:
     this.numberReqsSincePause = 0;
