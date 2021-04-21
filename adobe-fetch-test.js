@@ -8,13 +8,12 @@ const lg = new LicenseGroup(appConf);
 let adobeLicenses = lg.getVendorGroupNamesByVendor('Adobe');
 // console.log(adobeLicenses);
 
-let group = adobeLicenses[1];
+// let group = adobeLicenses[1];
+let group = 'Library API test';
 
 (async () => {
   try {
     await adobe.getToken();
-    // let url =
-    //   'https://usermanagement.adobe.io/v2/usermanagement/users/357BEB1C55C13CD77F000101@AdobeOrg/0/';
     let fetchres = await adobe.getGroupMembers(group);
     console.log(fetchres);
   } catch (err) {
