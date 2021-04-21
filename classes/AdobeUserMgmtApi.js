@@ -17,6 +17,7 @@ module.exports = class AdobeUserMgmtApi {
     this.numberReqsSincePause = 0;
     this.maxReqsPerCycle = 25;
     this.secondsPerCycle = 60;
+    this.queryConf = {};
   }
 
   addPrivateKeyToCredentials(conf) {
@@ -36,35 +37,45 @@ module.exports = class AdobeUserMgmtApi {
     }
   }
 
+  clearQueryConf() {
+    this.queryConf = {};
+  }
+
+  setQueryConf(key, value) {
+    this.queryConf[key] = value;
+  }
+
   async getQueryResults(method, url, addedParams = {}) {
     debug('starting getQueryResults for ', url);
-    let queryConf = {
-      method: method,
-      url: url,
-      headers: this.getAuthHeaders(),
-    };
-    queryConf = this.addQueryParams(queryConf, addedParams);
+    this.queryConf.headers = this.getAuthHeaders();
+    // let queryConf = {
+    //   method: method,
+    //   url: url,
+    //   headers: this.getAuthHeaders(),
+    // };
+    // queryConf = this.addQueryParams(queryConf, addedParams);
+
     /* 
     NOTE: when this gets a non-200 result back, it just 
     spews the response to the console. Let's do better... 
     */
     try {
-      let res = await axios(queryConf);
+      let res = await axios(this.queryConf);
       return res.data;
     } catch (err) {
       console.log(('Failed Adobe query:', err));
     }
   }
 
-  addQueryParams(queryConf, addedParams) {
-    let allowedParams = ['testOnly', 'data'];
-    allowedParams.forEach((p) => {
-      if (addedParams.hasOwnProperty(p)) {
-        queryConf[p] = addedParams[p];
-      }
-    });
-    return queryConf;
-  }
+  // addQueryParams(queryConf, addedParams) {
+  //   let allowedParams = ['testOnly', 'data'];
+  //   allowedParams.forEach((p) => {
+  //     if (addedParams.hasOwnProperty(p)) {
+  //       queryConf[p] = addedParams[p];
+  //     }
+  //   });
+  //   return queryConf;
+  // }
 
   getAuthHeaders() {
     return {
@@ -73,18 +84,18 @@ module.exports = class AdobeUserMgmtApi {
     };
   }
 
-  async getPaginatedResults(method, url, container) {
+  async getPaginatedResults(container) {
     debug('starting getPaginatedResults...');
     let allResults = [];
     let lastPage = false;
     while (lastPage == false) {
       await this.throttlePauseIfNeeded();
-      let res = await this.getQueryResults(method, url);
+      let res = await this.getQueryResults();
       this.numberReqsSincePause++;
       allResults = allResults.concat(res[container]);
       lastPage = res.lastPage;
       if (!lastPage) {
-        url = this.getNextUrl(url);
+        this.queryConf.url = this.getNextUrl(this.queryConf.url);
       }
     }
     return allResults;
@@ -107,10 +118,11 @@ module.exports = class AdobeUserMgmtApi {
 
   async getGroupMembers(group) {
     debug('starting getGroupMembers())');
-    let url =
+    this.clearQueryConf();
+    this.queryConf.url =
       this.baseUrl + 'users' + '/' + this.credentials.orgId + '/0/' + group;
-    debug('getGroupMembers url:', url);
-    let res = await this.getPaginatedResults('GET', url, 'users');
+    this.queryConf.method = 'GET';
+    let res = await this.getPaginatedResults('users');
     return res;
   }
 
@@ -121,11 +133,13 @@ module.exports = class AdobeUserMgmtApi {
   async addMembersToGroup(emailsToAdd, listName, testOnly = null) {
     try {
       let reqBody = this.prepBulkAddUsers2AdobeGroup(emailsToAdd, listName);
-      let url = this.actionUrl;
+      this.queryConf.url = this.actionUrl;
+      this.queryConf.method = 'post';
+      this.queryConf.data = reqBody;
       if (testOnly == 'test') {
-        url = url + '?testOnly=true';
+        this.queryConf.url += '?testOnly=true';
       }
-      return await this.getQueryResults('post', url, { data: reqBody });
+      return await this.getQueryResults();
     } catch (err) {
       console.log(err);
       return false;
