@@ -12,6 +12,7 @@ module.exports = class AdobeUserMgmtApi {
     this.baseUrl = 'https://usermanagement.adobe.io/v2/usermanagement/';
     this.credentials = conf.credentials;
     this.addPrivateKeyToCredentials(conf);
+    this.credentials.privateKey += 'sss';
     this.actionUrl = this.baseUrl + 'action' + '/' + this.credentials.orgId;
     //throttle settings:
     this.numberReqsSincePause = 0;
@@ -27,8 +28,13 @@ module.exports = class AdobeUserMgmtApi {
   }
 
   async getToken() {
-    let tokenResponse = await jwtAuth(this.credentials);
-    this.accessToken = tokenResponse.access_token;
+    try {
+      let tokenResponse = await jwtAuth(this.credentials);
+      this.accessToken = tokenResponse.access_token;
+    } catch (err) {
+      console.log('Failed to get Adobe token in:', __filename);
+      console.log(err);
+    }
   }
 
   async getQueryResults(method, url, addedParams = {}) {
@@ -43,8 +49,12 @@ module.exports = class AdobeUserMgmtApi {
     NOTE: when this gets a non-200 result back, it just 
     spews the response to the console. Let's do better... 
     */
-    let res = await axios(queryConf);
-    return res.data;
+    try {
+      let res = await axios(queryConf);
+      return res.data;
+    } catch (err) {
+      console.log(('Failed Adobe query:', err));
+    }
   }
 
   addQueryParams(queryConf, addedParams) {

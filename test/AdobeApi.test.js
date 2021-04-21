@@ -139,6 +139,21 @@ describe('AdobeUserMgmtApi: prepBulkAddUsers2AdobeGroup', () => {
   });
 });
 
+describe('AdobeUserMgmtApi: addMembersToGroup', () => {
+  bulkAddSpy = jest.spyOn(api, 'prepBulkAddUsers2AdobeGroup');
+  querySpy = jest.spyOn(api, 'getQueryResults');
+  api.addMembersToGroup(
+    ['johndoe@fake.org', 'janedoe@fake.org'],
+    'fakegroupname'
+  );
+  it('should call prepBulkAddUsers2AdobeGroup once', () => {
+    expect(bulkAddSpy).toHaveBeenCalledTimes(1);
+  });
+  it('should call getQueryResults once', () => {
+    expect(querySpy).toHaveBeenCalledTimes(1);
+  });
+});
+
 // describe('getAdobeLists', () => {
 //   beforeEach(() => {
 //     api = new AdobeUserMgmtApi(realConf);
