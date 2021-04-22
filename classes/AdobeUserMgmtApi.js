@@ -4,7 +4,12 @@ const jwtAuth = require('@adobe/jwt-auth');
 const path = require('path');
 const fs = require('fs');
 const sleep = require('sleep');
-const debug = require('debug')('AdobeUserMgmtApi');
+const debug = require('debug')('Adobe');
+const Utils = require('../classes/Utils');
+const util = new Utils();
+const Throttle = require('./Throttle');
+const userThrottle = new Throttle();
+const actionThrottle = new Throttle();
 // const { queryConf } = require('../config/adobe');
 
 module.exports = class AdobeUserMgmtApi {
@@ -13,10 +18,6 @@ module.exports = class AdobeUserMgmtApi {
     this.credentials = conf.credentials;
     this.addPrivateKeyToCredentials(conf);
     this.actionUrl = this.baseUrl + 'action' + '/' + this.credentials.orgId;
-    //throttle settings:
-    this.numberReqsSincePause = 0;
-    this.maxReqsPerCycle = 25;
-    this.secondsPerCycle = 60;
     this.queryConf = {};
   }
 
@@ -46,19 +47,8 @@ module.exports = class AdobeUserMgmtApi {
   }
 
   async getQueryResults(method, url, addedParams = {}) {
-    debug('starting getQueryResults for ', url);
+    debug('starting getQueryResults', this.queryConf);
     this.queryConf.headers = this.getAuthHeaders();
-    // let queryConf = {
-    //   method: method,
-    //   url: url,
-    //   headers: this.getAuthHeaders(),
-    // };
-    // queryConf = this.addQueryParams(queryConf, addedParams);
-
-    /* 
-    NOTE: when this gets a non-200 result back, it just 
-    spews the response to the console. Let's do better... 
-    */
     try {
       let res = await axios(this.queryConf);
       return res.data;
@@ -66,16 +56,6 @@ module.exports = class AdobeUserMgmtApi {
       console.log(('Failed Adobe query:', err));
     }
   }
-
-  // addQueryParams(queryConf, addedParams) {
-  //   let allowedParams = ['testOnly', 'data'];
-  //   allowedParams.forEach((p) => {
-  //     if (addedParams.hasOwnProperty(p)) {
-  //       queryConf[p] = addedParams[p];
-  //     }
-  //   });
-  //   return queryConf;
-  // }
 
   getAuthHeaders() {
     return {
@@ -89,9 +69,9 @@ module.exports = class AdobeUserMgmtApi {
     let allResults = [];
     let lastPage = false;
     while (lastPage == false) {
-      await this.throttlePauseIfNeeded();
+      await userThrottle.pauseIfNeeded();
       let res = await this.getQueryResults();
-      this.numberReqsSincePause++;
+      userThrottle.increment();
       allResults = allResults.concat(res[container]);
       lastPage = res.lastPage;
       if (!lastPage) {
@@ -99,14 +79,6 @@ module.exports = class AdobeUserMgmtApi {
       }
     }
     return allResults;
-  }
-
-  throttlePauseIfNeeded() {
-    if (this.numberReqsSincePause >= this.maxReqsPerCycle) {
-      sleep.sleep(this.secondsPerCycle + 5);
-      this.numberReqsSincePause = 0;
-    }
-    return true;
   }
 
   getNextUrl(url) {
@@ -135,10 +107,13 @@ module.exports = class AdobeUserMgmtApi {
       let reqBody = this.prepBulkAddUsers2AdobeGroup(emailsToAdd, listName);
       this.queryConf.url = this.actionUrl;
       this.queryConf.method = 'post';
-      this.queryConf.data = reqBody;
       if (testOnly == 'test') {
         this.queryConf.url += '?testOnly=true';
       }
+
+      util.chunkArray(reqBody, this.maxActionsPerReq);
+      this.queryConf.data = reqBody;
+
       return await this.getQueryResults();
     } catch (err) {
       console.log(err);
