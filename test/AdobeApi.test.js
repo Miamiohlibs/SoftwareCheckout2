@@ -63,6 +63,11 @@ describe('AdobeUserMmgtApi: getEmailsFromGroupMembers()', () => {
   expect(res).toEqual(expected);
 });
 
+describe('AdobeUserMmgtApi: getGroupMembers()', () => {
+  it('should call getPaginatedResults with users', () => {});
+  it('should set a queryConf.url ending in the group name', () => {}g);
+});
+
 describe('AdobeUserMmgtApi: createAddJsonBody', () => {
   it('should create JSON body with action 1 from only two inputs', () => {
     let expected1 = {
