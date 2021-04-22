@@ -8,17 +8,15 @@ module.exports = class Throttle {
     this.secondsPerCycle = secondsPerCycle;
   }
 
-  exec(myCallback) {
-    console.log(typeof myCallback);
-    // this.pauseIfNeeded();
-    // myCallback();
-  }
-
   pauseIfNeeded() {
     if (this.numberReqsSincePause >= this.maxReqsPerCycle) {
       sleep.sleep(this.secondsPerCycle + 5);
       this.numberReqsSincePause = 0;
     }
     return true;
+  }
+
+  increment() {
+    this.numberReqsSincePause++;
   }
 };
