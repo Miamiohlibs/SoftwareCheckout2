@@ -19,7 +19,7 @@ describe('AdobeUserMgmtApi: getGroupMembers', () => {
   });
 });
 
-describe('AdobeUserMgmtApi: addMembersToGroup', () => {
+describe('AdobeUserMgmtApi: addMembersToGroup (these now fail because the fn no longer returns a value)', () => {
   emailsToAdd1 = ['qum@miamioh.edu'];
   emailsToAdd2 = ['qum@miamioh.edu', 'brownsj1@miamioh.edu'];
   it('should be able to fake-add Meng to a list', async () => {
