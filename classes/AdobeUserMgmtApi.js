@@ -49,9 +49,9 @@ module.exports = class AdobeUserMgmtApi {
     this.queryConf = {};
   }
 
-  setQueryConf(key, value) {
-    this.queryConf[key] = value;
-  }
+  // setQueryConf(key, value) {
+  //   this.queryConf[key] = value;
+  // }
 
   async getQueryResults(method, url, addedParams = {}) {
     debug('starting getQueryResults', this.queryConf);
@@ -113,6 +113,7 @@ module.exports = class AdobeUserMgmtApi {
     let reqBody = this.prepBulkAddUsers2AdobeGroup(emailsToAdd, listName);
     let reqBodyChunks = util.chunkArray(reqBody, this.maxActionsPerReq);
 
+    this.clearQueryConf();
     this.queryConf.url = this.actionUrl;
     this.queryConf.method = 'post';
     if (testOnly == 'test') {
