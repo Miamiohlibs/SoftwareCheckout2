@@ -8,8 +8,6 @@ const debug = require('debug')('Adobe');
 const Utils = require('../classes/Utils');
 const util = new Utils();
 const Throttle = require('./Throttle');
-const userThrottle = new Throttle();
-const actionThrottle = new Throttle();
 // const { queryConf } = require('../config/adobe');
 
 module.exports = class AdobeUserMgmtApi {
@@ -19,6 +17,15 @@ module.exports = class AdobeUserMgmtApi {
     this.addPrivateKeyToCredentials(conf);
     this.actionUrl = this.baseUrl + 'action' + '/' + this.credentials.orgId;
     this.queryConf = {};
+    let userReqsPerCycle = 25;
+    let secondsPerUserCycle = 60;
+    this.userThrottle = new Throttle(userReqsPerCycle, secondsPerUserCycle);
+    let actionsReqPerCycle = 10;
+    let secondsPerActionCycle = 60;
+    this.actionThrottle = new Throttle(
+      actionsReqPerCycle,
+      secondsPerActionCycle
+    );
   }
 
   addPrivateKeyToCredentials(conf) {
@@ -69,9 +76,9 @@ module.exports = class AdobeUserMgmtApi {
     let allResults = [];
     let lastPage = false;
     while (lastPage == false) {
-      await userThrottle.pauseIfNeeded();
+      await this.userThrottle.pauseIfNeeded();
       let res = await this.getQueryResults();
-      userThrottle.increment();
+      this.userThrottle.increment();
       allResults = allResults.concat(res[container]);
       lastPage = res.lastPage;
       if (!lastPage) {
@@ -103,23 +110,50 @@ module.exports = class AdobeUserMgmtApi {
   }
 
   async addMembersToGroup(emailsToAdd, listName, testOnly = null) {
+    let reqBody = this.prepBulkAddUsers2AdobeGroup(emailsToAdd, listName);
+    let reqBodyChunks = util.chunkArray(reqBody, this.maxActionsPerReq);
+
+    this.queryConf.url = this.actionUrl;
+    this.queryConf.method = 'post';
+    if (testOnly == 'test') {
+      this.queryConf.url += '?testOnly=true';
+    }
+
+    let res = await this.submitActionReqs(reqBodyChunks);
+    console.log('result of action sumbmitted:', res);
+  }
+
+  async submitActionReqs(reqBodyChunks) {
     try {
-      let reqBody = this.prepBulkAddUsers2AdobeGroup(emailsToAdd, listName);
-      this.queryConf.url = this.actionUrl;
-      this.queryConf.method = 'post';
-      if (testOnly == 'test') {
-        this.queryConf.url += '?testOnly=true';
-      }
-
-      util.chunkArray(reqBody, this.maxActionsPerReq);
-      this.queryConf.data = reqBody;
-
-      return await this.getQueryResults();
+      reqBodyChunks.forEach(async (data) => {
+        // let actionResultsSummary = {};
+        this.actionThrottle.pauseIfNeeded();
+        this.queryConf.data = data;
+        this.actionThrottle.increment();
+        let res = await this.getQueryResults();
+        if (res) {
+          this.handleActionResults(res);
+        }
+        // actionResultsSummary = this.concatActionResults(
+        //   res,
+        //   actionResultsSummary
+        // );
+      });
     } catch (err) {
       console.log(err);
       return false;
     }
   }
+
+  // concatActionResults(data, mySummary) {
+  //   for (const [key, value] of Object.entries(data)) {
+  //     if (typeof value == 'number') {
+  //       if (!mySummary.hasOwnProperty(key)) mySummary[key] = value;
+  //       else mySummary[key] += value;
+  //     }
+  //   }
+  //   return mySummary;
+  // }
 
   prepBulkAddUsers2AdobeGroup(emailsToAdd, listName) {
     let i = 1;
@@ -142,6 +176,13 @@ module.exports = class AdobeUserMgmtApi {
     return { user: user, requestID: 'action_' + n, do: doObj };
   }
 
+  handleActionResults(res) {
+    if (res.notCompleted != 0 || res.hasOwnProperty('errors')) {
+      console.log('Partially failed Adobe actions:');
+      console.log(res);
+      console.log('Error generated for request:', this.queryConf.data);
+    }
+  }
   //GET /v2/usermanagement/users/{orgId}/{page}/{groupName}
 
   // // start with a basic set of options, add or overwrite with new options

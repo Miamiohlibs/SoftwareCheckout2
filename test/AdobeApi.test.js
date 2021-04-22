@@ -103,7 +103,7 @@ describe('AdobeUserMgmtApi: prepBulkAddUsers2AdobeGroup', () => {
 
 describe('AdobeUserMgmtApi: addMembersToGroup', () => {
   bulkAddSpy = jest.spyOn(api, 'prepBulkAddUsers2AdobeGroup');
-  querySpy = jest.spyOn(api, 'getQueryResults');
+  querySpy = jest.spyOn(api, 'submitActionReqs');
   api.addMembersToGroup(
     ['johndoe@fake.org', 'janedoe@fake.org'],
     'fakegroupname'
