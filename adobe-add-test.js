@@ -13,12 +13,24 @@ let group = 'Library API test';
 (async () => {
   try {
     await adobe.getToken();
-    let fetchres = await adobe.addMembersToGroup(
-      ['qum1@miamioh.edu'],
+    let res = await adobe.addMembersToGroup(
+      [
+        'qum@miamioh.edu',
+        'yarnete@miamioh.edu',
+        'irwinkr@miamioh.edu',
+        'hawkpf@miamioh.edu',
+        'diebelsa@miamioh.edu',
+        'brownsj1@miamioh.edu',
+        'bomholmm@miamioh.edu',
+        'kaiserj5@miamioh.edu',
+        'calabrcm@miamioh.edu',
+        // 'conleyj13@miamioh.edu',
+        // 'wegnera3@miamioh.edu',
+      ],
       group,
       'test'
     ); //adobe.getGroupMembers(group);
-    console.log(fetchres);
+    console.log(res);
   } catch (err) {
     console.error('Unable to do the thing:', err);
   }
