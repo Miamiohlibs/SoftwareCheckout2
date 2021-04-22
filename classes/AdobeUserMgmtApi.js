@@ -120,41 +120,42 @@ module.exports = class AdobeUserMgmtApi {
       this.queryConf.url += '?testOnly=true';
     }
 
-    let res = await this.submitActionReqs(reqBodyChunks);
-    console.log('result of action sumbmitted:', res);
+    await this.submitActionReqs(reqBodyChunks);
+    return this.actionResultsSummary;
   }
 
   async submitActionReqs(reqBodyChunks) {
     try {
+      this.actionResultsSummary = {};
       reqBodyChunks.forEach(async (data) => {
-        // let actionResultsSummary = {};
-        this.actionThrottle.pauseIfNeeded();
         this.queryConf.data = data;
-        this.actionThrottle.increment();
+        this.actionThrottle.pauseIfNeeded();
         let res = await this.getQueryResults();
+        this.actionThrottle.increment();
+
+        // let res = this.actionThrottle.exec(this.getQueryResults)
+
         if (res) {
           this.handleActionResults(res);
         }
-        // actionResultsSummary = this.concatActionResults(
-        //   res,
-        //   actionResultsSummary
-        // );
+        this.concatActionResults(res);
       });
     } catch (err) {
       console.log(err);
       return false;
     }
+    return this.actionResultsSummary;
   }
 
-  // concatActionResults(data, mySummary) {
-  //   for (const [key, value] of Object.entries(data)) {
-  //     if (typeof value == 'number') {
-  //       if (!mySummary.hasOwnProperty(key)) mySummary[key] = value;
-  //       else mySummary[key] += value;
-  //     }
-  //   }
-  //   return mySummary;
-  // }
+  concatActionResults(data) {
+    for (const [key, value] of Object.entries(data)) {
+      if (typeof value == 'number') {
+        if (!this.actionResultsSummary.hasOwnProperty(key)) {
+          this.actionResultsSummary[key] = value;
+        } else this.actionResultsSummary[key] += value;
+      }
+    }
+  }
 
   prepBulkAddUsers2AdobeGroup(emailsToAdd, listName) {
     let i = 1;
