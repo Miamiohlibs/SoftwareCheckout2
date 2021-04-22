@@ -64,8 +64,19 @@ describe('AdobeUserMmgtApi: getEmailsFromGroupMembers()', () => {
 });
 
 describe('AdobeUserMmgtApi: getGroupMembers()', () => {
-  it('should call getPaginatedResults with users', () => {});
-  it('should set a queryConf.url ending in the group name', () => {}g);
+  getPagSpy = jest.spyOn(api, 'getPaginatedResults').mockImplementation(() => {
+    return { users: ['testuser@fake.org'] };
+  });
+
+  it('should call getPaginatedResults with users', async () => {
+    await api.getGroupMembers(testGroupName);
+    expect(getPagSpy).toHaveBeenCalledTimes(1);
+  });
+  it('should set a queryConf.url ending in the group name', async () => {
+    await api.getGroupMembers(testGroupName);
+    let expectedMatch = new RegExp('/users/.*/0/' + testGroupName + '$');
+    expect(api.queryConf.url).toMatch(expectedMatch);
+  });
 });
 
 describe('AdobeUserMmgtApi: createAddJsonBody', () => {
