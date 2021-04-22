@@ -19,6 +19,17 @@ describe('Initialization', () => {
   });
 });
 
+describe('AdobeUserMgmtApi: clearQueryConf()', () => {
+  it('should have an empty queryConf object after running clearQueryConf', () => {
+    api.clearQueryConf();
+    expect(api.queryConf).toEqual({});
+  });
+  it('should have an empty queryConf object after running clearQueryConf', () => {
+    api.queryConf.url = 'https://bogus.com';
+    api.clearQueryConf();
+    expect(api.queryConf).toEqual({});
+  });
+});
 describe('getAuthHeaders', () => {
   it('should set the authHeaders', async () => {
     api.accessToken = 'thisisafaketoken';
