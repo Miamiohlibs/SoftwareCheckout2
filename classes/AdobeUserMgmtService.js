@@ -83,7 +83,8 @@ module.exports = class AdobeUserMgmtService {
   async submitActionReqs(reqBodyChunks) {
     try {
       this.actionResultsSummary = {};
-      reqBodyChunks.forEach(async (data) => {
+
+      await util.asyncForEach(reqBodyChunks, async (data) => {
         this.queryConf.data = data;
         this.actionThrottle.pauseIfNeeded();
         debug('submitting action with queryConf: ' + this.queryConf);
@@ -95,14 +96,18 @@ module.exports = class AdobeUserMgmtService {
         }
         this.concatActionResults(res);
       });
+      debug(
+        'action summary results: ' + JSON.stringify(this.actionResultsSummary)
+      );
+      return this.actionResultsSummary;
     } catch (err) {
       console.log(err);
       return false;
     }
-    return this.actionResultsSummary;
   }
 
   concatActionResults(data) {
+    debug('concatActionResults with: ' + JSON.stringify(data));
     for (const [key, value] of Object.entries(data)) {
       if (typeof value == 'number') {
         if (!this.actionResultsSummary.hasOwnProperty(key)) {
