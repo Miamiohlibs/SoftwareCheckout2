@@ -23,9 +23,9 @@ let group = 'Library API test';
         'conleyj@miamioh.edu',
         'wegnera3@miamioh.edu',
       ],
-      group
+      group,
       'test'
-    ); 
+    );
     console.log(res);
   } catch (err) {
     console.error('Unable to do the thing:', err);
