@@ -1,8 +1,9 @@
-const AdobeUserMgmtApi = require('./classes/AdobeUserMgmtApi');
+const AdobeUserMgmtService = require('./classes/AdobeUserMgmtService');
 const adobeConf = require('./config/adobe');
-const adobe = new AdobeUserMgmtApi(adobeConf);
+const adobe = new AdobeUserMgmtService(adobeConf);
 const appConf = require('./config/appConf');
 const LicenseGroup = require('./classes/LicenseGroup');
+// const AdobeUserMgmtService = require('./classes/AdobeUserMgmtService');
 const lg = new LicenseGroup(appConf);
 
 // let adobeLicenses = lg.getVendorGroupNamesByVendor('Adobe');
@@ -12,7 +13,7 @@ let group = 'Library API test';
 
 (async () => {
   try {
-    await adobe.getToken();
+    // await adobe.getToken();
     let res = await adobe.addMembersToGroup(
       [
         'qum@miamioh.edu',
@@ -24,8 +25,8 @@ let group = 'Library API test';
         'bomholmm@miamioh.edu',
         'kaiserj5@miamioh.edu',
         'calabrcm@miamioh.edu',
-        // 'conleyj13@miamioh.edu',
-        // 'wegnera3@miamioh.edu',
+        'conleyj@miamioh.edu',
+        'wegnera3@miamioh.edu',
       ],
       group,
       'test'
