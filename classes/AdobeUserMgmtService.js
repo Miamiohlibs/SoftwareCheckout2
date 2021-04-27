@@ -66,17 +66,28 @@ module.exports = class AdobeUserMgmtService {
     return data.map((i) => i.email);
   }
 
-  async addMembersToGroup(emailsToAdd, listName, testOnly = null) {
-    let reqBody = this.prepBulkAddUsers2AdobeGroup(emailsToAdd, listName);
+  async addGroupMembers(emails, listName, testOnly = null) {
+    return await this.alterGroupMembers(
+      'add',
+      emails,
+      listName,
+      (testOnly = null)
+    );
+  }
+
+  async removeGroupMembers(emails, listName, testOnly = null) {
+    return await this.alterGroupMembers(
+      'remove',
+      emails,
+      listName,
+      (testOnly = null)
+    );
+  }
+
+  async alterGroupMembers(addOrRemove, emails, listName, testOnly = null) {
+    let reqBody = this.prepBulkGroupUsers(addOrRemove, emails, listName);
     let reqBodyChunks = util.chunkArray(reqBody, this.maxActionsPerReq);
-
-    this.clearQueryConf();
-    this.queryConf.url = this.actionUrl;
-    this.queryConf.method = 'post';
-    if (testOnly == 'test') {
-      this.queryConf.url += '?testOnly=true';
-    }
-
+    this.setActionUrl();
     await this.submitActionReqs(reqBodyChunks);
     return {
       status: this.actionStatus(),
@@ -84,7 +95,17 @@ module.exports = class AdobeUserMgmtService {
     };
   }
 
+  setActionUrl(testOnly = null) {
+    this.clearQueryConf();
+    this.queryConf.url = this.actionUrl;
+    this.queryConf.method = 'post';
+    if (testOnly == 'test') {
+      this.queryConf.url += '?testOnly=true';
+    }
+  }
+
   actionStatus() {
+    if (!this.actionResultsSummary) return 'error';
     if (this.actionResultsSummary.notCompleted == 0) return 'success';
     else return 'error';
   }
@@ -124,20 +145,22 @@ module.exports = class AdobeUserMgmtService {
     }
   }
 
-  prepBulkAddUsers2AdobeGroup(emailsToAdd, listName) {
+  prepBulkGroupUsers(addOrRemove, emails, listName) {
     let i = 1;
     let jsonBody = [];
-    emailsToAdd.forEach((email) => {
-      jsonBody.push(this.createAddJsonBody(email, [listName], i));
+    emails.forEach((email) => {
+      jsonBody.push(
+        this.createActionReqBody(addOrRemove, email, [listName], i)
+      );
       i++;
     });
     return jsonBody;
   }
 
-  createAddJsonBody(user, groups, n = 1) {
+  createActionReqBody(addOrRemove, user, groups, n = 1) {
     let doObj = [
       {
-        add: {
+        [addOrRemove]: {
           group: groups,
         },
       },

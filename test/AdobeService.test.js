@@ -55,8 +55,8 @@ describe('AdobeUserMmgtService: getGroupMembers()', () => {
   });
 });
 
-describe('AdobeUserMmgtService: createAddJsonBody', () => {
-  it('should create JSON body with action 1 from only two inputs', () => {
+describe('AdobeUserMmgtService: createActionReqBody', () => {
+  it('should create ADD body with action 1 from only three inputs', () => {
     let expected1 = {
       user: 'doejohn@test.edu',
       requestID: 'action_1',
@@ -68,10 +68,14 @@ describe('AdobeUserMmgtService: createAddJsonBody', () => {
         },
       ],
     };
-    let res = serv.createAddJsonBody('doejohn@test.edu', testGroupName);
+    let res = serv.createActionReqBody(
+      'add',
+      'doejohn@test.edu',
+      testGroupName
+    );
     expect(res).toEqual(expected1);
   });
-  it('should create JSON body with action 33 from three inputs', () => {
+  it('should create ADD body with action 33 from four inputs', () => {
     let expected2 = {
       user: 'doejane@test.edu',
       requestID: 'action_33',
@@ -83,38 +87,145 @@ describe('AdobeUserMmgtService: createAddJsonBody', () => {
         },
       ],
     };
-    let res = serv.createAddJsonBody('doejane@test.edu', testGroupName, 33);
+    let res = serv.createActionReqBody(
+      'add',
+      'doejane@test.edu',
+      testGroupName,
+      33
+    );
     expect(res).toEqual(expected2);
+  });
+  it('should create ADD body with action 1 from only three inputs', () => {
+    let expected3 = {
+      user: 'doejohn@test.edu',
+      requestID: 'action_1',
+      do: [
+        {
+          remove: {
+            group: 'Library API test',
+          },
+        },
+      ],
+    };
+    let res = serv.createActionReqBody(
+      'remove',
+      'doejohn@test.edu',
+      testGroupName
+    );
+    expect(res).toEqual(expected3);
   });
 });
 
-describe('AdobeUserMmgtService: prepBulkAddUsers2AdobeGroup', () => {
+describe('AdobeUserMmgtService: prepBulkGroupUsers (add)', () => {
   let emails = ['email1@test.org', 'email2@test.org', 'email3@test.org'];
-  let res = serv.prepBulkAddUsers2AdobeGroup(emails, testGroupName);
+  let res = serv.prepBulkGroupUsers('add', emails, testGroupName);
   it('should get an array', () => {
     expect(res.length).toBe(3);
   });
   it('the first array item should be an object with user:email1@test.org and requestID:request_1', () => {
     expect(res[0].user).toBe('email1@test.org');
     expect(res[0].requestID).toBe('action_1');
+    expect(res[0]).toHaveProperty('do');
+    expect(Array.isArray(res[0].do)).toBe(true);
+    expect(res[0].do[0]).toHaveProperty('add');
   });
   it('the first array item should be an object with user:email3@test.org and requestID:request_3', () => {
     expect(res[2].user).toBe('email3@test.org');
     expect(res[2].requestID).toBe('action_3');
+    expect(res[2]).toHaveProperty('do');
+    expect(Array.isArray(res[2].do)).toBe(true);
+    expect(res[2].do[0]).toHaveProperty('add');
   });
 });
 
-describe('AdobeUserMmgtService: addMembersToGroup', () => {
-  bulkAddSpy = jest.spyOn(serv, 'prepBulkAddUsers2AdobeGroup');
-  querySpy = jest.spyOn(serv, 'submitActionReqs');
-  serv.addMembersToGroup(
-    ['johndoe@fake.org', 'janedoe@fake.org'],
-    'fakegroupname'
-  );
-  it('should call prepBulkAddUsers2AdobeGroup once', () => {
-    expect(bulkAddSpy).toHaveBeenCalledTimes(1);
+describe('AdobeUserMmgtService: alterGroupMembers (add)', () => {
+  beforeAll(() => {
+    jest.resetAllMocks();
+    prepSpy = jest.spyOn(serv, 'prepBulkGroupUsers').mockImplementation(() => {
+      return [{ user: 'test' }];
+    });
+    setUrlSpy = jest.spyOn(serv, 'setActionUrl');
+    querySpy = jest
+      .spyOn(serv, 'submitActionReqs')
+      .mockImplementation(() => Promise.resolve());
+    serv.alterGroupMembers(
+      'add',
+      ['johndoe@fake.org', 'janedoe@fake.org'],
+      'fakegroupname'
+    );
+  });
+  it('should call prepBulkGroupUsers once', () => {
+    expect(prepSpy).toHaveBeenCalledTimes(1);
+  });
+  it('should call setActionUrl once', () => {
+    expect(setUrlSpy).toHaveBeenCalledTimes(1);
   });
   it('should call getQueryResults once', () => {
     expect(querySpy).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('AdobeUserMmgtService: alterGroupMembers (remove)', () => {
+  beforeAll(async () => {
+    jest.resetAllMocks();
+    prepSpy = jest.spyOn(serv, 'prepBulkGroupUsers').mockImplementation(() => {
+      return [{ user: 'test' }];
+    });
+    setUrlSpy = jest.spyOn(serv, 'setActionUrl');
+    querySpy = jest
+      .spyOn(serv, 'submitActionReqs')
+      .mockImplementation(() => Promise.resolve());
+    serv.alterGroupMembers(
+      'remove',
+      ['johndoe@fake.org', 'janedoe@fake.org'],
+      'fakegroupname'
+    );
+  });
+
+  it('should call prepBulkGroupUsers once', () => {
+    expect(prepSpy).toHaveBeenCalledTimes(1);
+  });
+  it('should call setActionUrl once', () => {
+    expect(setUrlSpy).toHaveBeenCalledTimes(1);
+  });
+  it('should call getQueryResults once', () => {
+    expect(querySpy).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('AdobeUserMgmtService: addGroupMembers', () => {
+  beforeEach(async () => {
+    jest.clearAllMocks();
+    alterSpy = jest
+      .spyOn(serv, 'alterGroupMembers')
+      .mockImplementation(() => Promise.resolve());
+    emails = ['fakeemail@fake.org'];
+  });
+
+  it('should call alterGroupMembers with "add"', async () => {
+    serv.addGroupMembers(emails, testGroupName);
+    expect(alterSpy).toHaveBeenCalledWith('add', emails, testGroupName, null);
+    expect(alterSpy).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('AdobeUserMgmtService: removeGroupMembers', () => {
+  beforeEach(() => {
+    jest.resetAllMocks();
+    alterSpy = jest
+      .spyOn(serv, 'alterGroupMembers')
+      .mockImplementation(() => Promise.resolve());
+  });
+  let emails = ['fakeemail@fake.org'];
+
+  it('should call alterGroupMembers with "remove"', async () => {
+    serv.removeGroupMembers(emails, testGroupName);
+    expect(alterSpy).toHaveBeenCalledWith(
+      'remove',
+      emails,
+      testGroupName,
+      null
+    );
+    expect(alterSpy).toHaveBeenCalledTimes(1);
   });
 });
