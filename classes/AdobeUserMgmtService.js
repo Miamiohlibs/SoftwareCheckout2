@@ -16,6 +16,7 @@ module.exports = class AdobeUserMgmtService {
     this.userThrottle = new Throttle(userReqsPerCycle, secondsPerUserCycle);
     let actionsReqPerCycle = 10;
     let secondsPerActionCycle = 60;
+    this.maxActionsPerReq = 10;
     this.actionThrottle = new Throttle(
       actionsReqPerCycle,
       secondsPerActionCycle
@@ -98,10 +99,6 @@ module.exports = class AdobeUserMgmtService {
         debug('submitting action with queryConf: ' + this.queryConf);
         let res = await this.api.getQueryResults(this.queryConf);
         this.actionThrottle.increment();
-
-        // if (res) {
-        //   this.handleActionResults(res);
-        // }
         this.concatActionResults(res);
       });
       debug(
@@ -147,12 +144,4 @@ module.exports = class AdobeUserMgmtService {
     ];
     return { user: user, requestID: 'action_' + n, do: doObj };
   }
-
-  //   handleActionResults(res) {
-  //     if (res.notCompleted != 0 || res.hasOwnProperty('errors')) {
-  //       console.log('Partially failed Adobe actions:');
-  //       console.log(res);
-  //       console.log('Error generated for request:', this.queryConf.data);
-  //     }
-  //   }
 };

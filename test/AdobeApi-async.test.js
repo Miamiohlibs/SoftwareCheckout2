@@ -1,6 +1,8 @@
 const realConf = require('../config/adobe');
 const AdobeUserMgmtApi = require('../classes/AdobeUserMgmtApi');
+const AdobeService = require('../classes/AdobeUserMgmtService');
 const api = new AdobeUserMgmtApi(realConf);
+const serv = new AdobeService(realConf);
 const testGroupName = 'Library API test';
 
 describe('AdobeUserMgmtApi: getToken', () => {
@@ -14,22 +16,63 @@ describe('AdobeUserMgmtApi: getToken', () => {
 describe('AdobeUserMgmtApi: getGroupMembers', () => {
   it('should find two members of the test group', async () => {
     // await api.getToken();
-    res = await api.getGroupMembers(testGroupName);
+    res = await serv.getGroupMembers(testGroupName);
     expect(res.length).toEqual(2);
   });
 });
 
-describe('AdobeUserMgmtApi: addMembersToGroup (these now fail because the fn no longer returns a value)', () => {
+describe('AdobeUserMgmtService: addMembersToGroup', () => {
   emailsToAdd1 = ['qum@miamioh.edu'];
   emailsToAdd2 = ['qum@miamioh.edu', 'brownsj1@miamioh.edu'];
+  emailsFake1 = ['thisissuchafakeemail@miamioh.edu'];
+  emailsBigList = [
+    'qum@miamioh.edu',
+    'yarnete@miamioh.edu',
+    'irwinkr@miamioh.edu',
+    'hawkpf@miamioh.edu',
+    'diebelsa@miamioh.edu',
+    'brownsj1@miamioh.edu',
+    'bomholmm@miamioh.edu',
+    'kaiserj5@miamioh.edu',
+    'calabrcm@miamioh.edu',
+    'conleyj@miamioh.edu',
+    'wegnera3@miamioh.edu',
+  ];
   it('should be able to fake-add Meng to a list', async () => {
-    let res = await api.addMembersToGroup(emailsToAdd1, testGroupName, 'test');
-    expect(res).toHaveProperty('completedInTestMode');
-    expect(res.completedInTestMode).toBe(1);
+    let res = await serv.addMembersToGroup(emailsToAdd1, testGroupName, 'test');
+    expect(res).toHaveProperty('status');
+    expect(res.status).toBe('success');
+    expect(res).toHaveProperty('message');
+    expect(res.message).toHaveProperty('completedInTestMode');
+    expect(res.message.completedInTestMode).toBe(1);
   });
   it('should be able to fake-add two users to a list', async () => {
-    let res = await api.addMembersToGroup(emailsToAdd2, testGroupName, 'test');
-    expect(res).toHaveProperty('completedInTestMode');
-    expect(res.completedInTestMode).toBe(2);
+    let res = await serv.addMembersToGroup(emailsToAdd2, testGroupName, 'test');
+    expect(res).toHaveProperty('status');
+    expect(res.status).toBe('success');
+    expect(res).toHaveProperty('message');
+    expect(res.message).toHaveProperty('completedInTestMode');
+    expect(res.message.completedInTestMode).toBe(2);
+  });
+  it('should fail to fake-add fakeuser to a list', async () => {
+    let res = await serv.addMembersToGroup(emailsFake1, testGroupName, 'test');
+    expect(res).toHaveProperty('status');
+    expect(res.status).toBe('error');
+    expect(res).toHaveProperty('message');
+    expect(res.message).toHaveProperty('errors');
+    expect(res.message).toHaveProperty('notCompleted');
+    expect(res.message.notCompleted).toBe(1);
+  });
+  it('should be able to add more than 10 users at once (chunked into sep calls)', async () => {
+    let res = await serv.addMembersToGroup(
+      emailsBigList,
+      testGroupName,
+      'test'
+    );
+    expect(res).toHaveProperty('status');
+    expect(res.status).toBe('success');
+    expect(res).toHaveProperty('message');
+    expect(res.message).toHaveProperty('completedInTestMode');
+    expect(res.message.completedInTestMode).toBe(11);
   });
 });
