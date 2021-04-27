@@ -77,7 +77,15 @@ module.exports = class AdobeUserMgmtService {
     }
 
     await this.submitActionReqs(reqBodyChunks);
-    return this.actionResultsSummary;
+    return {
+      status: this.actionStatus(),
+      message: this.actionResultsSummary,
+    };
+  }
+
+  actionStatus() {
+    if (this.actionResultsSummary.notCompleted == 0) return 'success';
+    else return 'error';
   }
 
   async submitActionReqs(reqBodyChunks) {
@@ -91,15 +99,15 @@ module.exports = class AdobeUserMgmtService {
         let res = await this.api.getQueryResults(this.queryConf);
         this.actionThrottle.increment();
 
-        if (res) {
-          this.handleActionResults(res);
-        }
+        // if (res) {
+        //   this.handleActionResults(res);
+        // }
         this.concatActionResults(res);
       });
       debug(
         'action summary results: ' + JSON.stringify(this.actionResultsSummary)
       );
-      return this.actionResultsSummary;
+      return true;
     } catch (err) {
       console.log(err);
       return false;
@@ -109,10 +117,12 @@ module.exports = class AdobeUserMgmtService {
   concatActionResults(data) {
     debug('concatActionResults with: ' + JSON.stringify(data));
     for (const [key, value] of Object.entries(data)) {
-      if (typeof value == 'number') {
-        if (!this.actionResultsSummary.hasOwnProperty(key)) {
-          this.actionResultsSummary[key] = value;
-        } else this.actionResultsSummary[key] += value;
+      if (!this.actionResultsSummary.hasOwnProperty(key)) {
+        this.actionResultsSummary[key] = value;
+      } else if (typeof value == 'number') {
+        this.actionResultsSummary[key] += value;
+      } else if (Array.isArray(value)) {
+        this.actionResultsSummary[key].concat;
       }
     }
   }
@@ -138,11 +148,11 @@ module.exports = class AdobeUserMgmtService {
     return { user: user, requestID: 'action_' + n, do: doObj };
   }
 
-  handleActionResults(res) {
-    if (res.notCompleted != 0 || res.hasOwnProperty('errors')) {
-      console.log('Partially failed Adobe actions:');
-      console.log(res);
-      console.log('Error generated for request:', this.queryConf.data);
-    }
-  }
+  //   handleActionResults(res) {
+  //     if (res.notCompleted != 0 || res.hasOwnProperty('errors')) {
+  //       console.log('Partially failed Adobe actions:');
+  //       console.log(res);
+  //       console.log('Error generated for request:', this.queryConf.data);
+  //     }
+  //   }
 };
