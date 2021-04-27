@@ -1,11 +1,11 @@
-const Query = require('./Query');
-
-// uncomment this line to suppress debug messages
-console.debug = () => {};
+const Debug = require('debug');
+const debug = new Debug('AdobeApi');
+const axios = require('axios');
 
 module.exports = class LibCalApi {
   constructor(conf) {
     this.conf = conf;
+    this.baseUrl = conf.credentials.auth.tokenHost + '/1.1/equipment/';
     const required = ['credentials', 'queryConfig'];
     required.forEach((element) => {
       if (!this.conf.hasOwnProperty(element)) {
@@ -18,113 +18,74 @@ module.exports = class LibCalApi {
     const oauth2 = require('simple-oauth2').create(this.conf.credentials);
     try {
       const result = await oauth2.clientCredentials.getToken();
-      // console.log(oauth2)
-      // const accessToken = oauth2.accessToken.create(result);
-      // console.log('Token: ', result);
-      this.token = result.access_token;
-      // console.log('Just token:', this.token)
-      return Promise.resolve(this.token);
+      this.accessToken = result.access_token;
+      debug('LibCal Token: ' + this.accessToken);
+      return true;
     } catch (err) {
-      console.error('Access Token Error:', err.message);
+      console.error('LibCalAccess Token Error:', err.message);
     }
   }
 
-  async getOneLibCalList(element, params = '') {
-    const libCalOptions = this.conf;
+  async getSoftwareCategories() {
+    this.clearQueryConf();
+    this.queryConf.url =
+      this.baseUrl + 'categories/' + this.conf.softwareLocation;
+    this.queryConf.method = 'get';
+    return await this.getQueryResults();
+  }
 
-    // only get location: library software
-    if (element == 'categories') {
-      var id = '/' + this.conf.softwareLocation;
-    } else {
-      id = '';
+  clearQueryConf() {
+    this.queryConf = {};
+  }
+
+  async getQueryResults() {
+    if (!this.hasOwnProperty('accessToken')) {
+      debug('getting access token before getQueryResults');
+      await this.getToken();
+      this.queryConf.headers = this.getAuthHeaders();
+      try {
+        let res = await axios(this.queryConf);
+        return res.data;
+      } catch (err) {
+        console.log(('Failed LibCal query:', err));
+      }
     }
+  }
 
-    this.conf.queryConfig.options.path = '/1.1/equipment/' + element + id;
-    this.conf.queryConfig.options.headers = {
-      Authorization: 'Bearer ' + this.token,
+  getAuthHeaders() {
+    return {
+      Authorization: `Bearer ${this.accessToken}`,
     };
-    if (element == 'bookings') {
-      this.conf.queryConfig.options.path +=
-        '?limit=100&lid=' + this.conf.softwareLocation + params;
-    }
-    console.debug(this.conf.queryConfig.options.path, this.token);
-    // get a promise for each call
-    try {
-      let query = new Query(this.conf.queryConfig);
-      let response = await query.execute();
-      return response;
-    } catch {
-      console.error('failed to get libcal query');
-    }
   }
+  // getEquipmentCategories
+  //https://muohio.libcal.com/1.1/equipment/categories/8370
 
-  async getLibCalLists() {
-    try {
-      let categories = await this.getOneLibCalList('categories');
-      let cats = JSON.parse(categories);
-      console.log();
-      const allLists = [];
-      await this.asyncForEach(cats[0].categories, async (item) => {
-        // console.log(item);
-        let response = await this.getOneLibCalList(
-          'bookings',
-          '&cid=' + item.cid
-        );
-        let parsed = JSON.parse(response);
-        let obj = { cid: item.cid, name: item.name, bookings: parsed }; //, categories: categories }
-        // console.log('ID:',item.cid)
-        // response[item.cid] = obj;
-        allLists.push(obj);
-      });
-      // this.lcSoftware = allLists;
-      return allLists;
-    } catch (err) {
-      console.log('Error getting LibCal lists:', err);
-    }
-  }
+  // async getOneLibCalList(element, params = '') {
+  //   const libCalOptions = this.conf;
 
-  mapLibCal2ShortName(cids, crosswalk) {
-    // adds a .campusCode property to each LibCal cid element
-    // note: the LibCal.name must exactly match the software[] object.name property defined in configs/appConf
-    // crosswalk should be the .software property of the appConf configuration, containing a name and shortName
-    cids.forEach((libCalElement) => {
-      crosswalk.map((item) => {
-        if (libCalElement.name == item.name) {
-          libCalElement.shortName = item.shortName;
-        }
-      });
-    });
-    return cids;
-  }
+  //   // only get location: library software
+  //   if (element == 'categories') {
+  //     var id = '/' + this.conf.softwareLocation;
+  //   } else {
+  //     id = '';
+  //   }
 
-  getCurrentLibCalBookings(bookings) {
-    // checks the software array for bookings that are current (active as of now) and status=confirmed
-    // returns an array with a subset of booked software
-
-    // filter to current
-    let currentBookings = bookings.filter((obj) => {
-      let toDate = Date.parse(obj.toDate);
-      let fromDate = Date.parse(obj.fromDate);
-      return Date.now() > fromDate && Date.now() < toDate;
-    });
-    // limit to confirmed bookings (not cancelled, etc)
-    return currentBookings.filter((obj) => {
-      return obj.status === 'Confirmed' || obj.status === 'Mediated Approved';
-    });
-  }
-
-  getEmailsFromBookings(bookings) {
-    return bookings.map((item) => {
-      return item.email;
-    });
-  }
-
-  async asyncForEach(array, callback) {
-    // asyncForEach
-    // from: https://codeburst.io/javascript-async-await-with-foreach-b6ba62bbf404
-    // by: Sebastien Chopin
-    for (let index = 0; index < array.length; index++) {
-      await callback(array[index], index, array);
-    }
-  }
+  //   this.conf.queryConfig.options.path = '/1.1/equipment/' + element + id;
+  //   this.conf.queryConfig.options.headers = {
+  //     Authorization: 'Bearer ' + this.token,
+  //   };
+  //   if (element == 'bookings') {
+  //     this.conf.queryConfig.options.path +=
+  //       '?limit=100&lid=' + this.conf.softwareLocation + params;
+  //   }
+  //   console.debug(this.conf.queryConfig.options.path, this.token);
+  //   // get a promise for each call
+  //   try {
+  //     let query = new Query(this.conf.queryConfig);
+  //     let response = await query.execute();
+  //     return response;
+  //   } catch {
+  //     console.error('failed to get libcal query');
+  //   }
+  // }
 };
