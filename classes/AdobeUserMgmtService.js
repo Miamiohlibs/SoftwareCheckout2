@@ -67,27 +67,17 @@ module.exports = class AdobeUserMgmtService {
   }
 
   async addGroupMembers(emails, listName, testOnly = null) {
-    return await this.alterGroupMembers(
-      'add',
-      emails,
-      listName,
-      (testOnly = null)
-    );
+    return await this.alterGroupMembers('add', emails, listName, testOnly);
   }
 
   async removeGroupMembers(emails, listName, testOnly = null) {
-    return await this.alterGroupMembers(
-      'remove',
-      emails,
-      listName,
-      (testOnly = null)
-    );
+    return await this.alterGroupMembers('remove', emails, listName, testOnly);
   }
 
   async alterGroupMembers(addOrRemove, emails, listName, testOnly = null) {
     let reqBody = this.prepBulkGroupUsers(addOrRemove, emails, listName);
     let reqBodyChunks = util.chunkArray(reqBody, this.maxActionsPerReq);
-    this.setActionUrl();
+    this.setActionUrl(testOnly);
     await this.submitActionReqs(reqBodyChunks);
     return {
       status: this.actionStatus(),
