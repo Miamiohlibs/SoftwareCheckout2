@@ -3,18 +3,13 @@ const adobeConf = require('./config/adobe');
 const adobe = new AdobeUserMgmtService(adobeConf);
 const appConf = require('./config/appConf');
 const LicenseGroup = require('./classes/LicenseGroup');
-// const AdobeUserMgmtService = require('./classes/AdobeUserMgmtService');
 const lg = new LicenseGroup(appConf);
-
-// let adobeLicenses = lg.getVendorGroupNamesByVendor('Adobe');
-// console.log(adobeLicenses);
 
 let group = 'Library API test';
 
 (async () => {
   try {
-    // await adobe.getToken();
-    let res = await adobe.addMembersToGroup(
+    let res = await adobe.addGroupMembers(
       [
         'qum@miamioh.edu',
         'yarnete@miamioh.edu',
@@ -28,9 +23,9 @@ let group = 'Library API test';
         'conleyj@miamioh.edu',
         'wegnera3@miamioh.edu',
       ],
-      group,
+      group
       'test'
-    ); //adobe.getGroupMembers(group);
+    ); 
     console.log(res);
   } catch (err) {
     console.error('Unable to do the thing:', err);
