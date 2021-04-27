@@ -14,12 +14,12 @@ module.exports = class Utils {
         last.push(val);
       }
     });
-
     return chunkedArr;
   }
 
-  /* asyncForEach taken from: https://codeburst.io/javascript-async-await-with-foreach-b6ba62bbf404 */
   async asyncForEach(array, callback) {
+    // https://codeburst.io/javascript-async-await-with-foreach-b6ba62bbf404
+    // by: Sebastien Chopin
     for (let index = 0; index < array.length; index++) {
       await callback(array[index], index, array);
     }
