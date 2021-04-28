@@ -6,9 +6,9 @@ describe('initialization', () => {
   it('should initialize as a LicenseGroup object', () => {
     expect(obj instanceof LicenseGroup).toBe(true);
   });
-  it('should create the software array from the config arg on constrution', () => {
+  it('should create the software array from the config arg on construction', () => {
     expect(obj.software instanceof Array).toBe(true);
-    expect(obj.software.length).toBe(3);
+    expect(obj.software.length).toBe(5);
   });
 });
 describe('getLicenseGroupsByVendor', () => {
@@ -22,6 +22,10 @@ describe('getLicenseGroupsByVendor', () => {
   });
   it('should return zero SnarfCo licenses from the app conf', () => {
     res = obj.getLicenseGroupsByVendor('SnarfCo');
+    expect(res.length).toBe(0);
+  });
+  it('should return zero licenses when active:false', () => {
+    res = obj.getLicenseGroupsByVendor('FutureCo');
     expect(res.length).toBe(0);
   });
 });

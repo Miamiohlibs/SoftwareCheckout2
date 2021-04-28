@@ -5,11 +5,11 @@ module.exports = class LicenseGroup {
     this.software = conf.software;
   }
 
-  getLicenseGroupsByVendor(vendor) {
-    return this.software.filter((i) => i.vendor == vendor);
+  getLicenseGroupsByVendor(vendor, limitToActive = true) {
+    return this.software.filter((i) => i.vendor == vendor && i.active == true);
   }
 
-  getVendorGroupNamesByVendor(vendor) {
+  getVendorGroupNamesByVendor(vendor, limitToActive = true) {
     let objects = this.getLicenseGroupsByVendor(vendor);
     return objects.map((i) => i.vendorGroupName);
   }
