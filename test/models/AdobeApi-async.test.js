@@ -1,8 +1,8 @@
 const realConf = require('../../config/adobe');
-const AdobeUserMgmtApi = require('../classes/AdobeUserMgmtApi');
-const AdobeService = require('../classes/AdobeUserMgmtService');
+const AdobeUserMgmtApi = require('../../models/AdobeApi');
+const AdobeRepo = require('../../repositories/AdobeRepository');
 const api = new AdobeUserMgmtApi(realConf);
-const serv = new AdobeService(realConf);
+const repo = new AdobeRepo(realConf);
 const testGroupName = 'Library API test';
 
 describe('AdobeUserMgmtApi: getToken', () => {
@@ -16,12 +16,12 @@ describe('AdobeUserMgmtApi: getToken', () => {
 describe('AdobeUserMgmtApi: getGroupMembers', () => {
   it('should find two members of the test group', async () => {
     // await api.getToken();
-    res = await serv.getGroupMembers(testGroupName);
+    res = await repo.getGroupMembers(testGroupName);
     expect(res.length).toEqual(2);
   });
 });
 
-describe('AdobeUserMgmtService: addMembersToGroup', () => {
+describe('AdobeUserMgmtrepoice: addMembersToGroup', () => {
   emailsToAdd1 = ['qum@miamioh.edu'];
   emailsToAdd2 = ['qum@miamioh.edu', 'brownsj1@miamioh.edu'];
   emailsFake1 = ['thisissuchafakeemail@miamioh.edu'];
@@ -39,7 +39,7 @@ describe('AdobeUserMgmtService: addMembersToGroup', () => {
     'wegnera3@miamioh.edu',
   ];
   it('should be able to fake-add Meng to a list', async () => {
-    let res = await serv.addGroupMembers(emailsToAdd1, testGroupName, 'test');
+    let res = await repo.addGroupMembers(emailsToAdd1, testGroupName, 'test');
     expect(res).toHaveProperty('status');
     expect(res.status).toBe('success');
     expect(res).toHaveProperty('message');
@@ -47,7 +47,7 @@ describe('AdobeUserMgmtService: addMembersToGroup', () => {
     expect(res.message.completedInTestMode).toBe(1);
   });
   it('should be able to fake-add two users to a list', async () => {
-    let res = await serv.addGroupMembers(emailsToAdd2, testGroupName, 'test');
+    let res = await repo.addGroupMembers(emailsToAdd2, testGroupName, 'test');
     expect(res).toHaveProperty('status');
     expect(res.status).toBe('success');
     expect(res).toHaveProperty('message');
@@ -55,7 +55,7 @@ describe('AdobeUserMgmtService: addMembersToGroup', () => {
     expect(res.message.completedInTestMode).toBe(2);
   });
   it('should fail to fake-add fakeuser to a list', async () => {
-    let res = await serv.addGroupMembers(emailsFake1, testGroupName, 'test');
+    let res = await repo.addGroupMembers(emailsFake1, testGroupName, 'test');
     expect(res).toHaveProperty('status');
     expect(res.status).toBe('error');
     expect(res).toHaveProperty('message');
@@ -64,7 +64,7 @@ describe('AdobeUserMgmtService: addMembersToGroup', () => {
     expect(res.message.notCompleted).toBe(1);
   });
   it('should be able to add more than 10 users at once (chunked into sep calls)', async () => {
-    let res = await serv.addGroupMembers(emailsBigList, testGroupName, 'test');
+    let res = await repo.addGroupMembers(emailsBigList, testGroupName, 'test');
     expect(res).toHaveProperty('status');
     expect(res.status).toBe('success');
     expect(res).toHaveProperty('message');
