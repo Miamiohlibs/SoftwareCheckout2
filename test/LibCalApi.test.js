@@ -39,7 +39,6 @@ describe('LibCalApi: getAuthHeaders', () => {
     console.log(api);
     delete api.accessToken;
   });
-  q;
 });
 
 describe('LibCalApi: getQueryResults', () => {
