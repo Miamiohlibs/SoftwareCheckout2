@@ -1,5 +1,5 @@
 const adobeConf = require('../config/adobe');
-const AdobeApi = require('../classes/AdobeUserMgmtApi');
+const AdobeApi = require('../models/AdobeApi');
 
 // get Adobe Token
 const adobe = new AdobeApi(adobeConf);
