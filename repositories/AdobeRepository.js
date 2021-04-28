@@ -1,5 +1,5 @@
-const debug = require('debug')('AdobeService');
-const AdobeApi = require('../classes/AdobeUserMgmtApi');
+const debug = require('debug')('AdobeRepository');
+const AdobeApi = require('../models/AdobeApi');
 const Throttle = require('../classes/Throttle');
 const Utils = require('../classes/Utils');
 const util = new Utils();
