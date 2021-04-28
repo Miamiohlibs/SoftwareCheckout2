@@ -29,11 +29,18 @@ describe('LibCalApi: clearQueryConf', () => {
   });
 });
 
-// clearQueryConf() {
-//   this.queryConf = {};
-// }
-
-// getAuthHeaders()
+describe('LibCalApi: getAuthHeaders', () => {
+  it('should create the Auth/Bearer token', () => {
+    api.accessToken = 'myFakeToken';
+    let res = api.getAuthHeaders();
+    expect(res).toEqual({
+      Authorization: 'Bearer myFakeToken',
+    });
+    console.log(api);
+    delete api.accessToken;
+  });
+  q;
+});
 
 describe('LibCalApi: getQueryResults', () => {
   beforeEach(() => {
