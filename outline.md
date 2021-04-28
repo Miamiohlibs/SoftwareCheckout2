@@ -23,10 +23,9 @@
 - certs/
   - SSL certificates, gitignored
 - classes/
-  - LibCal
-  - Adobe
-  - Apple
   - MiamiEmail
+  - Throttle
+  - Utils
 - config/
   - appConf
     - defines which services are turned on
@@ -37,7 +36,17 @@
 - logs/
   - possibly a separate log per day, and a cleanup mechanism after a month
   - timestamp each line?
+- models/
+  - AdobeApi
+  - AppleApi
+  - LibCalApi
 - services/
+  - Adobe (talks to AdobeRepo && LibCalRepo)
+  - Apple (talks to AppleRepo && LibCalRepo)
   - getUniqidFromEmail (checks cache, db, or performs query)
+- repositories/
+  - AdobeRepo
+  - AppleRepo
+  - LibCalRepo
 - test/
   - [tests for each class]
