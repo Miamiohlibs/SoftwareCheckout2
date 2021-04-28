@@ -1,6 +1,6 @@
 // const appConfMissingStuff = require('./sample-data/appConfSample');
-const realConf = require('../config/adobe');
-const AdobeUserMgmtApi = require('../classes/AdobeUserMgmtApi');
+const realConf = require('../../config/adobe');
+const AdobeUserMgmtApi = require('../../models/AdobeApi');
 
 // const bookingsToAdd = require('./sample-data/libCalBookingsToAdd2Adobe');
 
