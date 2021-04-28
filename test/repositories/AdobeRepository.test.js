@@ -2,7 +2,7 @@ const AdobeService = require('../../repositories/AdobeRepository');
 const realConf = require('../../config/adobe');
 const serv = new AdobeService(realConf);
 const testGroupName = 'Library API test';
-const sampleGroupMembers = require('../sample-data/adobeGroupMembers');
+const sampleGroupMembers = require('./sample-data/adobeGroupMembers');
 
 describe('AdobeUserMmgtService: clearQueryConf()', () => {
   it('should have an empty queryConf object after running clearQueryConf', () => {
