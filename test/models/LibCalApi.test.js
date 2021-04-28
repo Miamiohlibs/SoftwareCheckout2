@@ -1,5 +1,5 @@
 const fakeConf = require('../sample-data/libCalFakeConf');
-const LibCalApi = require('../classes/LibCalApi');
+const LibCalApi = require('../../models/LibCalApi');
 const badConf = require('../sample-data/libCalBadConf');
 const { JsonWebTokenError } = require('jsonwebtoken');
 const api = new LibCalApi(fakeConf);

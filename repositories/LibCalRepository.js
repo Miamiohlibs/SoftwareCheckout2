@@ -1,4 +1,4 @@
-const LibCalApi = require('./LibCalApi');
+const LibCalApi = require('../models/LibCalApi');
 const Utils = require('../classes/Utils');
 const util = new Utils();
 
