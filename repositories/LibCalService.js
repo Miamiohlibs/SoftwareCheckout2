@@ -1,5 +1,5 @@
 const LibCalApi = require('./LibCalApi');
-const Utils = require('./Utils');
+const Utils = require('../classes/Utils');
 const util = new Utils();
 
 module.exports = class LibCalService {

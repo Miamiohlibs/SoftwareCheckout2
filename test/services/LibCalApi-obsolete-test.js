@@ -1,9 +1,9 @@
 const LibCalApi = require('../classes/LibCalApi');
-const conf = require('../config/libCal');
-const sampleBookings = require('./sample-data/libCalBookingsSample');
-const appConf = require('../config/appConf')
-const dynamicDatesBookings = require('./sample-data/libCalBookingsSampleDynamic');
-const bookingObject = require('./sample-data/bookingObject');
+const conf = require('../../config/libCal');
+const sampleBookings = require('../sample-data/libCalBookingsSample');
+const appConf = require('../../config/appConf');
+const dynamicDatesBookings = require('../sample-data/libCalBookingsSampleDynamic');
+const bookingObject = require('../sample-data/bookingObject');
 
 describe('LibCalApi initialization', () => {
   it('should have some basic variables set on initialization', () => {
@@ -28,12 +28,11 @@ describe('LibCalApi can get a lists of categories', () => {
     var categories = await myApi.getOneLibCalList('categories');
     expect(categories.length).toBeGreaterThan(0);
     var obj = JSON.parse(categories);
-    expect(obj[0]).toHaveProperty('lid')
+    expect(obj[0]).toHaveProperty('lid');
   });
 });
 
 describe('LibCalApi can get the booking lists', () => {
-
   beforeEach(() => {
     myApi = new LibCalApi(conf);
   });
@@ -48,7 +47,10 @@ describe('LibCalApi can get the booking lists', () => {
   });
 
   it('should add a campusCode to each LibCal category', () => {
-    let softwareWithCodes = myApi.mapLibCal2ShortName(sampleBookings, appConf.software);
+    let softwareWithCodes = myApi.mapLibCal2ShortName(
+      sampleBookings,
+      appConf.software
+    );
     expect(softwareWithCodes[0]).toHaveProperty('shortName');
     expect(softwareWithCodes[0].shortName).toBe('photoshop');
   });
@@ -63,7 +65,6 @@ describe('LibCalApi can get the booking lists', () => {
     let result = myApi.getEmailsFromBookings(bookingObject);
     expect(result).toBeInstanceOf(Array);
     expect(result.length).toBe(3);
-    expect(result[0]).toBe('jerry.yarnetsky@miamioh.edu')
+    expect(result[0]).toBe('jerry.yarnetsky@miamioh.edu');
   });
 });
-

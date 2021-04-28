@@ -1,4 +1,4 @@
-const realConf = require('../config/adobe');
+const realConf = require('../../config/adobe');
 const AdobeUserMgmtApi = require('../classes/AdobeUserMgmtApi');
 const AdobeService = require('../classes/AdobeUserMgmtService');
 const api = new AdobeUserMgmtApi(realConf);
