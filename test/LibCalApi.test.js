@@ -18,6 +18,23 @@ describe('LibCalApi: initialization', () => {
   });
 });
 
+describe('LibCalApi: clearQueryConf', () => {
+  it('should turn the queryConf into an empty object', () => {
+    api.queryConf = {
+      url: 'http://fakeurl.org',
+      method: 'get',
+    };
+    api.clearQueryConf();
+    expect(api.queryConf).toEqual({});
+  });
+});
+
+// clearQueryConf() {
+//   this.queryConf = {};
+// }
+
+// getAuthHeaders()
+
 describe('LibCalApi: getQueryResults', () => {
   beforeEach(() => {
     jest.clearAllMocks();

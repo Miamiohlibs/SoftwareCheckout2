@@ -1,7 +1,12 @@
 const Debug = require('debug');
 const debug = new Debug('AdobeApi');
 const axios = require('axios');
-const e = require('express');
+
+/* 
+public methods:
+- getSoftwareCategories
+- getBookings
+*/
 
 module.exports = class LibCalApi {
   constructor(conf) {
