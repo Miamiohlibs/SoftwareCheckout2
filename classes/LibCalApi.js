@@ -41,16 +41,17 @@ module.exports = class LibCalApi {
       await this.getToken();
     } else {
       console.log(
-        'we dont need no stinkin token; weve already got one:'.this.accessToken
+        'we dont need no stinkin token; weve already got one:',
+        this.accessToken
       );
     }
     this.queryConf.headers = this.getAuthHeaders();
-    try {
-      let res = await axios(this.queryConf);
-      return res.data;
-    } catch (err) {
-      console.log(('Failed LibCal query:', err));
-    }
+    // try {
+    //   let res = await axios(this.queryConf);
+    //   return res.data;
+    // } catch (err) {
+    //   console.log(('Failed LibCal query:', err));
+    // }
   }
 
   async getToken() {
