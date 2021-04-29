@@ -1,15 +1,7 @@
 const LibCalApi = require('../models/LibCalApi');
 const Utils = require('../classes/Utils');
 const util = new Utils();
-const winston = require('winston');
-const logpath = __dirname + '/combined.log';
 const dayjs = require('dayjs');
-const logger = winston.createLogger({
-  transports: [
-    // new winston.transports.Console(),
-    new winston.transports.File({ filename: logpath, level: 'info' }),
-  ],
-});
 
 module.exports = class LibCalService {
   constructor(conf) {
