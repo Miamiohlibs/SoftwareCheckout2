@@ -24,7 +24,8 @@
     "nodemon": "^2.0.2",
     "querystring": "^0.2.0",
     "simple-oauth2": "^3.3.0",
-    "sleep": "^6.3.0"
+    "sleep": "^6.3.0",
+    "winston": "^3.3.3"
   },
   "devDependencies": {
     "babel-jest": "^25.2.4",
