@@ -23,16 +23,24 @@ module.exports = class LibCalService {
     return valid;
   }
 
-  filterToCurrentBookings(input) {
-    return input.filter(
+  filterToCurrentBookings(bookings) {
+    return bookings.filter(
       (i) => dayjs(i.fromDate) < dayjs() && dayjs(i.toDate) > dayjs()
     );
   }
 
-  filterToValidBookings(input) {
-    return input.filter(
+  filterToValidBookings(bookings) {
+    return bookings.filter(
       (i) => i.status === 'Confirmed' || i.status === 'Mediated Approved'
     );
+  }
+
+  getUniqueEmailsFromBookings(bookings) {
+    let emails = bookings.map((item) => {
+      return item.email;
+    });
+    let unique = [...new Set(emails)];
+    return unique;
   }
 
   // async getLibCalLists() {
@@ -90,9 +98,5 @@ module.exports = class LibCalService {
   //   });
   // }
 
-  // getEmailsFromBookings(bookings) {
-  //   return bookings.map((item) => {
-  //     return item.email;
-  //   });
   // }
 };

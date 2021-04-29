@@ -67,3 +67,17 @@ describe('LibCalRepo: getCurrentValidBookings', () => {
     expect(res[1].eid).toBe(75562);
   });
 });
+
+describe('LibCalRepo: getUniqueEmailsFromBookings', () => {
+  it('should find four unique users in the test data', () => {
+    let res = repo.getUniqueEmailsFromBookings(bookingsResponse);
+    expect(Array.isArray(res)).toBe(true);
+    expect(res.length).toBe(4);
+    expect(res).toEqual([
+      'jeruser@fake.org',
+      'evanuser@fake.org',
+      'domuser@fake.org',
+      'sethuser@fake.org',
+    ]);
+  });
+});
