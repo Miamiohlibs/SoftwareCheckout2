@@ -2,6 +2,7 @@ const LibCalApi = require('../models/LibCalApi');
 const Utils = require('../classes/Utils');
 const util = new Utils();
 const dayjs = require('dayjs');
+const logger = require('../services/logger');
 
 module.exports = class LibCalService {
   constructor(conf) {
@@ -10,8 +11,10 @@ module.exports = class LibCalService {
 
   async getCurrentValidBookings(cid) {
     let res = await this.api.getBookings(cid);
+    logger.debug(`received from getBookings ${cid}`, res);
     let current = this.filterToCurrentBookings(res);
     let valid = this.filterToValidBookings(current);
+    logger.debug(`getCurrentValidBookings returns ${cid}:`, valid);
     return valid;
   }
 

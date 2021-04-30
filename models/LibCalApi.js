@@ -1,6 +1,7 @@
 const Debug = require('debug');
 const debug = new Debug('AdobeApi');
 const axios = require('axios');
+const logger = require('../services/logger');
 
 /* 
 public methods:
@@ -37,7 +38,9 @@ module.exports = class LibCalApi {
       '&cid=' +
       cid;
     this.queryConf.method = 'get';
-    return await this.getQueryResults();
+    let res = await this.getQueryResults();
+    logger.debug(`API received getBookings for ${cid}`, res);
+    return res;
   }
 
   async getQueryResults() {
@@ -46,8 +49,10 @@ module.exports = class LibCalApi {
       await this.getToken();
     }
     this.queryConf.headers = this.getAuthHeaders();
+    logger.debug('getQueryResults with', this.queryConf);
     try {
       let res = await axios.request(this.queryConf);
+      logger.debug('Received query results', res);
       return res.data;
     } catch (err) {
       console.log(('Failed LibCal query:', err));
