@@ -11,7 +11,7 @@ const logger = createLogger({
   format: combine(timestamp(), prettyPrint()),
   transports: [
     // new winston.transports.Console(),
-    new transports.File({ filename: debuglog, level: 'debug' }),
+    // new transports.File({ filename: debuglog, level: 'debug' }),
     new transports.File({ filename: infolog, level: 'info' }),
   ],
 });
