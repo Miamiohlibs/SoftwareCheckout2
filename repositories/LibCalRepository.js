@@ -11,10 +11,12 @@ module.exports = class LibCalService {
 
   async getCurrentValidBookings(cid) {
     let res = await this.api.getBookings(cid);
-    logger.debug(`received from getBookings ${cid}`, res);
+    logger.debug(`received from getBookings ${cid}`, { results: res });
     let current = this.filterToCurrentBookings(res);
     let valid = this.filterToValidBookings(current);
-    logger.debug(`getCurrentValidBookings returns ${cid}:`, valid);
+    logger.debug(`getCurrentValidBookings returns ${cid}:`, {
+      validBookings: valid,
+    });
     return valid;
   }
 

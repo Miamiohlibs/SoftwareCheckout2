@@ -17,21 +17,24 @@ console.log(software);
 logger.info('starting AdobeService');
 
 utils.asyncForEach(software, async (pkg) => {
-  console.log('Getting:', pkg.libCalCid, pkg.vendorGroupName);
+  logger.info(
+    `Getting libCalCid: ${pkg.libCalCid}, vendorGroupName: ${pkg.vendorGroupName}`
+  );
 
   // get libCalList based on pkg.libCalCid
-  // let libCalBookings = await libCal.getCurrentValidBookings(pkg.libCalCid);
+  let libCalBookings = await libCal.getCurrentValidBookings(pkg.libCalCid);
   // console.log(pkg.libCalCid, libCalBookings.length);
-
+  let libCalEmails = libCal.getUniqueEmailsFromBookings(libCalBookings);
+  logger.debug('libCalEmails:', { content: libCalEmails });
   // // get adobe list based on pkg.vendorGroupName
-  // let currAdobeEntitlements = await adobe.getGroupMembers(pkg.vendorGroupName);
+  let currAdobeEntitlements = await adobe.getGroupMembers(pkg.vendorGroupName);
   // console.log('currAdobeEntitlements:', currAdobeEntitlements.length);
-  // let currAdobeEmails = adobe.getEmailsFromGroupMembers(currAdobeEntitlements);
-  // console.log(currAdobeEmails);
+  let currAdobeEmails = adobe.getEmailsFromGroupMembers(currAdobeEntitlements);
+  logger.debug('currAdobeEmails:', { content: currAdobeEmails });
 
-  // Fake Data:
-  let libCalBookings = ['irwinkr@miamioh.edu', 'bomholmm@miamioh.edu'];
-  let currAdobeEmails = ['irwinkr@miamioh.edu', 'qum@miamioh.edu'];
+  // Fake Data: to use this, comment out the code above and uncomment these two lines
+  // let libCalBookings = ['irwinkr@miamioh.edu', 'bomholmm@miamioh.edu'];
+  // let currAdobeEmails = ['irwinkr@miamioh.edu', 'qum@miamioh.edu'];
 
   // we're skipping this step so far:
   // convert emails if necessary?
@@ -39,30 +42,26 @@ utils.asyncForEach(software, async (pkg) => {
   // compare: get users to remove in Adobe
   let emailsToRemove = utils.filterToEntriesMissingFromSecondArray(
     currAdobeEmails,
-    libCalBookings
+    libCalEmails
   );
 
   // compare: get users to add in Adobe
   let emailsToAdd = utils.filterToEntriesMissingFromSecondArray(
-    libCalBookings,
+    libCalEmails,
     currAdobeEmails
   );
 
   // adobe remove
-  console.log('Remove', emailsToRemove);
+  logger.info('Adobe Remove:', { content: emailsToRemove });
   if (emailsToRemove.length > 0) {
-    res = await adobe.removeGroupMembers(
-      emailsToRemove,
-      pkg.vendorGroupName,
-      'test'
-    );
-    console.log(res);
+    res = await adobe.removeGroupMembers(emailsToRemove, pkg.vendorGroupName);
+    logger.info(res);
   }
 
   // adobe add
-  console.log('Add', emailsToAdd);
+  logger.info('Adobe Add:', { content: emailsToAdd });
   if (emailsToAdd.length > 0) {
-    res = await adobe.addGroupMembers(emailsToAdd, pkg.vendorGroupName, 'test');
-    console.log(res);
+    res = await adobe.addGroupMembers(emailsToAdd, pkg.vendorGroupName);
+    logger.info(res);
   }
 });
