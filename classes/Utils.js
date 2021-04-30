@@ -24,4 +24,8 @@ module.exports = class Utils {
       await callback(array[index], index, array);
     }
   }
+
+  filterToEntriesMissingFromSecondArray(arr1, arr2) {
+    return arr1.filter((i) => !arr2.includes(i));
+  }
 };
