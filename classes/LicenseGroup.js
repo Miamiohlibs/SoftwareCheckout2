@@ -1,8 +1,16 @@
-const appConf = require('../config/appConf');
-
 module.exports = class LicenseGroup {
   constructor(conf) {
     this.software = conf.software;
+  }
+
+  getActiveEntries() {
+    return this.software.filter((i) => i.active == true);
+  }
+
+  getActiveVendors() {
+    let objects = this.getActiveEntries();
+    let activeVendors = objects.map((i) => i.vendor);
+    return [...new Set(activeVendors)];
   }
 
   getLicenseGroupsByVendor(vendor, limitToActive = true) {

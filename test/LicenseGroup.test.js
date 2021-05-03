@@ -11,7 +11,31 @@ describe('initialization', () => {
     expect(obj.software.length).toBe(5);
   });
 });
-describe('getLicenseGroupsByVendor', () => {
+
+describe('LicenseGroup: getActiveEntries', () => {
+  it('should return array with three objects', () => {
+    res = obj.getActiveEntries();
+    expect(Array.isArray(res)).toBe(true);
+    expect(res.length).toBe(3);
+    expect(res[0]).toHaveProperty('vendor');
+    expect(res[0].vendor).toBe('Adobe');
+    expect(res[0]).toHaveProperty('active');
+    expect(res[0].active).toBe(true);
+    expect(res[2]).toHaveProperty('vendor');
+    expect(res[2].vendor).toBe('WidgetCo');
+    expect(res[2]).toHaveProperty('active');
+    expect(res[2].active).toBe(true);
+  });
+});
+
+describe('LicenseGroup: getActiveVendors', () => {
+  it('should return array with Adobe & WidgetCo as current active vendors', () => {
+    res = obj.getActiveVendors();
+    expect(res).toEqual(['Adobe', 'WidgetCo']);
+  });
+});
+
+describe('LicenseGroup: getLicenseGroupsByVendor', () => {
   it('should return two adobe licenses from the app conf', () => {
     res = obj.getLicenseGroupsByVendor('Adobe');
     expect(res.length).toBe(2);
@@ -30,7 +54,7 @@ describe('getLicenseGroupsByVendor', () => {
   });
 });
 
-describe('getVendorGroupNamesByVendor', () => {
+describe('LicenseGroup: getVendorGroupNamesByVendor', () => {
   it('should return two adobe licenses from the app conf', () => {
     res = obj.getVendorGroupNamesByVendor('Adobe');
     expect(res.length).toBe(2);
