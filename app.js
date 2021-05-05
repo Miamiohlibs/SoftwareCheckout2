@@ -8,3 +8,7 @@ let vendors = lg.getActiveVendors();
 if (vendors.includes('Adobe')) {
   adobe();
 }
+
+if (vendors.includes('Jamf')) {
+  // jamf();
+}

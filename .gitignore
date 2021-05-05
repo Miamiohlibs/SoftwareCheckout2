@@ -9,4 +9,5 @@ config/adobe.js
 config/libCal.js
 config/appConf.js
 config/campusConf.js
+config/jamf.js
 
