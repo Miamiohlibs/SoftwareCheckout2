@@ -1,5 +1,3 @@
-const Utils = require('./helpers/Utils');
-const utils = new Utils();
 const EmailApi = require('./models/EmailConvertererApi');
 const appConf = require('./config/appConf');
 const api = new EmailApi(appConf);
