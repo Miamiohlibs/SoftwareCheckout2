@@ -7,7 +7,7 @@ function Log(phrase) {
 
 (async () => {
   for (let i = 0; i < 10; i++) {
-    throttle.pauseIfNeeded();
+    await throttle.pauseIfNeeded();
     Log('next:' + i);
     throttle.increment();
   }

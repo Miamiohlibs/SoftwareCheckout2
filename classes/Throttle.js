@@ -1,4 +1,4 @@
-const sleep = require('sleep');
+const { sleep } = require('../helpers/utils');
 
 module.exports = class Throttle {
   constructor(reqsPerCycle, secondsPerCycle) {
@@ -8,9 +8,9 @@ module.exports = class Throttle {
     this.secondsPerCycle = secondsPerCycle;
   }
 
-  pauseIfNeeded() {
+  async pauseIfNeeded() {
     if (this.numberReqsSincePause >= this.maxReqsPerCycle) {
-      sleep.sleep(this.secondsPerCycle + 5);
+      await sleep(this.secondsPerCycle + 5);
       this.numberReqsSincePause = 0;
     }
     return true;
