@@ -25,7 +25,6 @@
     "nodemon": "^2.0.2",
     "querystring": "^0.2.0",
     "simple-oauth2": "^3.3.0",
-    "sleep": "^6.3.0",
     "winston": "^3.3.3"
   },
   "devDependencies": {
@@ -33,6 +32,6 @@
     "bufferutil": "^4.0.1",
     "canvas": "^2.6.1",
     "jest": "^25.2.4",
-    "utf-8-validate": "^5.0.2"
+    "utf-8-validate": "^5.0.5"
   }
 }

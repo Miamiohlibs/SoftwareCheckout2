@@ -1,8 +1,8 @@
 version: '3'
 services:
-  #PHP Service
+  #
   app:
-    image: node:10-alpine
+    image: node:14-alpine3.13
     container_name: app
     restart: unless-stopped
     working_dir: /var/www
@@ -10,26 +10,12 @@ services:
     volumes:
       - ./:/var/www
     links:
-      - redis
+      # - redis
+      - mongodb
     networks:
       - app-network
 
-  mysqldb:
-    image: mysql:5.7.22
-    container_name: mysqldb
-    restart: unless-stopped
-    tty: true
-    ports:
-      - '3306:3306'
-    environment:
-      MYSQL_DATABASE: softwareCheckout
-      MYSQL_ROOT_PASSWORD: softwareCheckout123
-      SERVICE_TAGS: dev
-      SERVICE_NAME: mysql
-    networks:
-      - app-network
-
-  #MySQL Service
+  # Mongo Service
   mongodb:
     image: mongo
     container_name: mongodb
@@ -41,18 +27,6 @@ services:
       MONGO_INITDB_DATABASE: Lofm
     volumes:
       - dbdata:/data/db
-    networks:
-      - app-network
-
-  redis:
-    image: redis
-    container_name: redis
-    restart: unless-stopped
-    tty: true
-    expose:
-      - 6379
-    ports:
-      - 6379:6379
     networks:
       - app-network
 
