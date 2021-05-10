@@ -1,7 +1,7 @@
 const debug = require('debug')('AdobeRepository');
 const AdobeApi = require('../models/AdobeApi');
 const Throttle = require('../helpers/Throttle');
-const Utils = require('../helpers/Utils');
+const Utils = require('../helpers/Utilities');
 const util = new Utils();
 
 module.exports = class AdobeUserMgmtService {
