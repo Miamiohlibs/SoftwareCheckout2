@@ -2,7 +2,7 @@ const adobeConf = require('./config/adobe');
 const AdobeRepo = require('./repositories/AdobeRepository');
 const adobe = new AdobeRepo(adobeConf);
 const appConf = require('./config/appConf');
-const LicenseGroup = require('./classes/LicenseGroup');
+const LicenseGroup = require('./helpers/LicenseGroup');
 const lg = new LicenseGroup(appConf);
 
 // let adobeLicenses = lg.getVendorGroupNamesByVendor('Adobe');

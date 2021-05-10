@@ -1,5 +1,5 @@
 const appConf = require('./config/appConf');
-const LicenseGroup = require('./classes/LicenseGroup');
+const LicenseGroup = require('./helpers/LicenseGroup');
 const lg = new LicenseGroup(appConf);
 const adobe = require('./services/AdobeService');
 

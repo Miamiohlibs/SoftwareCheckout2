@@ -2,7 +2,7 @@ const AdobeUserMgmtRepo = require('./repositories/AdobeRepository');
 const adobeConf = require('./config/adobe');
 const adobe = new AdobeUserMgmtRepo(adobeConf);
 const appConf = require('./config/appConf');
-const LicenseGroup = require('./classes/LicenseGroup');
+const LicenseGroup = require('./helpers/LicenseGroup');
 const lg = new LicenseGroup(appConf);
 
 let group = 'Library API test';

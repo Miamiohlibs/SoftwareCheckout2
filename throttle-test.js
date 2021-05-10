@@ -1,4 +1,4 @@
-const Throttle = require('./classes/Throttle.js');
+const Throttle = require('./helpers/Throttle.js');
 const throttle = new Throttle(5, 10);
 
 function Log(phrase) {

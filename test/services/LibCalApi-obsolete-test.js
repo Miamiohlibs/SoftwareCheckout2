@@ -1,4 +1,4 @@
-const LibCalApi = require('../classes/LibCalApi');
+const LibCalApi = require('../helpers/LibCalApi');
 const conf = require('../../config/libCal');
 const sampleBookings = require('../sample-data/libCalBookingsSample');
 const appConf = require('../../config/appConf');

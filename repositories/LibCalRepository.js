@@ -1,5 +1,5 @@
 const LibCalApi = require('../models/LibCalApi');
-const Utils = require('../classes/Utils');
+const Utils = require('../helpers/Utils');
 const util = new Utils();
 const dayjs = require('dayjs');
 const logger = require('../services/logger');

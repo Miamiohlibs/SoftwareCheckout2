@@ -40,7 +40,7 @@ describe('AdobeRepository: getEmailsFromGroupMembers()', () => {
 });
 
 describe('AdobeRepository: getGroupMembers()', () => {
-  getPagSpy = jest.spyOn(serv, 'getPaginatedResults').mockImplementation(() => {
+  getPagSpy = jest.spyOn(repo, 'getPaginatedResults').mockImplementation(() => {
     return { users: ['testuser@fake.org'] };
   });
 
@@ -141,12 +141,12 @@ describe('AdobeRepository: prepBulkGroupUsers (add)', () => {
 describe('AdobeRepository: alterGroupMembers (add)', () => {
   beforeAll(() => {
     jest.resetAllMocks();
-    prepSpy = jest.spyOn(serv, 'prepBulkGroupUsers').mockImplementation(() => {
+    prepSpy = jest.spyOn(repo, 'prepBulkGroupUsers').mockImplementation(() => {
       return [{ user: 'test' }];
     });
-    setUrlSpy = jest.spyOn(serv, 'setActionUrl');
+    setUrlSpy = jest.spyOn(repo, 'setActionUrl');
     querySpy = jest
-      .spyOn(serv, 'submitActionReqs')
+      .spyOn(repo, 'submitActionReqs')
       .mockImplementation(() => Promise.resolve());
     repo.alterGroupMembers(
       'add',
@@ -168,12 +168,12 @@ describe('AdobeRepository: alterGroupMembers (add)', () => {
 describe('AdobeRepository: alterGroupMembers (remove)', () => {
   beforeAll(async () => {
     jest.resetAllMocks();
-    prepSpy = jest.spyOn(serv, 'prepBulkGroupUsers').mockImplementation(() => {
+    prepSpy = jest.spyOn(repo, 'prepBulkGroupUsers').mockImplementation(() => {
       return [{ user: 'test' }];
     });
-    setUrlSpy = jest.spyOn(serv, 'setActionUrl');
+    setUrlSpy = jest.spyOn(repo, 'setActionUrl');
     querySpy = jest
-      .spyOn(serv, 'submitActionReqs')
+      .spyOn(repo, 'submitActionReqs')
       .mockImplementation(() => Promise.resolve());
     repo.alterGroupMembers(
       'remove',
@@ -193,11 +193,11 @@ describe('AdobeRepository: alterGroupMembers (remove)', () => {
   });
 });
 
-describe('AdobeUserMgmtService: addGroupMembers', () => {
+describe('AdobeRepository: addGroupMembers', () => {
   beforeEach(async () => {
     jest.clearAllMocks();
     alterSpy = jest
-      .spyOn(serv, 'alterGroupMembers')
+      .spyOn(repo, 'alterGroupMembers')
       .mockImplementation(() => Promise.resolve());
     emails = ['fakeemail@fake.org'];
   });
@@ -209,11 +209,11 @@ describe('AdobeUserMgmtService: addGroupMembers', () => {
   });
 });
 
-describe('AdobeUserMgmtService: removeGroupMembers', () => {
+describe('AdobeRepository: removeGroupMembers', () => {
   beforeEach(() => {
     jest.resetAllMocks();
     alterSpy = jest
-      .spyOn(serv, 'alterGroupMembers')
+      .spyOn(repo, 'alterGroupMembers')
       .mockImplementation(() => Promise.resolve());
   });
   let emails = ['fakeemail@fake.org'];

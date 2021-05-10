@@ -1,5 +1,5 @@
 const appConfMixed = require('./sample-data/appConfSample');
-const LicenseGroup = require('../classes/LicenseGroup');
+const LicenseGroup = require('../helpers/LicenseGroup');
 const obj = new LicenseGroup(appConfMixed);
 
 describe('initialization', () => {
