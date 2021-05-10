@@ -1,5 +1,19 @@
 module.exports = {
   nodePort: 9000, // could be any port; 9000 is the default for this app
+  logLevels: {
+    logLevels: {
+      // false: not currently logging
+      // 'monthly' for logfiles like error-2021-05
+      // 'daily' for logfiles like debug-2021-05-01
+      error: 'monthly',
+      warn: false,
+      info: 'monthly',
+      http: false,
+      verbose: false,
+      debug: false, // 'daily'
+      silly: false,
+    },
+  },
   server: {
     // server variables only required if you using https calls to update your software checkouts
     name: 'server1.yourorg.edu', // REPLACE WITH server name
