@@ -1,8 +1,8 @@
 const debug = require('debug')('AdobeRepository');
 const AdobeApi = require('../models/AdobeApi');
 const Throttle = require('../helpers/Throttle');
-const Utils = require('../helpers/Utilities');
-const util = new Utils();
+const { asyncForEach } = require('../helpers/utils');
+const _ = require('lodash');
 
 module.exports = class AdobeUserMgmtService {
   constructor(conf) {
@@ -76,7 +76,7 @@ module.exports = class AdobeUserMgmtService {
 
   async alterGroupMembers(addOrRemove, emails, listName, testOnly = null) {
     let reqBody = this.prepBulkGroupUsers(addOrRemove, emails, listName);
-    let reqBodyChunks = util.chunkArray(reqBody, this.maxActionsPerReq);
+    let reqBodyChunks = _.chunk(reqBody, this.maxActionsPerReq);
     this.setActionUrl(testOnly);
     await this.submitActionReqs(reqBodyChunks);
     return {
@@ -104,7 +104,7 @@ module.exports = class AdobeUserMgmtService {
     try {
       this.actionResultsSummary = {};
 
-      await util.asyncForEach(reqBodyChunks, async (data) => {
+      await asyncForEach(reqBodyChunks, async (data) => {
         this.queryConf.data = data;
         await this.actionThrottle.pauseIfNeeded();
         debug('submitting action with queryConf: ' + this.queryConf);

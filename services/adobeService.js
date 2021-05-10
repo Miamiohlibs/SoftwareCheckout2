@@ -8,15 +8,17 @@ const appConf = require('../config/appConf');
 const LicenseGroup = require('../helpers/LicenseGroup');
 const licenses = new LicenseGroup(appConf);
 const logger = require('./logger');
-const Utils = require('../helpers/Utilities');
-const utils = new Utils();
+const {
+  asyncForEach,
+  filterToEntriesMissingFromSecondArray,
+} = require('../helpers/utils');
 let software = licenses.getLicenseGroupsByVendor('Adobe');
 software = software.filter((i) => parseInt(i.libCalCid) > 20000);
 
 module.exports = async () => {
   logger.info('starting AdobeService');
 
-  utils.asyncForEach(software, async (pkg) => {
+  asyncForEach(software, async (pkg) => {
     logger.info(
       `Getting libCalCid: ${pkg.libCalCid}, vendorGroupName: ${pkg.vendorGroupName}`
     );
@@ -44,13 +46,13 @@ module.exports = async () => {
     // convert emails if necessary?
 
     // compare: get users to remove in Adobe
-    let emailsToRemove = utils.filterToEntriesMissingFromSecondArray(
+    let emailsToRemove = filterToEntriesMissingFromSecondArray(
       currAdobeEmails,
       libCalEmails
     );
 
     // compare: get users to add in Adobe
-    let emailsToAdd = utils.filterToEntriesMissingFromSecondArray(
+    let emailsToAdd = filterToEntriesMissingFromSecondArray(
       libCalEmails,
       currAdobeEmails
     );

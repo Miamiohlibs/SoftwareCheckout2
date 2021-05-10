@@ -1,4 +1,4 @@
-const { sleep } = require('./Utilities');
+const { sleep } = require('./utils');
 
 module.exports = class Throttle {
   constructor(reqsPerCycle, secondsPerCycle) {
