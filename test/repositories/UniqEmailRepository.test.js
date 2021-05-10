@@ -1,0 +1,50 @@
+const UniqEmailRepository = require('../../repositories/UniqEmailRepository');
+const emailRepo = new UniqEmailRepository();
+const testKnownHaystack = [
+  {
+    email: 'dr.seuss@fake.org',
+    uniqEmail: 'geiselt@fake.org',
+  },
+  {
+    email: 'madonna@fake.org',
+    uniqEmail: 'chiconel@fake.org',
+  },
+  {
+    email: 'chiconel@fake.org',
+    uniqEmail: 'chiconel@fake.org',
+  },
+  {
+    email: 'mr.t@fake.org',
+    uniqEmail: 'tureaudl@fake.org',
+  },
+];
+const testEmails = [
+  'dr.seuss@fake.org',
+  'chiconel@fake.org',
+  'alex.the.great@fake.org',
+];
+
+describe('UniqEmailRepository: getUniqForEmail', () => {
+  it('should find geiselt for dr.seuss', () => {
+    let res = emailRepo.getUniqForEmail(testEmails[0], testKnownHaystack);
+    expect(res).toEqual(['geiselt@fake.org']);
+  });
+  it('should find chiconel for chiconel', () => {
+    let res = emailRepo.getUniqForEmail(testEmails[1], testKnownHaystack);
+    expect(res).toEqual(['chiconel@fake.org']);
+  });
+  it('should find return an empty array for alex.the.great', () => {
+    let res = emailRepo.getUniqForEmail(testEmails[2], testKnownHaystack);
+    expect(res).toEqual([]);
+  });
+});
+
+describe('UniqEmailRepository: getKnownAndUnknownEmails', () => {
+  it('should find DrSeuss and Madonna, not find Alex the great', () => {
+    let res = emailRepo.getKnownAndUnknownEmails(testEmails, testKnownHaystack);
+    expect(res).toHaveProperty('found');
+    expect(res.found).toEqual(['geiselt@fake.org', 'chiconel@fake.org']);
+    expect(res).toHaveProperty('missing');
+    expect(res.missing).toEqual(['alex.the.great@fake.org']);
+  });
+});
