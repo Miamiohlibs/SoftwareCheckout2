@@ -21,8 +21,9 @@ module.exports = class EmailConverterApi {
     if (this.affixSuffixToReturn && uniq !== undefined) {
       uniq += this.suffix;
     }
-    return uniq;
+    return uniq; // value or undefined
   }
+
   async submitQuery(email) {
     let url = this.baseUrl + email + this.endOfUrl;
     logger.debug('requesting url', { url: url });
