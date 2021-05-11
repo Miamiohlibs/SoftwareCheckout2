@@ -16,6 +16,8 @@ const convertRepo = new emailConverterRepo(appConf);
 module.exports = async (emails) => {
   await emailRepo.connect();
   knownEmails = await emailRepo.querySpecificEmails(emails);
+  // alternate definition may or may not result in a faster process
+  // knownEmails = await emailRepo.queryAllEmails();
   let { found, missing } = await emailRepo.getKnownAndUnknownEmails(
     emails,
     knownEmails
