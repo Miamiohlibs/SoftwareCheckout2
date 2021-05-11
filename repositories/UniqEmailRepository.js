@@ -18,7 +18,7 @@ module.exports = class UniqEmailRepository {
     }
   }
 
-  async getAllEmailsArray() {
+  async queryAllEmails() {
     return await UniqEmail.find();
   }
 
