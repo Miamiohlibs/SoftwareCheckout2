@@ -18,7 +18,7 @@ module.exports = class EmailConverterApi {
   async getAuthoritativeEmail(email) {
     let res = await this.submitQuery(email);
     let uniq = _.get(res, this.objectPropForReturnValue);
-    if (this.affixSuffixToReturn) {
+    if (this.affixSuffixToReturn && uniq !== undefined) {
       uniq += this.suffix;
     }
     return uniq;
