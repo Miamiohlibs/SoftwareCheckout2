@@ -15,24 +15,33 @@ const convertRepo = new emailConverterRepo(appConf);
 
 module.exports = async (emails) => {
   await emailRepo.connect();
-  knownEmails = await emailRepo.querySpecificEmails(emails);
+  // knownEmails = await emailRepo.querySpecificEmails(emails);
   // alternate definition may or may not result in a faster process
-  // knownEmails = await emailRepo.queryAllEmails();
+  knownEmails = await emailRepo.queryAllEmails();
   let { found, missing } = await emailRepo.getKnownAndUnknownEmails(
     emails,
     knownEmails
   );
+
   let authoritativeEmails = found;
+
   let {
     authFound,
     authMissing,
     newMatches,
   } = await convertRepo.getAuthoritativeEmailsBatch(missing);
+
   if (newMatches.length > 0) {
     logger.info('adding new emails pairs with', newMatches);
     await emailRepo.addNewEmailPairs(newMatches);
   }
+  if (authMissing.length > 0) {
+    logger.error('Failed to get authoritative emails for:', {
+      missing: authMissing,
+    });
+  }
+
   await emailRepo.disconnect();
-  logger.error('Failed to get authoritative emails for:', authMissing);
+
   return authoritativeEmails.concat(authFound);
 };
