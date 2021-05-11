@@ -8,6 +8,7 @@ const appConf = require('../config/appConf');
 const LicenseGroup = require('../helpers/LicenseGroup');
 const licenses = new LicenseGroup(appConf);
 const logger = require('./logger');
+const emailConverterService = require('../services/emailConverterService');
 const {
   asyncForEach,
   filterToEntriesMissingFromSecondArray,
@@ -42,8 +43,8 @@ module.exports = async () => {
     // let libCalBookings = ['irwinkr@miamioh.edu', 'bomholmm@miamioh.edu'];
     // let currAdobeEmails = ['irwinkr@miamioh.edu', 'qum@miamioh.edu'];
 
-    // we're skipping this step so far:
-    // convert emails if necessary?
+    // convert emails if necessary
+    libCalEmails = await emailConverterService(libCalEmails);
 
     // compare: get users to remove in Adobe
     let emailsToRemove = filterToEntriesMissingFromSecondArray(
