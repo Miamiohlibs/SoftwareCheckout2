@@ -10,7 +10,7 @@ module.exports = class UniqEmailRepository {
         connectString,
         { useNewUrlParser: true, useUnifiedTopology: true },
         () => {
-          console.log('connected to db');
+          logger.debug('connected to db');
         }
       );
     } catch (err) {
