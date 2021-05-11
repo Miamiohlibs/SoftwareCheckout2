@@ -1,5 +1,3 @@
-const mongoose = require('mongoose');
-const appConf = require('./config/appConf');
 const UniqEmailRepo = require('./repositories/UniqEmailRepository');
 const emailRepo = new UniqEmailRepo();
 
