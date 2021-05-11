@@ -57,6 +57,15 @@ module.exports = class UniqEmailRepository {
       .map((obj) => obj.uniqEmail);
   }
 
+  async addNewEmailPairs(arr) {
+    // expects and array of objects with 'email' and 'uniqEmail'
+    try {
+      return UniqEmail.insertMany(arr);
+    } catch (err) {
+      logger.error('Error inserting new emails into database', err, arr);
+    }
+  }
+
   async disconnect() {
     mongoose.connection.close();
   }
