@@ -48,3 +48,20 @@ describe('UniqEmailRepository: getKnownAndUnknownEmails', () => {
     expect(res.missing).toEqual(['alex.the.great@fake.org']);
   });
 });
+
+describe('UniqEmailRepository: buildEmailsQuery', () => {
+  it('should build one JSON array with one email passed to it', () => {
+    let res = emailRepo.buildEmailsQuery(['dr.seuss@fake.org']);
+    expect(res).toEqual({ $or: [{ email: 'dr.seuss@fake.org' }] });
+  });
+  it('should build one JSON array with all emails passed to it', () => {
+    let res = emailRepo.buildEmailsQuery(testEmails);
+    expect(res).toEqual({
+      $or: [
+        { email: 'dr.seuss@fake.org' },
+        { email: 'chiconel@fake.org' },
+        { email: 'alex.the.great@fake.org' },
+      ],
+    });
+  });
+});

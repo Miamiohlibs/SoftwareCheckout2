@@ -22,6 +22,21 @@ module.exports = class UniqEmailRepository {
     return await UniqEmail.find();
   }
 
+  async querySpecificEmails(emails) {
+    let query = this.buildEmailsQuery(emails);
+    return await UniqEmail.find(query);
+  }
+
+  buildEmailsQuery(emails) {
+    let objArr = [];
+    emails.forEach((email) => {
+      objArr.push({ email: email });
+    });
+    return {
+      $or: objArr,
+    };
+  }
+
   getKnownAndUnknownEmails(needles, haystack) {
     let found = [];
     let missing = [];
