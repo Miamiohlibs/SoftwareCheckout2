@@ -14,7 +14,9 @@ const {
   filterToEntriesMissingFromSecondArray,
 } = require('../helpers/utils');
 let software = licenses.getLicenseGroupsByVendor('Adobe');
-software = software.filter((i) => parseInt(i.libCalCid) > 20000);
+
+// uncomment this line to only do the staff CC list:
+// software = software.filter((i) => parseInt(i.libCalCid) > 20000);
 
 module.exports = async () => {
   logger.info('starting AdobeService');
