@@ -14,6 +14,7 @@ module.exports = class EmailConverterRepository {
   async getAuthoritativeEmailsBatch(emails) {
     let found = [];
     let missing = [];
+    let newMatches = [];
     await utils.asyncForEach(emails, async (email) => {
       await this.lookupThrottle.pauseIfNeeded();
       let res = await this.api.getAuthoritativeEmail(email);
@@ -22,8 +23,9 @@ module.exports = class EmailConverterRepository {
         missing.push(email);
       } else {
         found.push(res);
+        newMatches.push({ email: email, uniqEmail: res });
       }
     });
-    return { authFound: found, authMissing: missing };
+    return { authFound: found, authMissing: missing, newMatches: newMatches };
   }
 };
