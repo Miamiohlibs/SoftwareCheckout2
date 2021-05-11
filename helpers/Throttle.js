@@ -1,4 +1,5 @@
 const { sleep } = require('./utils');
+const logger = require('../services/logger');
 
 module.exports = class Throttle {
   constructor(reqsPerCycle, secondsPerCycle) {
@@ -10,6 +11,7 @@ module.exports = class Throttle {
 
   async pauseIfNeeded() {
     if (this.numberReqsSincePause >= this.maxReqsPerCycle) {
+      logger.info('pausing throttle');
       await sleep(this.secondsPerCycle + 5);
       this.numberReqsSincePause = 0;
     }
