@@ -26,7 +26,10 @@ module.exports = async (emails) => {
   let {
     authFound,
     authMissing,
+    newMatches,
   } = await convertRepo.getAuthoritativeEmailsBatch(missing);
+  logger.info('adding new emails pairs with', newMatches);
+  await emailRepo.addNewEmailPairs(newMatches);
   await emailRepo.disconnect();
   logger.error('Failed to get authoritative emails for:', authMissing);
   return authoritativeEmails.concat(authFound);
