@@ -64,14 +64,14 @@ module.exports = async () => {
     logger.info('Adobe Remove:', { content: emailsToRemove });
     if (emailsToRemove.length > 0) {
       res = await adobe.removeGroupMembers(emailsToRemove, pkg.vendorGroupName);
-      logger.info(res);
+      logger.info('Response from Adobe remove request', { status: res.status });
     }
 
     // adobe add
     logger.info('Adobe Add:', { content: emailsToAdd });
     if (emailsToAdd.length > 0) {
       res = await adobe.addGroupMembers(emailsToAdd, pkg.vendorGroupName);
-      logger.info(res);
+      logger.info('Response from Adobe add request', { status: res.status });
     }
   });
 };
