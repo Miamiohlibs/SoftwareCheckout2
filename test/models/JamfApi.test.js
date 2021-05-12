@@ -12,4 +12,9 @@ describe('JamfApi: constructor', () => {
   it('should create a baseUrl', () => {
     expect(fakeApi.baseUrl).toBe('https://myfakejamf.edu:8443/JSSResource');
   });
+  it('should create userGroupRoute', () => {
+    expect(fakeApi.userGroupRoute).toBe(
+      'https://myfakejamf.edu:8443/JSSResource/usergroups/id/'
+    );
+  });
 });
