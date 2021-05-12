@@ -12,20 +12,23 @@ module.exports = class JamfRepository {
     try {
       let url = this.api.userGroupRoute + groupId;
       let res = await this.api.submitGet(url);
-      return res.user_group.users.map((user) => user.username);
+      let usernames = res.user_group.users.map((user) => user.username);
+      return this.addEmailSuffixes(usernames);
     } catch (err) {
       logger.error('failed JamfRepo.getGroupMembers', { error: err });
     }
   }
 
   async addUsersToGroup(groupId, users) {
-    let xml = this.generateAddOrDeleteXml('add', users);
+    let usernames = this.removeEmailSuffixes(users);
+    let xml = this.generateAddOrDeleteXml('add', usernames);
     let url = this.api.userGroupRoute + groupId;
     return await this.api.submitPut(url, xml);
   }
 
   async deleteUsersFromGroup(groupId, users) {
-    let xml = generateAddOrDeleteXml('delete', users);
+    let usernames = this.removeEmailSuffixes(users);
+    let xml = this.generateAddOrDeleteXml('delete', usernames);
     let url = this.api.userGroupRoute + groupId;
     return await this.api.submitPut(url, xml);
   }

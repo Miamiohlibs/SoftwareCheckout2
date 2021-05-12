@@ -51,6 +51,8 @@ describe('JamfRepo: generateAddOrDeleteXml', () => {
 
 describe('JamfRepo: addUsersToGroup', () => {
   beforeAll(async () => {
+    addSuffixSpy = jest.spyOn(repo, 'addEmailSuffixes');
+    removeSuffixSpy = jest.spyOn(repo, 'removeEmailSuffixes');
     generateSpy = jest
       .spyOn(repo, 'generateAddOrDeleteXml')
       .mockImplementation(() => {
@@ -63,12 +65,42 @@ describe('JamfRepo: addUsersToGroup', () => {
 
   beforeEach(async () => {
     jest.clearAllMocks();
-    let res = repo.addUsersToGroup(1, ['userOne']);
+    let res = repo.addUsersToGroup(1, ['userOne@fake.org']);
+  });
+
+  it('should call removeEmailSuffixes once', () => {
+    expect(removeSuffixSpy).toHaveBeenCalledTimes(1);
+    expect(removeSuffixSpy).toHaveBeenCalledWith(['userOne@fake.org']);
   });
 
   it('should call generateAddOrDeleteXml once', () => {
     expect(generateSpy).toHaveBeenCalledTimes(1);
     expect(generateSpy).toHaveBeenCalledWith('add', ['userOne']);
+  });
+
+  it('should call submitPut once', () => {
+    let fakeXml = '<usergroups></usergroups>';
+    let fakeUrl = 'https://myfakejamf.edu:8443/JSSResource/usergroups/id/1';
+    expect(putSpy).toHaveBeenCalledTimes(1);
+    expect(putSpy).toHaveBeenCalledWith(fakeUrl, fakeXml);
+  });
+});
+
+describe('JamfRepo: removeUsersFromGroup', () => {
+  // inherit spies from previous test block
+  beforeEach(async () => {
+    jest.clearAllMocks();
+    let res = repo.deleteUsersFromGroup(1, ['userOne@fake.org']);
+  });
+
+  it('should call removeEmailSuffixes once', () => {
+    expect(removeSuffixSpy).toHaveBeenCalledTimes(1);
+    expect(removeSuffixSpy).toHaveBeenCalledWith(['userOne@fake.org']);
+  });
+
+  it('should call generateAddOrDeleteXml once', () => {
+    expect(generateSpy).toHaveBeenCalledTimes(1);
+    expect(generateSpy).toHaveBeenCalledWith('delete', ['userOne']);
   });
 
   it('should call submitPut once', () => {
