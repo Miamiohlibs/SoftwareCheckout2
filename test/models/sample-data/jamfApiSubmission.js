@@ -1,0 +1,49 @@
+module.exports = {
+  oneUser: [{ user: { username: 'userOne' } }],
+  twoUsers: [
+    { user: { username: 'userOne' } },
+    { user: { username: 'userTwo' } },
+  ],
+  oneUserAdd: `
+<user_group>
+    <user_additions>
+        <user>
+            <username>userOne</username>
+        </user>
+    </user_additions>
+</user_group>`,
+  twoUsersAdd: `
+<user_group>
+    <user_additions>
+        <user>
+            <username>userOne</username>
+        </user>
+    </user_additions>
+    <user_additions>
+        <user>
+            <username>userTwo</username>
+        </user>
+    </user_additions>
+</user_group>`,
+  oneUserDelete: `
+<user_group>
+    <user_deletions>
+        <user>
+            <username>userOne</username>
+        </user>
+    </user_deletions>
+</user_group>`,
+  twoUsersDelete: `
+<user_group>
+    <user_deletions>
+        <user>
+            <username>userOne</username>
+        </user>
+    </user_deletions>
+    <user_deletions>
+        <user>
+            <username>userTwo</username>
+        </user>
+    </user_deletions>
+</user_group>`,
+};
