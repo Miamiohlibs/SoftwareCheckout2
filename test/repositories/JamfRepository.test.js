@@ -5,7 +5,12 @@ const twoUsers = ['userOne', 'userTwo'];
 const xmlMinify = require('minify-xml').minify;
 const JamfRepo = require('../../repositories/JamfRepository');
 const repo = new JamfRepo(fakeConf);
-
+const usersNoSuffix = ['userOne', 'userTwo', 'userThree'];
+const usersWithSuffix = [
+  'userOne@fake.org',
+  'userTwo@fake.org',
+  'userThree@fake.org',
+];
 describe('JamfRepo: constructor', () => {
   it('should instantiate a JamfApi as this.api', () => {
     expect(repo).toHaveProperty('api');
@@ -71,5 +76,19 @@ describe('JamfRepo: addUsersToGroup', () => {
     let fakeUrl = 'https://myfakejamf.edu:8443/JSSResource/usergroups/id/1';
     expect(putSpy).toHaveBeenCalledTimes(1);
     expect(putSpy).toHaveBeenCalledWith(fakeUrl, fakeXml);
+  });
+});
+
+describe('JamfRepo: addEmailSuffixes', () => {
+  it('should add the suffix "@fake.org" to each user in array', () => {
+    let res = repo.addEmailSuffixes(usersNoSuffix);
+    expect(res).toEqual(usersWithSuffix);
+  });
+});
+
+describe('JamfRepo: removeEmailSuffixes', () => {
+  it('should remove the suffix "@fake.org" from each user in array', () => {
+    let res = repo.removeEmailSuffixes(usersWithSuffix);
+    expect(res).toEqual(usersNoSuffix);
   });
 });

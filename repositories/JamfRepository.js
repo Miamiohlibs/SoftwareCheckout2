@@ -5,17 +5,28 @@ const logger = require('../services/logger');
 module.exports = class JamfRepository {
   constructor(conf) {
     this.api = new JamfApi(conf);
+    this.emailSuffix = conf.emailSuffix;
+  }
+
+  async getGroupMembers(groupId) {
+    try {
+      let url = this.api.userGroupRoute + groupId;
+      let res = await this.api.submitGet(url);
+      return res.user_group.users.map((user) => user.username);
+    } catch (err) {
+      logger.error('failed JamfRepo.getGroupMembers', { error: err });
+    }
   }
 
   async addUsersToGroup(groupId, users) {
     let xml = this.generateAddOrDeleteXml('add', users);
-    let url = this.api.updateGroupRoute + groupId;
+    let url = this.api.userGroupRoute + groupId;
     return await this.api.submitPut(url, xml);
   }
 
   async deleteUsersFromGroup(groupId, users) {
     let xml = generateAddOrDeleteXml('delete', users);
-    let url = this.api.updateGroupRoute + groupId;
+    let url = this.api.userGroupRoute + groupId;
     return await this.api.submitPut(url, xml);
   }
 
@@ -36,5 +47,13 @@ module.exports = class JamfRepository {
       usersArr.push({ user: { username: username } });
     });
     return usersArr;
+  }
+
+  addEmailSuffixes(users) {
+    return users.map((u) => u + this.emailSuffix);
+  }
+
+  removeEmailSuffixes(users) {
+    return users.map((u) => u.replace(this.emailSuffix, ''));
   }
 };
