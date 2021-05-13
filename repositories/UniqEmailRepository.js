@@ -1,21 +1,16 @@
-const mongoose = require('mongoose');
+// const mongoose = require('mongoose');
 const UniqEmail = require('../models/UniqEmail');
 const appConf = require('../config/appConf');
 const logger = require('../services/logger');
+const database = require('../helpers/database.js');
 
 module.exports = class UniqEmailRepository {
-  async connect(connectString = appConf.emailConverter.db_connection) {
-    try {
-      mongoose.connect(
-        connectString,
-        { useNewUrlParser: true, useUnifiedTopology: true },
-        () => {
-          logger.debug('connected to db');
-        }
-      );
-    } catch (err) {
-      logger.error('Failed to connect to db', err);
-    }
+  async connect() {
+    return await database.connect();
+  }
+
+  async disconnect() {
+    return await database.disconnect();
   }
 
   async queryAllEmails() {
@@ -66,7 +61,7 @@ module.exports = class UniqEmailRepository {
     }
   }
 
-  async disconnect() {
-    mongoose.connection.close();
-  }
+  // async disconnect() {
+  //   mongoose.connection.close();
+  // }
 };
