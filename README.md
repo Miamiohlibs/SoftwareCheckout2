@@ -49,7 +49,13 @@ Request API keys from LibCal and Adobe. You will enter these values in the confi
     - `.objectPropForReturnValue`: the name of the property in the API's return value needed to access the uniqueId, e.g. `data.user.uid`
     - `.affixSuffixToReturn`: true/false; indicates whether the value returned by the API will need to have an email "@..." added to it to create a valid email address. If the API returns 'user@fake.org' then set `affixSuffixToReturn: false` because the email address is complete. If the API just returns 'user', set `affixSuffixToReturn: true` so the app knows to append the rest of an email address.
     - `.suffix`: the string to be appended to the unique Id returned by the API, e.g. `@fake.org`
-  - `software`: object descibing the connections between LibCal's names for the software and the related vendor permissions groups
+  - `software`: array of objects descibing the connections between LibCal's names for the software and the related vendor permissions groups. One object per license group package; potentially multiple objects/license groups per vendor.
+    - `.active`: true/false: is this license currently being used/checked by the software
+    - `.vendor`: Software license vendor. Current allowed values: 'Adobe', 'Jamf'
+    - `.libCalName`: LibCal equipment category name (this is for human readability, not for the app)
+    - `.libCalCid`: LibCal CategoryID for the group (used by the app)
+    - `.vendorGroupName`: license group name (used by Adobe)
+    - `.vendorGroupId`: license group id (used by Jamf)
 
 - `config/libCal.js`: includes API key, config for requesting an API token, and query config for making API requests with the token.
   - update the softwareLocation with the Location ID you created for Software Checkout in LibCal
