@@ -1,15 +1,25 @@
 # Software Checkout
 
-Looks up software bookings from the LibCal API and updates the membership of corresponding Adobe Admin Console user groups.
+Looks up software bookings from the LibCal API and updates the membership of corresponding license group in any of:
+
+- Adobe Cloud
+- Jamf
 
 ## Requirements
 
 - Node.js
 - LibCal subscription
+
+### Adobe
+
 - Adobe account with access to the User Management API
   - Adobe user management API documentation: https://adobe-apiplatform.github.io/umapi-documentation/en/
   - Adobe Admin Console: https://adminconsole.adobe.com/overview
   - Console Documentation: https://helpx.adobe.com/enterprise/managing/user-guide.html
+
+### Jamf
+
+[need more info here]
 
 ### LibCal Setup
 
@@ -30,9 +40,17 @@ This repo comes with several `config/*.sample.js` files; copy each of them over 
 Request API keys from LibCal and Adobe. You will enter these values in the configs described below.
 
 - `config/appConf.js`:
-  - `nodePort`: the port this app will run on; default is 9000, but you may want to change that according to local needs.
-  - `server`: if your setup inlucdes triggering the app to update using an https call, give your server's fully-qualified hostname, along with the paths to the SSL certificate and key. (See "Running the App" below.)
-  - `software`: object descibing the connections between LibCal's names for the software and the related Adobe permissions groups
+
+  - `db_connection`: mongodb connection string (optional; used for caching converted email aliases)
+  - `logLevels`: for each level, set one of: false, 'daily', 'monthly'; false for no logs at that level; 'daily' for logs that start a new logfile each day; 'monthly' for a new logfile per year. Use daily logs for levels that output obnoxiously large amounts of data like 'debug'. Currently, only 'info','error', and 'debug' are used by the app.
+  - `emailConverter`: LibCal may accept users' aliased email addresss (e.g. my.full.name@fake.org) even though license providers may only use the uniqueId version of a user Id (e.g. namemf@fake.org).
+    - `.active`: When `emailConverter.active: true`, the app will look up each user email and get the authoriative username. In order for this to work, your organization will need a public API to perform this service.
+    - `.baseUrl` and `.endOfUrl`: In the emailConverter settings use the `baseUrl` and `endOfUrl` properties to establish the query URL for that api. (You may not need `endOfUrl` but it is provided in case the needed query does not end with the user's email, e.g. "https://fake.org/api/email/alias@fake.org/convert" would use `baseUrl: 'https://fake.org/api/email/'` and `endOfUrl: 'convert'`)
+    - `.objectPropForReturnValue`: the name of the property in the API's return value needed to access the uniqueId, e.g. `data.user.uid`
+    - `.affixSuffixToReturn`: true/false; indicates whether the value returned by the API will need to have an email "@..." added to it to create a valid email address. If the API returns 'user@fake.org' then set `affixSuffixToReturn: false` because the email address is complete. If the API just returns 'user', set `affixSuffixToReturn: true` so the app knows to append the rest of an email address.
+    - `.suffix`: the string to be appended to the unique Id returned by the API, e.g. `@fake.org`
+  - `software`: object descibing the connections between LibCal's names for the software and the related vendor permissions groups
+
 - `config/libCal.js`: includes API key, config for requesting an API token, and query config for making API requests with the token.
   - update the softwareLocation with the Location ID you created for Software Checkout in LibCal
   - update the `client` values with the client ID and client_secret API keys you get from LibCal
@@ -45,23 +63,9 @@ Request API keys from LibCal and Adobe. You will enter these values in the confi
 ## Running the app
 
 - `node app` - run once
-- `node app --listen` - run once, then listen on port 9000 (or port specified in campusIT.nodePort) for subsequent updates
 - PRODUCTION: `npm run server`: will add the `--listen` flag as well as `--name=software-checkout` so we can see which node process it is
-
-There are two main ways to run the app. You can set it up to run as a web server using the built in express app features, or you can run it just-once on a periodic basis using `node app` on a cron job. The advantage of the web server setup is that you can set LibCal to to trigger a call to the website everytime a checkout is initiated. That will update the permissions in the Adobe group almost instantly (less that 15 seconds). But it requires that you are able to set up a server running Node.js over https. If setting up a Node.js-capable web server is not suitable for your situation, you can run the Software Checkout app using `node app` on a cronjob, e.g. every 15, 30, or 60 minutes. This requires less setup but introduces some lag time between the patron request and the update to the permissions.
 
 ### Killing / restarting the app
 
 - run `./killapp` -- finds the relevant process and kills it (only works if you used `npm run server` to start the app
 - `./restart` or `./killapp -r`: kill and restart (or use `npm run server` as above)
-
-## Log files
-
-- `./lastlog.sh`: displays the output of the last update (from `logs/app.log`)
-
-### THESE LOGS ARE NOT CURRENTLY IN PLACE:
-
-- `logs/app.log`: logs console/STDOUT and STDERR when the app runs (chiefly at startup and whenever someone hits ths url)
-- `bookings.log`: most recent copy of the bookings API call from LibCal
-- `categories.log`: most recent copy of the categories API call from LibCal
-- `locations.log`: most recent copy of the locations API call from LibCal
