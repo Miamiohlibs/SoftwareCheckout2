@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const appConf = require('../config/appConf');
 const logger = require('../services/logger');
 
-const connectionString = appConf.emailConverter.db_connection;
+const connectionString = appConf.db_connection;
 module.exports = {
   connect: async function () {
     try {
