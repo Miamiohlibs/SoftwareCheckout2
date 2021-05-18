@@ -44,4 +44,14 @@ module.exports = class JamfApi {
       logger.error('Error submitting Jamf POST query', { error: err });
     }
   }
+
+  async submitDelete(url) {
+    try {
+      let config = { auth: this.auth };
+      let res = await axios.delete(url, config);
+      return res.data;
+    } catch (err) {
+      logger.error('Error submitting Jamf DELETE query', { error: err });
+    }
+  }
 };
