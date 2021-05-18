@@ -1,11 +1,14 @@
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'; // dangerous -- don't leave this here forever
 const { default: axios } = require('axios');
+logger = require('../services/logger');
 
 module.exports = class JamfApi {
   constructor(conf) {
     this.auth = conf.auth;
     this.baseUrl = conf.baseUrl + '/JSSResource';
     this.userGroupRoute = this.baseUrl + '/usergroups/id/';
+    this.userRoute = this.baseUrl + '/users/id/';
+    this.newUserRoute = this.userRoute + '0';
   }
 
   async submitPut(url, xml = null) {
@@ -26,6 +29,19 @@ module.exports = class JamfApi {
       return res.data;
     } catch (err) {
       logger.error('Error submitting Jamf GET query', { error: err });
+    }
+  }
+
+  async submitPost(url, xml = null) {
+    try {
+      let config = {
+        auth: this.auth,
+        headers: { 'Content-Type': 'text/xml' },
+      };
+      let res = await axios.post(url, xml, config);
+      return res.data;
+    } catch (err) {
+      logger.error('Error submitting Jamf POST query', { error: err });
     }
   }
 };

@@ -111,6 +111,20 @@ describe('JamfRepo: removeUsersFromGroup', () => {
   });
 });
 
+describe('JamfRepo: addEmailSuffix', () => {
+  it('should add the suffix "@fake.org" a single user', () => {
+    let res = repo.addEmailSuffix('mpython');
+    expect(res).toEqual('mpython@fake.org');
+  });
+});
+
+describe('JamfRepo: removeEmailSuffix', () => {
+  it('should remove the suffix "@fake.org" from a single user', () => {
+    let res = repo.removeEmailSuffix('mpython@fake.org');
+    expect(res).toEqual('mpython');
+  });
+});
+
 describe('JamfRepo: addEmailSuffixes', () => {
   it('should add the suffix "@fake.org" to each user in array', () => {
     let res = repo.addEmailSuffixes(usersNoSuffix);
@@ -122,5 +136,12 @@ describe('JamfRepo: removeEmailSuffixes', () => {
   it('should remove the suffix "@fake.org" from each user in array', () => {
     let res = repo.removeEmailSuffixes(usersWithSuffix);
     expect(res).toEqual(usersNoSuffix);
+  });
+});
+
+describe('JamfRepo: generateCreateUserXML', () => {
+  it('should generate a valid XML submission for one user', () => {
+    let res = repo.generateCreateUserXML('fakeUserId', 'Mx. Fake User Name');
+    expect(xmlMinify(res)).toEqual(xmlMinify(demoData.createUser));
   });
 });

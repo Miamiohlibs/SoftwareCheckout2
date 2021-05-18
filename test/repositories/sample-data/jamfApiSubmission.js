@@ -46,4 +46,12 @@ module.exports = {
         </user>
     </user_deletions>
 </user_group>`,
+  createUser: `
+  <user>
+    <name>fakeUserId</name>
+    <full_name>Mx. Fake User Name</full_name>
+    <email>fakeUserId@fake.org</email>
+    <email_address>fakeUserId@fake.org</email_address>
+    <position>Fake Jamf User Group</position>
+  </user>`,
 };

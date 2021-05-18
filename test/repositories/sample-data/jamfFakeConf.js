@@ -5,4 +5,5 @@ module.exports = {
   },
   baseUrl: 'https://myfakejamf.edu:8443',
   emailSuffix: '@fake.org',
+  userGroupName: 'Fake Jamf User Group',
 };
