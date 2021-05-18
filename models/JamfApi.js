@@ -7,6 +7,7 @@ module.exports = class JamfApi {
     this.auth = conf.auth;
     this.baseUrl = conf.baseUrl + '/JSSResource';
     this.userGroupRoute = this.baseUrl + '/usergroups/id/';
+    this.userEmailRoute = this.baseUrl + '/users/email/';
     this.userRoute = this.baseUrl + '/users/id/';
     this.newUserRoute = this.userRoute + '0';
   }

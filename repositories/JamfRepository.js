@@ -79,6 +79,40 @@ module.exports = class JamfRepository {
     }
   }
 
+  async getUserByEmail(email) {
+    let url = this.api.userEmailRoute + email;
+    let res = await this.api.submitGet(url);
+    if (res.users[0].hasOwnProperty('email') && res.users[0].email == email) {
+      return res.users[0];
+    } else {
+      logger.error('JamfReposity getUserByEmail failed to find: ' + email);
+      return false;
+    }
+  }
+
+  async deleteUserByUid(uniqueId) {
+    let email = this.addEmailSuffix(uniqueId);
+    return await this.deleteUserByEmail(email);
+  }
+
+  async deleteUserByEmail(email) {
+    let user = await this.getUserByEmail(email);
+    if (user) {
+      return await this.deleteUserById(user.id);
+    }
+    return false;
+  }
+
+  async deleteUserById(id) {
+    let url = this.api.userRoute + id;
+    let resXml = await this.api.submitDelete(url);
+    let res = JSON.parse(xml2json.toJson(resXml));
+    if (res.hasOwnProperty('user')) {
+      return { success: true, action: 'delete', user: res.user };
+    } else {
+      return { success: false, attemptedAction: 'delete', res: res };
+    }
+  }
   addEmailSuffix(user) {
     return user + this.emailSuffix;
   }
