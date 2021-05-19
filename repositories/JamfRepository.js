@@ -15,6 +15,36 @@ module.exports = class JamfRepository {
     this.throttle = new Throttle(userReqsPerCycle, secondsPerUserCycle);
   }
 
+  /* User Create/Delete Methods */
+
+  async createUser(uniqueId, fullName) {
+    let xml = this.generateCreateUserXML(uniqueId, fullName);
+    await this.throttle.pauseIfNeeded();
+    let resXml = await this.api.submitPost(this.api.newUserRoute, xml);
+    await this.throttle.increment();
+    let res = JSON.parse(xml2json.toJson(resXml));
+    if (res.hasOwnProperty('user')) {
+      return { success: true, user: res.user };
+    } else {
+      return { success: false, res: res };
+    }
+  }
+
+  async deleteUserByUid(uniqueId) {
+    let email = this.addEmailSuffix(uniqueId);
+    return await this.deleteUserByEmail(email);
+  }
+
+  async deleteUserByEmail(email) {
+    let user = await this.getUserByEmail(email);
+    if (user) {
+      return await this.deleteUserById(user.id);
+    }
+    return false;
+  }
+
+  /* Group Membership methods */
+
   async getGroupMembers(groupId) {
     try {
       let url = this.api.userGroupRoute + groupId;
@@ -48,6 +78,8 @@ module.exports = class JamfRepository {
     return res;
   }
 
+  /* supporting methods */
+
   generateAddOrDeleteXml(addOrDelete, users) {
     let obj;
     let usersArr = this.generateUsersArray(users);
@@ -80,19 +112,6 @@ module.exports = class JamfRepository {
     return o2x(obj);
   }
 
-  async createUser(uniqueId, fullName) {
-    let xml = this.generateCreateUserXML(uniqueId, fullName);
-    await this.throttle.pauseIfNeeded();
-    let resXml = await this.api.submitPost(this.api.newUserRoute, xml);
-    await this.throttle.increment();
-    let res = JSON.parse(xml2json.toJson(resXml));
-    if (res.hasOwnProperty('user')) {
-      return { success: true, user: res.user };
-    } else {
-      return { success: false, res: res };
-    }
-  }
-
   async getUserByEmail(email) {
     let url = this.api.userEmailRoute + email;
     await this.throttle.pauseIfNeeded();
@@ -104,19 +123,6 @@ module.exports = class JamfRepository {
       logger.error('JamfReposity getUserByEmail failed to find: ' + email);
       return false;
     }
-  }
-
-  async deleteUserByUid(uniqueId) {
-    let email = this.addEmailSuffix(uniqueId);
-    return await this.deleteUserByEmail(email);
-  }
-
-  async deleteUserByEmail(email) {
-    let user = await this.getUserByEmail(email);
-    if (user) {
-      return await this.deleteUserById(user.id);
-    }
-    return false;
   }
 
   async deleteUserById(id) {
@@ -131,6 +137,7 @@ module.exports = class JamfRepository {
       return { success: false, attemptedAction: 'delete', res: res };
     }
   }
+
   addEmailSuffix(user) {
     return user + this.emailSuffix;
   }
