@@ -30,6 +30,7 @@ module.exports = class JamfApi {
       return res.data;
     } catch (err) {
       logger.error('Error submitting Jamf GET query', { error: err });
+      return false;
     }
   }
 

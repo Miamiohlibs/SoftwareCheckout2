@@ -17,11 +17,21 @@ module.exports = class JamfRepository {
 
   /* User Create/Delete Methods */
 
-  async createUser(uniqueId, fullName) {
+  async createUserIfNeeded(email, fullName = '') {
+    let uniqueId = this.removeEmailSuffix(email);
+    await this.throttle.pauseIfNeeded();
+    let user = await this.getUserByEmail(email);
+    this.throttle.increment();
+    if (user) {
+      return { success: true, user: user };
+    }
+    return await this.createUser(uniqueId, fullName);
+  }
+  async createUser(uniqueId, fullName = '') {
     let xml = this.generateCreateUserXML(uniqueId, fullName);
     await this.throttle.pauseIfNeeded();
     let resXml = await this.api.submitPost(this.api.newUserRoute, xml);
-    await this.throttle.increment();
+    this.throttle.increment();
     let res = JSON.parse(xml2json.toJson(resXml));
     if (res.hasOwnProperty('user')) {
       return { success: true, user: res.user };
@@ -64,7 +74,7 @@ module.exports = class JamfRepository {
     let url = this.api.userGroupRoute + groupId;
     await this.throttle.pauseIfNeeded();
     let res = await this.api.submitPut(url, xml);
-    await this.throttle.increment();
+    this.throttle.increment();
     return res;
   }
 
@@ -74,7 +84,7 @@ module.exports = class JamfRepository {
     let url = this.api.userGroupRoute + groupId;
     await this.throttle.pauseIfNeeded();
     let res = await this.api.submitPut(url, xml);
-    await this.throttle.increment();
+    this.throttle.increment();
     return res;
   }
 
@@ -114,10 +124,11 @@ module.exports = class JamfRepository {
 
   async getUserByEmail(email) {
     let url = this.api.userEmailRoute + email;
+    console.log(url);
     await this.throttle.pauseIfNeeded();
     let res = await this.api.submitGet(url);
-    await this.throttle.increment();
-    if (res.users[0].hasOwnProperty('email') && res.users[0].email == email) {
+    this.throttle.increment();
+    if (res.hasOwnProperty('users') && res.users.length > 0) {
       return res.users[0];
     } else {
       logger.error('JamfReposity getUserByEmail failed to find: ' + email);
@@ -129,7 +140,7 @@ module.exports = class JamfRepository {
     let url = this.api.userRoute + id;
     await this.throttle.pauseIfNeeded();
     let resXml = await this.api.submitDelete(url);
-    await this.throttle.increment();
+    this.throttle.increment();
     let res = JSON.parse(xml2json.toJson(resXml));
     if (res.hasOwnProperty('user')) {
       return { success: true, action: 'delete', user: res.user };
