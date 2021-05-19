@@ -3,18 +3,24 @@ const o2x = require('object-to-xml');
 const logger = require('../services/logger');
 const { uniqueId } = require('lodash');
 const xml2json = require('xml2json');
+const Throttle = require('../helpers/Throttle');
 
 module.exports = class JamfRepository {
   constructor(conf) {
     this.api = new JamfApi(conf);
     this.emailSuffix = conf.emailSuffix;
     this.userGroupName = conf.userGroupName;
+    let userReqsPerCycle = 6;
+    let secondsPerUserCycle = 3;
+    this.throttle = new Throttle(userReqsPerCycle, secondsPerUserCycle);
   }
 
   async getGroupMembers(groupId) {
     try {
       let url = this.api.userGroupRoute + groupId;
+      await this.throttle.pauseIfNeeded();
       let res = await this.api.submitGet(url);
+      this.throttle.increment();
       let usernames = res.user_group.users.map((user) => user.username);
       return this.addEmailSuffixes(usernames);
     } catch (err) {
@@ -26,14 +32,20 @@ module.exports = class JamfRepository {
     let usernames = this.removeEmailSuffixes(users);
     let xml = this.generateAddOrDeleteXml('add', usernames);
     let url = this.api.userGroupRoute + groupId;
-    return await this.api.submitPut(url, xml);
+    await this.throttle.pauseIfNeeded();
+    let res = await this.api.submitPut(url, xml);
+    await this.throttle.increment();
+    return res;
   }
 
   async deleteUsersFromGroup(groupId, users) {
     let usernames = this.removeEmailSuffixes(users);
     let xml = this.generateAddOrDeleteXml('delete', usernames);
     let url = this.api.userGroupRoute + groupId;
-    return await this.api.submitPut(url, xml);
+    await this.throttle.pauseIfNeeded();
+    let res = await this.api.submitPut(url, xml);
+    await this.throttle.increment();
+    return res;
   }
 
   generateAddOrDeleteXml(addOrDelete, users) {
@@ -70,7 +82,9 @@ module.exports = class JamfRepository {
 
   async createUser(uniqueId, fullName) {
     let xml = this.generateCreateUserXML(uniqueId, fullName);
+    await this.throttle.pauseIfNeeded();
     let resXml = await this.api.submitPost(this.api.newUserRoute, xml);
+    await this.throttle.increment();
     let res = JSON.parse(xml2json.toJson(resXml));
     if (res.hasOwnProperty('user')) {
       return { success: true, user: res.user };
@@ -81,7 +95,9 @@ module.exports = class JamfRepository {
 
   async getUserByEmail(email) {
     let url = this.api.userEmailRoute + email;
+    await this.throttle.pauseIfNeeded();
     let res = await this.api.submitGet(url);
+    await this.throttle.increment();
     if (res.users[0].hasOwnProperty('email') && res.users[0].email == email) {
       return res.users[0];
     } else {
@@ -105,7 +121,9 @@ module.exports = class JamfRepository {
 
   async deleteUserById(id) {
     let url = this.api.userRoute + id;
+    await this.throttle.pauseIfNeeded();
     let resXml = await this.api.submitDelete(url);
+    await this.throttle.increment();
     let res = JSON.parse(xml2json.toJson(resXml));
     if (res.hasOwnProperty('user')) {
       return { success: true, action: 'delete', user: res.user };
