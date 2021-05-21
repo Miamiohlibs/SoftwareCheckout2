@@ -23,6 +23,11 @@ const testEmails = [
   'chiconel@fake.org',
   'alex.the.great@fake.org',
 ];
+const testObjects = [
+  { user: 'Dr. Seuss', position: 'Professor', email: 'dr.seuss@fake.org' },
+  { user: 'Madonna', position: 'CEO', email: 'chiconel@fake.org' },
+  { user: 'Weird Al', position: 'Accordionist', email: 'weird.al@fake.org' },
+];
 
 describe('UniqEmailRepository: getUniqForEmail', () => {
   it('should find geiselt for dr.seuss', () => {
@@ -63,5 +68,26 @@ describe('UniqEmailRepository: buildEmailsQuery', () => {
         { email: 'alex.the.great@fake.org' },
       ],
     });
+  });
+});
+
+describe('UniqEmailRepository: updateObjectsWithKnownEmails', () => {
+  it('should find Dr Seuss and Madonna, but not Weird Al, in known emails', async () => {
+    let { found, missing } = await emailRepo.updateObjectsWithKnownEmails(
+      testObjects,
+      'email',
+      testKnownHaystack
+    );
+    expect(found).toEqual([
+      { user: 'Dr. Seuss', position: 'Professor', email: 'geiselt@fake.org' },
+      { user: 'Madonna', position: 'CEO', email: 'chiconel@fake.org' },
+    ]);
+    expect(missing).toEqual([
+      {
+        user: 'Weird Al',
+        position: 'Accordionist',
+        email: 'weird.al@fake.org',
+      },
+    ]);
   });
 });

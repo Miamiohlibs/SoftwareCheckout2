@@ -3,6 +3,7 @@ const UniqEmail = require('../models/UniqEmail');
 const appConf = require('../config/appConf');
 const logger = require('../services/logger');
 const database = require('../helpers/database.js');
+const { asyncForEach } = require('../helpers/utils');
 
 module.exports = class UniqEmailRepository {
   async connect() {
@@ -41,6 +42,31 @@ module.exports = class UniqEmailRepository {
         found.push(res[0]);
       } else {
         missing.push(email);
+      }
+    });
+    return { found: found, missing: missing };
+  }
+
+  /* updateObjectsWithKnownEmails
+    accepts an array of objects and the name of the property containing an email address
+    looks up the authoritative email address
+    returns a "found" array of objects with known authEmails
+     and a "missing" array of unaltered objects
+  */
+  async updateObjectsWithKnownEmails(arr, key, haystack) {
+    let found = [];
+    let missing = [];
+
+    arr.forEach((obj) => {
+      let objCopy = obj; // create a copy
+      let authEmail = this.getUniqForEmail(obj[key], haystack);
+      if (authEmail.length > 0) {
+        objCopy[key] = authEmail[0];
+        found.push(objCopy);
+        // console.log('found and pushed', obj[key]);
+      } else {
+        missing.push(obj);
+        // console.log('could not find', obj[key]);
       }
     });
     return { found: found, missing: missing };
