@@ -7,11 +7,11 @@ const testKnownHaystack = [
   },
   {
     email: 'madonna@fake.org',
-    uniqEmail: 'chiconel@fake.org',
+    uniqEmail: 'cicconel@fake.org',
   },
   {
-    email: 'chiconel@fake.org',
-    uniqEmail: 'chiconel@fake.org',
+    email: 'cicconel@fake.org',
+    uniqEmail: 'cicconel@fake.org',
   },
   {
     email: 'mr.t@fake.org',
@@ -20,12 +20,12 @@ const testKnownHaystack = [
 ];
 const testEmails = [
   'dr.seuss@fake.org',
-  'chiconel@fake.org',
+  'cicconel@fake.org',
   'alex.the.great@fake.org',
 ];
 const testObjects = [
   { user: 'Dr. Seuss', position: 'Professor', email: 'dr.seuss@fake.org' },
-  { user: 'Madonna', position: 'CEO', email: 'chiconel@fake.org' },
+  { user: 'Madonna', position: 'CEO', email: 'cicconel@fake.org' },
   { user: 'Weird Al', position: 'Accordionist', email: 'weird.al@fake.org' },
 ];
 
@@ -34,9 +34,9 @@ describe('UniqEmailRepository: getUniqForEmail', () => {
     let res = emailRepo.getUniqForEmail(testEmails[0], testKnownHaystack);
     expect(res).toEqual(['geiselt@fake.org']);
   });
-  it('should find chiconel for chiconel', () => {
+  it('should find cicconel for cicconel', () => {
     let res = emailRepo.getUniqForEmail(testEmails[1], testKnownHaystack);
-    expect(res).toEqual(['chiconel@fake.org']);
+    expect(res).toEqual(['cicconel@fake.org']);
   });
   it('should find return an empty array for alex.the.great', () => {
     let res = emailRepo.getUniqForEmail(testEmails[2], testKnownHaystack);
@@ -48,7 +48,7 @@ describe('UniqEmailRepository: getKnownAndUnknownEmails', () => {
   it('should find DrSeuss and Madonna, not find Alex the great', () => {
     let res = emailRepo.getKnownAndUnknownEmails(testEmails, testKnownHaystack);
     expect(res).toHaveProperty('found');
-    expect(res.found).toEqual(['geiselt@fake.org', 'chiconel@fake.org']);
+    expect(res.found).toEqual(['geiselt@fake.org', 'cicconel@fake.org']);
     expect(res).toHaveProperty('missing');
     expect(res.missing).toEqual(['alex.the.great@fake.org']);
   });
@@ -64,7 +64,7 @@ describe('UniqEmailRepository: buildEmailsQuery', () => {
     expect(res).toEqual({
       $or: [
         { email: 'dr.seuss@fake.org' },
-        { email: 'chiconel@fake.org' },
+        { email: 'cicconel@fake.org' },
         { email: 'alex.the.great@fake.org' },
       ],
     });
@@ -80,7 +80,7 @@ describe('UniqEmailRepository: updateObjectsWithKnownEmails', () => {
     );
     expect(found).toEqual([
       { user: 'Dr. Seuss', position: 'Professor', email: 'geiselt@fake.org' },
-      { user: 'Madonna', position: 'CEO', email: 'chiconel@fake.org' },
+      { user: 'Madonna', position: 'CEO', email: 'cicconel@fake.org' },
     ]);
     expect(missing).toEqual([
       {

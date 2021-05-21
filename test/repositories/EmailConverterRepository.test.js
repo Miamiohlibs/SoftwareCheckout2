@@ -5,7 +5,7 @@ const realAppConf = require('../../config/appConf');
 const repo = new EmailConverterRepository(realAppConf);
 const testEmails = [
   'dr.seuss@fake.org',
-  'chiconel@fake.org',
+  'cicconel@fake.org',
   'alex.the.great@fake.org',
 ];
 
