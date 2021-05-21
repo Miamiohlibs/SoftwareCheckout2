@@ -1,4 +1,10 @@
-// const { asyncForEach } = require('../helpers/utils');
+/*
+    Use this instead of emailConverterService when you need not just to get a users' authoritative emails, but when you need those authEmails to be added to an existing user object with the rest of the object intact.
+
+    This is useful when multiple properties of the user object will be used to create a new user on a service's platform. 
+
+    For example: Jamf user creation should have several user properties: name, uid, email -- we need that data to all stay together, so we use this service. 
+*/
 
 const appConf = require('../config/appConf');
 const EmailConverterRepo = require('../repositories/EmailConverterRepository');
