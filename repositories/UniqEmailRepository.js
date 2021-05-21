@@ -53,7 +53,7 @@ module.exports = class UniqEmailRepository {
     returns a "found" array of objects with known authEmails
      and a "missing" array of unaltered objects
   */
-  async updateObjectsWithKnownEmails(arr, key, haystack) {
+  updateObjectsWithKnownEmails(arr, key, haystack) {
     let found = [];
     let missing = [];
 
