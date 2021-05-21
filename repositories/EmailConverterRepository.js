@@ -26,6 +26,36 @@ module.exports = class EmailConverterRepository {
         newMatches.push({ email: email, uniqEmail: res });
       }
     });
+    // found = array of emails we found matches for
+    // missing = array of emails with no match
+    // newMatches = array of pairs: email & uniqEmail
     return { authFound: found, authMissing: missing, newMatches: newMatches };
+  }
+
+  async updateObjectsWithAuthEmails(objects, key) {
+    let found = [];
+    let missing = [];
+    let newMatches = [];
+    await utils.asyncForEach(objects, async (obj) => {
+      let objCopy = obj;
+      let email = obj[key];
+      await this.lookupThrottle.pauseIfNeeded();
+      let res = await this.api.getAuthoritativeEmail(email).catch((err) => {
+        console.log('failed to lookup email in API', err);
+      });
+      this.lookupThrottle.increment();
+      if (res === undefined) {
+        missing.push(obj);
+      } else {
+        objCopy[key] = res;
+        found.push(objCopy);
+        newMatches.push({ email: email, uniqEmail: res });
+      }
+    });
+    return {
+      authFound: found,
+      authMissing: missing,
+      newMatches: newMatches,
+    };
   }
 };
