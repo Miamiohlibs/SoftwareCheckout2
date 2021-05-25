@@ -9,6 +9,8 @@ const LicenseGroup = require('../helpers/LicenseGroup');
 const licenses = new LicenseGroup(appConf);
 const logger = require('./logger');
 const emailConverterService = require('../services/emailConverterService');
+const emailObjectConverterService = require('../services/emailObjectConverterService');
+
 const {
   asyncForEach,
   filterToEntriesMissingFromSecondArray,
@@ -34,7 +36,7 @@ module.exports = async () => {
     logger.debug('currJamfEmails:', { content: currJamfEmails });
 
     // Fake Data: to use this, comment out the code above and uncomment these two lines
-    // let libCalBookings = ['irwinkr@miamioh.edu', 'bomholmm@miamioh.edu'];
+    // let libCalEmails = ['irwinkr@miamioh.edu', 'bomholmm@miamioh.edu'];
     // let currJamfEmails = ['irwinkr@miamioh.edu', 'qum@miamioh.edu'];
 
     // convert emails if necessary
@@ -45,12 +47,19 @@ module.exports = async () => {
       currJamfEmails,
       libCalEmails
     );
+    logger.info('Jamf emails to remove', emailsToRemove);
 
     // compare: get users to add in Jamf
     let emailsToAdd = filterToEntriesMissingFromSecondArray(
       libCalEmails,
       currJamfEmails
     );
+    logger.info('Jamf emails to add', emailsToAdd);
+
+    // foreach email to add, get the libCal object, modified with an authorizedEmail
+    // let authLibCalBookings = emailObjectConverterService(libCalBookings);
+    // then with each libcal object, check to see if they have a Jamf account
+    // and add one if they do not
 
     // jamf remove
     logger.info('Jamf Remove:', { content: emailsToRemove });
