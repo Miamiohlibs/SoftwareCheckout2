@@ -4,6 +4,8 @@ const EmailConverterRepository = require('./repositories/EmailConverterRepositor
 const appConf = require('./config/appConf');
 const convertRepo = new EmailConverterRepository(appConf);
 const emailConverterService = require('./services/emailConverterService');
+const database = require('./helpers/database');
+const UniqEmail = require('./models/UniqEmail');
 /*
  UniqEmailRepo offers two ways to get the same info:
  1. queryAllEmails fetches all the emails from the db and then looks for the desired content
@@ -13,6 +15,13 @@ const emailConverterService = require('./services/emailConverterService');
 */
 
 (async () => {
+  /* Test connection */
+  await database.connect();
+  // let res = await UniqEmail.find();
+  let res = await emailRepo.queryAllEmails();
+  console.log(res);
+  await database.disconnect();
+
   // await emailRepo.connect();
   // lookfor = ['jerry.yarnetsky@miamioh.edu', 'ken.irwin@miamioh.edu'];
   // // emails = await emailRepo.queryAllEmails();
@@ -20,15 +29,17 @@ const emailConverterService = require('./services/emailConverterService');
   // console.log(emailRepo.getKnownAndUnknownEmails(lookfor, emails));
   // await emailRepo.disconnect();
 
-  lookfor = [
-    'qum@miamioh.edu',
-    'diebelsa@miamioh.edu',
-    'brownsj1@miamioh.edu',
-    'bomholmm@miamioh.edu',
-    'jerry.yarnetsky@miamioh.edu',
-    'ken.irwin@miamioh.edu',
-    'kirwin@wittenberg.edu',
-  ];
-  let res = await emailConverterService(lookfor);
-  console.log(res);
+  /* Higher order business */
+  // lookfor = [
+  //   'qum@miamioh.edu',
+  //   'diebelsa@miamioh.edu',
+  //   'brownsj1@miamioh.edu',
+  //   'bomholmm@miamioh.edu',
+  //   'jerry.yarnetsky@miamioh.edu',
+  //   'ken.irwin@miamioh.edu',
+  //   'kirwin@wittenberg.edu',
+  //   'ken@kenirwin.net',
+  // ];
+  // let res = await emailConverterService(lookfor);
+  // console.log(res);
 })();
