@@ -2,7 +2,6 @@ const JamfApi = require('../models/JamfApi');
 const o2x = require('object-to-xml');
 const logger = require('../services/logger');
 const { uniqueId } = require('lodash');
-const xml2json = require('xml2json');
 const Throttle = require('../helpers/Throttle');
 
 module.exports = class JamfRepository {
@@ -30,9 +29,8 @@ module.exports = class JamfRepository {
   async createUser(uniqueId, fullName = '') {
     let xml = this.generateCreateUserXML(uniqueId, fullName);
     await this.throttle.pauseIfNeeded();
-    let resXml = await this.api.submitPost(this.api.newUserRoute, xml);
+    let res = await this.api.submitPost(this.api.newUserRoute, xml);
     this.throttle.increment();
-    let res = JSON.parse(xml2json.toJson(resXml));
     if (res.hasOwnProperty('user')) {
       return { success: true, user: res.user };
     } else {
