@@ -12,7 +12,7 @@ const jamfRepo = new JamfRepository(jamfConf);
     //   'https://muawjssp01.it.muohio.edu:8443/JSSResource/usergroups/id/3'
     // );
     let res = await jamfRepo.getGroupMembers(3);
-    console.log(result);
+    console.log(res);
   } catch (err) {
     console.log('error:', err);
   }
