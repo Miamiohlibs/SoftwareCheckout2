@@ -15,7 +15,10 @@ module.exports = class JamfApi {
   async submitPut(url, xml = null) {
     // success = res.status == 201
     try {
-      let config = { auth: this.auth, headers: { 'Content-Type': 'text/xml' } };
+      let config = {
+        auth: this.auth,
+        headers: { 'Content-Type': 'text/xml' },
+      };
       let res = await axios.put(url, xml, config);
       return res;
     } catch (err) {
@@ -25,7 +28,7 @@ module.exports = class JamfApi {
 
   async submitGet(url) {
     try {
-      let config = { auth: this.auth };
+      let config = { auth: this.auth, headers: { Accept: 'application/json' } };
       let res = await axios.get(url, config);
       return res.data;
     } catch (err) {
