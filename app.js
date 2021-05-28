@@ -1,7 +1,7 @@
 const appConf = require('./config/appConf');
 const LicenseGroup = require('./helpers/LicenseGroup');
 const lg = new LicenseGroup(appConf);
-const adobe = require('./services/AdobeService');
+const adobe = require('./services/adobeService');
 const jamf = require('./services/jamfService');
 let vendors = lg.getActiveVendors();
 let logger = require('./services/logger');
