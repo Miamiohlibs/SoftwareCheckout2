@@ -5,6 +5,7 @@ package-lock.json
 *.bak
 certs/*
 logs/*
+run.sh
 config/adobe.js
 config/libCal.js
 config/appConf.js
