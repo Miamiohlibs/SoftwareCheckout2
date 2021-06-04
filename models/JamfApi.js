@@ -9,8 +9,8 @@ module.exports = class JamfApi {
     this.userEmailRoute = this.baseUrl + '/users/email/';
     this.userRoute = this.baseUrl + '/users/id/';
     this.newUserRoute = this.userRoute + '0';
-    if (conf.danger_tls_reject_unauthorized === true) { 
-	process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'; // dangerous -- don't leave this here forever
+    if (conf.danger_tls_reject_unauthorized === true) {
+      process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'; // dangerous -- don't leave this here forever
     }
   }
 
