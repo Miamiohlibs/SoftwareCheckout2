@@ -2,6 +2,7 @@ const Debug = require('debug');
 const debug = new Debug('AdobeApi');
 const axios = require('axios');
 const logger = require('../services/logger');
+const { axiosLogPrep } = require('../helpers/utils');
 
 /* 
 public methods:
@@ -55,7 +56,7 @@ module.exports = class LibCalApi {
       logger.debug('Received query results', { results: res });
       return res.data;
     } catch (err) {
-      logger.error(('Failed LibCal query:', { error: err }));
+      logger.error(('Failed LibCal query:', axiosLogPrep(err)));
     }
   }
 
