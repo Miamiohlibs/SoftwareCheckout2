@@ -1,5 +1,6 @@
 const { default: axios } = require('axios');
 logger = require('../services/logger');
+const { axiosLogPrep } = require('../helpers/utils');
 
 module.exports = class JamfApi {
   constructor(conf) {
@@ -24,7 +25,7 @@ module.exports = class JamfApi {
       let res = await axios.put(url, xml, config);
       return res;
     } catch (err) {
-      logger.error('Error submitting Jamf PUT query', err);
+      logger.error('Error submitting Jamf PUT query', axiosLogPrep(err));
     }
   }
 
@@ -34,7 +35,7 @@ module.exports = class JamfApi {
       let res = await axios.get(url, config);
       return res.data;
     } catch (err) {
-      logger.error('Error submitting Jamf GET query', { error: err });
+      logger.error('Error submitting Jamf GET query', axiosLogPrep(err));
       return false;
     }
   }
@@ -48,7 +49,7 @@ module.exports = class JamfApi {
       let res = await axios.post(url, xml, config);
       return res.data;
     } catch (err) {
-      logger.error('Error submitting Jamf POST query', { error: err });
+      logger.error('Error submitting Jamf POST query', axiosLogPrep(err));
     }
   }
 
@@ -58,7 +59,7 @@ module.exports = class JamfApi {
       let res = await axios.delete(url, config);
       return res.data;
     } catch (err) {
-      logger.error('Error submitting Jamf DELETE query', { error: err });
+      logger.error('Error submitting Jamf DELETE query', axiosLogPrep(err));
     }
   }
 };

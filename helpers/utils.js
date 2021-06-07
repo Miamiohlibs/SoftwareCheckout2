@@ -14,4 +14,16 @@ const asyncForEach = async (array, callback) => {
   }
 };
 
-module.exports = { sleep, filterToEntriesMissingFromSecondArray, asyncForEach };
+const axiosLogPrep = (err) => {
+  // let temp = res.request._header;
+  // res.request = { header: temp };
+  delete err.request;
+  return err;
+};
+
+module.exports = {
+  sleep,
+  filterToEntriesMissingFromSecondArray,
+  asyncForEach,
+  axiosLogPrep,
+};
