@@ -55,12 +55,17 @@ module.exports = class JamfRepository {
 
   async getGroupMembers(groupId) {
     try {
+      let usernames;
       let url = this.api.userGroupRoute + groupId;
       await this.throttle.pauseIfNeeded();
       let res = await this.api.submitGet(url);
       this.throttle.increment();
-      let usernames = res.user_group.users.map((user) => user.username);
-      return this.addEmailSuffixes(usernames);
+      if (res.user_group && res.user_group.hasOwnProperty('users')) {
+        usernames = res.user_group.users.map((user) => user.username);
+        return this.addEmailSuffixes(usernames);
+      } else {
+        return [];
+      }
     } catch (err) {
       logger.error('failed JamfRepo.getGroupMembers', { error: err });
     }
