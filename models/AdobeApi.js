@@ -1,11 +1,9 @@
-// const Query = require('./Query');
 const axios = require('axios');
 const jwtAuth = require('@adobe/jwt-auth');
 const path = require('path');
 const fs = require('fs');
 const debug = require('debug')('AdobeApi');
-
-// const { queryConf } = require('../config/adobe');
+const { axiosLogPrep } = require('../helpers/utils');
 
 module.exports = class AdobeUserMgmtApi {
   constructor(conf) {
@@ -41,7 +39,7 @@ module.exports = class AdobeUserMgmtApi {
       let res = await axios(queryConf);
       return res.data;
     } catch (err) {
-      console.log(('Failed Adobe query:', err));
+      console.log(('Failed Adobe query:', axiosLogPrep(err)));
     }
   }
 
