@@ -26,10 +26,12 @@ module.exports = class EmailConverterApi {
 
   async submitQuery(email) {
     let url = this.baseUrl + email + this.endOfUrl;
-    logger.debug('requesting url', { url: url });
+    logger.debug('Requesting url', { url: url });
     try {
       let res = await axios(url);
-      logger.debug({ EmailConverterResData: res.data });
+      logger.debug('Email converter results', {
+        EmailConverterResData: res.data,
+      });
       return res.data;
     } catch (err) {
       logger.error('Failed email lookup for: ' + email);

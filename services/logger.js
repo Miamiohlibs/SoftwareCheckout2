@@ -24,7 +24,8 @@ for (level in appConf.logLevels) {
 const logger = createLogger({
   format: combine(
     timestamp(),
-    prettyPrint()
+    prettyPrint(),
+    format.json()
     // format.json((info) => `${info.timestamp} ${info.level}: ${info.message}`)
   ),
   transports: transportsArr,
