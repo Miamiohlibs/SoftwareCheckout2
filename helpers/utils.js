@@ -14,11 +14,11 @@ const asyncForEach = async (array, callback) => {
   }
 };
 
-const axiosLogPrep = (err) => {
-  // let temp = res.request._header;
-  // res.request = { header: temp };
-  delete err.request;
-  return err;
+const axiosLogPrep = (obj) => {
+  if (obj !== undefined && obj.hasOwnProperty('request')) {
+    delete obj.request;
+  }
+  return obj;
 };
 
 module.exports = {
