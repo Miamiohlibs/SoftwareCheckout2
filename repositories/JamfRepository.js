@@ -34,8 +34,10 @@ module.exports = class JamfRepository {
     this.throttle.increment();
     let res = JSON.parse(xmlParser.toJson(resXml));
     if (res.hasOwnProperty('user')) {
+      logger.info('Created Jamf user: ' + uniqueId);
       return { success: true, user: res.user };
     } else {
+      logger.error('Failed to create Jamf user: ' + uniqueId, { res: res });
       return { success: false, res: res };
     }
   }
