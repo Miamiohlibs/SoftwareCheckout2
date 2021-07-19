@@ -32,7 +32,12 @@ module.exports = async () => {
     logger.debug('libCalEmails:', { content: libCalEmails });
 
     // get jamf list based on pkg.vendorGroupId
-    let currJamfEmails = await jamf.getGroupMembers(pkg.vendorGroupId);
+    logger.debug('getting Jamf emails');
+    try {
+      let currJamfEmails = await jamf.getGroupMembers(pkg.vendorGroupId);
+    } catch (err) {
+      logger.error('Error getting Jamf group members', { error: err });
+    }
     logger.debug('currJamfEmails:', { content: currJamfEmails });
 
     // Fake Data: to use this, comment out the code above and uncomment these two lines
@@ -41,6 +46,7 @@ module.exports = async () => {
 
     // convert emails if necessary
     libCalEmails = await emailConverterService(libCalEmails);
+    logger.debug('converted libCalEmails', libCalEmails);
 
     // compare: get users to remove in Jamf
     let emailsToRemove = filterToEntriesMissingFromSecondArray(
@@ -71,6 +77,10 @@ module.exports = async () => {
     // jamf add
     logger.info('Jamf Add:', { content: emailsToAdd });
     if (emailsToAdd.length > 0) {
+      asyncForEach(emailsToAdd, async (email) => {
+        await jamf.createUserIfNeeded(email);
+      });
+
       res = await jamf.addUsersToGroup(pkg.vendorGroupId, emailsToAdd);
       logger.info('Response from Jamf add request', { status: res.status });
     }
