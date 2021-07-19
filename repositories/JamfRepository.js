@@ -3,7 +3,7 @@ const o2x = require('object-to-xml');
 const logger = require('../services/logger');
 const { uniqueId } = require('lodash');
 const Throttle = require('../helpers/Throttle');
-const xmlParser = require('xml2json');
+const xmlParser = require('fast-xml-parser');
 
 module.exports = class JamfRepository {
   constructor(conf) {
@@ -32,7 +32,7 @@ module.exports = class JamfRepository {
     await this.throttle.pauseIfNeeded();
     let resXml = await this.api.submitPost(this.api.newUserRoute, xml);
     this.throttle.increment();
-    let res = JSON.parse(xmlParser.toJson(resXml));
+    let res = xmlParser.parse(resXml);
     if (res.hasOwnProperty('user')) {
       logger.info('Created Jamf user: ' + uniqueId);
       return { success: true, user: res.user };
