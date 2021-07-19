@@ -148,7 +148,7 @@ module.exports = class JamfRepository {
     await this.throttle.pauseIfNeeded();
     let resXml = await this.api.submitDelete(url);
     this.throttle.increment();
-    let res = JSON.parse(xml2json.toJson(resXml));
+    let res = xmlParser.parse(resXml);
     if (res.hasOwnProperty('user')) {
       return { success: true, action: 'delete', user: res.user };
     } else {
