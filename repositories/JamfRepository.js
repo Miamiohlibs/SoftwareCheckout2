@@ -18,20 +18,32 @@ module.exports = class JamfRepository {
   /* User Create/Delete Methods */
 
   async createUserIfNeeded(email, fullName = '') {
+    logger.debug('begin function jamfRepo.createUserIfNeeded');
     let uniqueId = this.removeEmailSuffix(email);
+    logger.debug('uniqueId: '+uniqueId);
     await this.throttle.pauseIfNeeded();
+    logger.debug('getting User by Email: '+email);
     let user = await this.getUserByEmail(email);
+    logger.debug('got back user value: ', {user: user})
     this.throttle.increment();
     if (user) {
+      logger.info('Jamf User found: ',user);	
       return { success: true, user: user };
-    }
-    return await this.createUser(uniqueId, fullName);
+    } 
+    logger.info('jamf user not found; need to create: '+email);
+    let res = await this.createUser(uniqueId, email);
+    logger.info('results from attemt to create: '+email, res);
+    return res;
   }
   async createUser(uniqueId, fullName = '') {
+    logger.debug('jamfRepo creating user '+uniqueId + ' ' + fullName);
     let xml = this.generateCreateUserXML(uniqueId, fullName);
+    logger.debug('submitting Jamf new user data' + xml);
+    logger.debug('submitting jamf data to POST: '+this.api.newUserRoute); 
     await this.throttle.pauseIfNeeded();
     let resXml = await this.api.submitPost(this.api.newUserRoute, xml);
     this.throttle.increment();
+    logger.debug('received xml from jamf user creation', resXml);
     let res = xmlParser.parse(resXml);
     if (res.hasOwnProperty('user')) {
       logger.info('Created Jamf user: ' + uniqueId);
@@ -76,6 +88,10 @@ module.exports = class JamfRepository {
   }
 
   async addUsersToGroup(groupId, users) {
+    logger.debug('adding Jamf users to group (in addUsersToGroup)',{
+     group: groupId,
+     users: users
+    });
     let usernames = this.removeEmailSuffixes(users);
     let xml = this.generateAddOrDeleteXml('add', usernames);
     let url = this.api.userGroupRoute + groupId;
@@ -86,6 +102,11 @@ module.exports = class JamfRepository {
   }
 
   async deleteUsersFromGroup(groupId, users) {
+    logger.debug('deleting Jamf users to group (in addUsersToGroup)',{
+     group: groupId,
+     users: users
+    });
+
     let usernames = this.removeEmailSuffixes(users);
     let xml = this.generateAddOrDeleteXml('delete', usernames);
     let url = this.api.userGroupRoute + groupId;
@@ -130,15 +151,18 @@ module.exports = class JamfRepository {
   }
 
   async getUserByEmail(email) {
+    logger.debug('starting jamfRepo.getUserByEmail:'+email);
     let url = this.api.userEmailRoute + email;
     console.log(url);
+    console.log('Getting Url: '+ url);
     await this.throttle.pauseIfNeeded();
     let res = await this.api.submitGet(url);
     this.throttle.increment();
+    logger.debug('jamfRepo.getUserByEmail got response ' + res.status);
     if (res.hasOwnProperty('users') && res.users.length > 0) {
       return res.users[0];
     } else {
-      logger.error('JamfReposity getUserByEmail failed to find: ' + email);
+      logger.error('JamfRepository getUserByEmail failed to find: ' + email);
       return false;
     }
   }

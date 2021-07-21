@@ -21,46 +21,58 @@ module.exports = async () => {
   logger.info('starting JamfService');
 
   asyncForEach(software, async (pkg) => {
+
     logger.info(
       `Getting libCalCid: ${pkg.libCalCid}, vendorGroupName: ${pkg.vendorGroupName}`
     );
-
+/*
     // get libCalList based on pkg.libCalCid
     let libCalBookings = await libCal.getCurrentValidBookings(pkg.libCalCid);
     // console.log(pkg.libCalCid, libCalBookings.length);
     let libCalEmails = libCal.getUniqueEmailsFromBookings(libCalBookings);
-    logger.debug('libCalEmails:', { content: libCalEmails });
+    logger.debug(`libCalEmails (Jamf: ${pkg.vendorGroupName}):`, { content: libCalEmails });
 
     // get jamf list based on pkg.vendorGroupId
     logger.debug('getting Jamf emails');
+    let currJamfEmails; 
     try {
-      let currJamfEmails = await jamf.getGroupMembers(pkg.vendorGroupId);
+      currJamfEmails = await jamf.getGroupMembers(pkg.vendorGroupId);
+      logger.debug(`currJamfEmails (Jamf: ${pkg.vendorGroupName}):`, { content: currJamfEmails });
+
     } catch (err) {
       logger.error('Error getting Jamf group members', { error: err });
     }
-    logger.debug('currJamfEmails:', { content: currJamfEmails });
-
+*/
     // Fake Data: to use this, comment out the code above and uncomment these two lines
-    // let libCalEmails = ['irwinkr@miamioh.edu', 'bomholmm@miamioh.edu'];
-    // let currJamfEmails = ['irwinkr@miamioh.edu', 'qum@miamioh.edu'];
+     let libCalEmails = ['irwinkr@miamioh.edu', 'kaiserj5@miamioh.edu'];
+     let currJamfEmails = ['irwinkr@miamioh.edu', 'qum@miamioh.edu'];
 
     // convert emails if necessary
     libCalEmails = await emailConverterService(libCalEmails);
     logger.debug('converted libCalEmails', libCalEmails);
 
     // compare: get users to remove in Jamf
-    let emailsToRemove = filterToEntriesMissingFromSecondArray(
-      currJamfEmails,
-      libCalEmails
-    );
-    logger.info('Jamf emails to remove', emailsToRemove);
-
+    let emailsToRemove;
+    try { 
+      emailsToRemove = filterToEntriesMissingFromSecondArray(
+        currJamfEmails,
+        libCalEmails
+      );
+      logger.info('Jamf emails to remove', emailsToRemove);
+    } catch (err) {
+	logger.error('Error filtering to Jamf emails to remove',err);
+    } 
     // compare: get users to add in Jamf
-    let emailsToAdd = filterToEntriesMissingFromSecondArray(
-      libCalEmails,
-      currJamfEmails
-    );
-    logger.info('Jamf emails to add', emailsToAdd);
+    let emailsToAdd; 
+    try { 
+	emailsToAdd = filterToEntriesMissingFromSecondArray(
+	    libCalEmails,
+	    currJamfEmails
+	);
+	logger.info('Jamf emails to add', emailsToAdd);
+    } catch (err) {
+	logger.error('Error filtering to Jamf emails to add',err);
+    }
 
     // foreach email to add, get the libCal object, modified with an authorizedEmail
     // let authLibCalBookings = emailObjectConverterService(libCalBookings);
@@ -70,6 +82,7 @@ module.exports = async () => {
     // jamf remove
     logger.info('Jamf Remove:', { content: emailsToRemove });
     if (emailsToRemove.length > 0) {
+      logger.debug('About do run jamfRepo.deleteUsersFromGroup on ', { data: emailsToRemove});
       res = await jamf.deleteUsersFromGroup(pkg.vendorGroupId, emailsToRemove);
       logger.info('Response from Jamf remove request', { status: res.status });
     }
@@ -78,10 +91,18 @@ module.exports = async () => {
     logger.info('Jamf Add:', { content: emailsToAdd });
     if (emailsToAdd.length > 0) {
       asyncForEach(emailsToAdd, async (email) => {
-        await jamf.createUserIfNeeded(email);
+	try {   
+	logger.debug('initiating createUserIfNeeded for '+email);
+        let res  = await jamf.createUserIfNeeded(email);
+	logger.debug('response from createUserIfNeeded', res);
+	    } catch (err) {
+        logger.error('jamfRepo createUserIfNeeded failed for '+email, err);
+        }
       });
-
+      logger.debug('Finished waiting for updates to Jamf user list');
+      logger.debug('Adding Jamf users to group', { data: emailsToAdd });
       res = await jamf.addUsersToGroup(pkg.vendorGroupId, emailsToAdd);
+      logger.debug('Finished adding jamf users to groups');
       logger.info('Response from Jamf add request', { status: res.status });
     }
   });
