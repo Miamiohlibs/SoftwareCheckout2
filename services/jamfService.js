@@ -45,7 +45,7 @@ module.exports = async () => {
 */
     // Fake Data: to use this, comment out the code above and uncomment these two lines
      let libCalEmails = ['irwinkr@miamioh.edu', 'kaiserj5@miamioh.edu'];
-     let currJamfEmails = ['irwinkr@miamioh.edu', 'qum@miamioh.edu'];
+     let currJamfEmails = ['irwinkr@miamioh.edu'];
 
     // convert emails if necessary
     libCalEmails = await emailConverterService(libCalEmails);
