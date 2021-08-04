@@ -28,21 +28,24 @@ module.exports = async () => {
     let libCalBookings = await libCal.getCurrentValidBookings(pkg.libCalCid);
     // console.log(pkg.libCalCid, libCalBookings.length);
     let libCalEmails = libCal.getUniqueEmailsFromBookings(libCalBookings);
-    logger.debug(`libCalEmails (Jamf: ${pkg.vendorGroupName}):`, { content: libCalEmails });
+    logger.debug(`libCalEmails (Jamf: ${pkg.vendorGroupName}):`, {
+      content: libCalEmails,
+    });
 
     // get jamf list based on pkg.vendorGroupId
     logger.debug('getting Jamf emails');
-    let currJamfEmails; 
+    let currJamfEmails;
     try {
       currJamfEmails = await jamf.getGroupMembers(pkg.vendorGroupId);
-      logger.debug(`currJamfEmails (Jamf: ${pkg.vendorGroupName}):`, { content: currJamfEmails });
-
+      logger.debug(`currJamfEmails (Jamf: ${pkg.vendorGroupName}):`, {
+        content: currJamfEmails,
+      });
     } catch (err) {
       logger.error('Error getting Jamf group members', { error: err });
     }
     // Fake Data: to use this, comment out the code above and uncomment these two lines
-//    let libCalEmails = ['irwinkr@miamioh.edu', 'kaiserj5@miamioh.edu'];
-//    let currJamfEmails = ['irwinkr@miamioh.edu'];
+    //    let libCalEmails = ['irwinkr@miamioh.edu', 'kaiserj5@miamioh.edu'];
+    //    let currJamfEmails = ['irwinkr@miamioh.edu'];
 
     // convert emails if necessary
     libCalEmails = await emailConverterService(libCalEmails);
