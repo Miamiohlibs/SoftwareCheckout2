@@ -40,6 +40,7 @@ module.exports = class LibCalApi {
       cid;
     this.queryConf.method = 'get';
     let res = await this.getQueryResults();
+    logger.debug('API response status', res);
     logger.debug(`API received getBookings for ${cid}`, axiosLogPrep(res));
     return res;
   }
@@ -56,7 +57,9 @@ module.exports = class LibCalApi {
       logger.debug('Received query results', axiosLogPrep(res));
       return res.data;
     } catch (err) {
-      logger.error(('Failed LibCal query:', axiosLogPrep(err)));
+      logger.error(
+        ('Failed LibCal query:' + err.response.status, axiosLogPrep(err))
+      );
     }
   }
 

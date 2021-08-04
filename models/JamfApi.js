@@ -17,6 +17,7 @@ module.exports = class JamfApi {
 
   async submitPut(url, xml = null) {
     // success = res.status == 201
+    logger.debug('beginning jamfApi.submitPut with url: ' + url + ' and with xml: ' +xml);
     try {
       let config = {
         auth: this.auth,
