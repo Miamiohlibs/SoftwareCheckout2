@@ -18,13 +18,12 @@ const {
 let software = licenses.getLicenseGroupsByVendor('Jamf');
 
 module.exports = async () => {
-  logger.info('starting JamfService');
+  logger.info('starting JamfUserService');
 
   asyncForEach(software, async (pkg) => {
     logger.info(
       `Getting libCalCid: ${pkg.libCalCid}, vendorGroupName: ${pkg.vendorGroupName}`
     );
-    /*
     // get libCalList based on pkg.libCalCid
     let libCalBookings = await libCal.getCurrentValidBookings(pkg.libCalCid);
     // console.log(pkg.libCalCid, libCalBookings.length);
@@ -41,10 +40,9 @@ module.exports = async () => {
     } catch (err) {
       logger.error('Error getting Jamf group members', { error: err });
     }
-    */
     // Fake Data: to use this, comment out the code above and uncomment these two lines
-    let libCalEmails = ['irwinkr@miamioh.edu'];
-    let currJamfEmails = ['irwinkr@miamioh.edu', 'kaiserj5@miamioh.edu'];
+//    let libCalEmails = ['irwinkr@miamioh.edu', 'kaiserj5@miamioh.edu'];
+//    let currJamfEmails = ['irwinkr@miamioh.edu'];
 
     // convert emails if necessary
     libCalEmails = await emailConverterService(libCalEmails);
