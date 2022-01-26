@@ -1,3 +1,0 @@
-The logs, sadly, aren't real JSON -- they are individual json lines not bound together in an array. 
-
-The `jsonifylogs.js` script will take the output of a grep and drop the lines comma separated into an array `[ {}, {}, {}, ... ]`. If you pipe the results to `jq .` they'll get pretty-printed, which makes parsing and grepping easier. e.g. `grep '2022-01-25T14:4' ../logs/debug-2022-01-25.log | jq .`

@@ -30,7 +30,7 @@ module.exports = async () => {
     let libCalBookings = await libCal.getCurrentValidBookings(pkg.libCalCid);
     // console.log(pkg.libCalCid, libCalBookings.length);
     let libCalEmails = libCal.getUniqueEmailsFromBookings(libCalBookings);
-    logger.debug('libCalEmails:', { content: libCalEmails });
+    logger.debug('libCalEmails (Adobe):', { content: libCalEmails });
     // // get adobe list based on pkg.vendorGroupName
     let currAdobeEntitlements = await adobe.getGroupMembers(
       pkg.vendorGroupName
