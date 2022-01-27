@@ -22,6 +22,7 @@
     "lodash": "^4.17.21",
     "mongoose": "^5.12.8",
     "object-to-xml": "^2.0.0",
+    "process": "^0.11.10",
     "querystring": "^0.2.0",
     "simple-oauth2": "^3.3.0",
     "ssl-root-cas": "^1.3.1",
