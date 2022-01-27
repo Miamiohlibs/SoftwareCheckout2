@@ -1,3 +1,4 @@
+const process = require('process');
 const adobeConf = require('../config/adobe');
 const AdobeRepo = require('../repositories/AdobeRepository');
 const adobe = new AdobeRepo(adobeConf);
@@ -14,6 +15,7 @@ const {
   filterToEntriesMissingFromSecondArray,
 } = require('../helpers/utils');
 let software = licenses.getLicenseGroupsByVendor('Adobe');
+let pid = process.pid; 
 
 // uncomment this line to only do the staff CC list:
 // software = software.filter((i) => parseInt(i.libCalCid) > 20000);
@@ -23,31 +25,32 @@ module.exports = async () => {
 
   asyncForEach(software, async (pkg) => {
     logger.info(
-      `Getting libCalCid: ${pkg.libCalCid}, vendorGroupName: ${pkg.vendorGroupName}`
+      `Getting libCalCid (pid:${pid}): ${pkg.libCalCid}, vendorGroupName: ${pkg.vendorGroupName}`
     );
 
     // get libCalList based on pkg.libCalCid
     let libCalBookings = await libCal.getCurrentValidBookings(pkg.libCalCid);
     // console.log(pkg.libCalCid, libCalBookings.length);
     let libCalEmails = libCal.getUniqueEmailsFromBookings(libCalBookings);
-    logger.debug('libCalEmails (Adobe):', { content: libCalEmails });
+    logger.debug(`libCalEmails (Adobe):(pid:${pid}):`, { content: libCalEmails });
     // // get adobe list based on pkg.vendorGroupName
     let currAdobeEntitlements = await adobe.getGroupMembers(
       pkg.vendorGroupName
     );
+    logger.info(`length of currAdobeEntitlements: ${currAdobeEntitlements.length} (pid:${pid})`);
     // console.log('currAdobeEntitlements:', currAdobeEntitlements.length);
     let currAdobeEmails = adobe.getEmailsFromGroupMembers(
       currAdobeEntitlements
     );
-    logger.debug('currAdobeEmails:', { content: currAdobeEmails });
-
+    logger.debug(`currAdobeEmails:(pid:${pid}):`, { content: currAdobeEmails });
+    logger.info(`length of currAdobeEmails: ${currAdobeEmails.length} (pid:${pid})`);
     // Fake Data: to use this, comment out the code above and uncomment these two lines
     // let libCalBookings = ['irwinkr@miamioh.edu', 'bomholmm@miamioh.edu'];
     // let currAdobeEmails = ['irwinkr@miamioh.edu', 'qum@miamioh.edu'];
 
     // convert emails if necessary
     libCalEmails = await emailConverterService(libCalEmails);
-
+    logger.info(`length of currLibCalEmails: ${currlibCalEmails.length} (pid:${pid})`);
     // compare: get users to remove in Adobe
     let emailsToRemove = filterToEntriesMissingFromSecondArray(
       currAdobeEmails,
@@ -61,17 +64,17 @@ module.exports = async () => {
     );
 
     // adobe remove
-    logger.info('Adobe Remove:', { content: emailsToRemove });
+    logger.info(`Adobe Remove:(pid:${pid}):${emailsToRemove.length}`, { content: emailsToRemove });
     if (emailsToRemove.length > 0) {
       res = await adobe.removeGroupMembers(emailsToRemove, pkg.vendorGroupName);
-      logger.info('Response from Adobe remove request', { status: res.status });
+      logger.info(`Response from Adobe remove request(pid:${pid})`, { status: res.status });
     }
 
     // adobe add
-    logger.info('Adobe Add:', { content: emailsToAdd });
+    logger.info(`Adobe Add:(pid:${pid}):${emailsToAdd.length}`, { content: emailsToAdd });
     if (emailsToAdd.length > 0) {
       res = await adobe.addGroupMembers(emailsToAdd, pkg.vendorGroupName);
-      logger.info('Response from Adobe add request', { status: res.status });
+      logger.info(`Response from Adobe add request (pid:${pid})`, { status: res.status });
     }
   });
 };
