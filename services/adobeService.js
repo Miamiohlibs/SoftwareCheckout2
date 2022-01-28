@@ -49,19 +49,30 @@ module.exports = async () => {
     // let currAdobeEmails = ['irwinkr@miamioh.edu', 'qum@miamioh.edu'];
 
     // convert emails if necessary
+      logger.info(`starting emailConverterService (pid:${pid})`);
+      try { 
     libCalEmails = await emailConverterService(libCalEmails);
-    logger.info(`length of currLibCalEmails: ${currlibCalEmails.length} (pid:${pid})`);
+} catch (err) {
+    logger.error(`failed emailConverterService (pid:${pid})`, { error: err });
+}
+      logger.info(`finished emailConverterService (pid:${pid})`);
+
+    logger.info(`length of libCalEmails: ${libCalEmails.length} (pid:${pid})`);
+
+      logger.info(`starting Adobe emailsToRemove (pid:${pid})`);
     // compare: get users to remove in Adobe
     let emailsToRemove = filterToEntriesMissingFromSecondArray(
       currAdobeEmails,
       libCalEmails
     );
 
+      logger.info(`starting Adobe emailsToAdd (pid:${pid})`);
     // compare: get users to add in Adobe
     let emailsToAdd = filterToEntriesMissingFromSecondArray(
       libCalEmails,
       currAdobeEmails
     );
+      logger.info(`finished Adobe emailsToAdd (pid:${pid})`);
 
     // adobe remove
     logger.info(`Adobe Remove:(pid:${pid}):${emailsToRemove.length}`, { content: emailsToRemove });
