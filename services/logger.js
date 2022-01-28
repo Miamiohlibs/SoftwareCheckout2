@@ -21,15 +21,15 @@ for (level in appConf.logLevels) {
   }
 }
 
-const timezoned = () => { 
+const timezoned = () => {
   return new Date().toLocaleString('en-US', {
-      timeZone: 'America/New_York'
+    timeZone: 'America/New_York',
   });
-}
+};
 
 const logger = createLogger({
   format: combine(
-    timestamp({format: 'YYYY-MM-DD HH:mm:ss'}),
+    timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
     prettyPrint(),
     format.json()
     // format.json((info) => `${info.timestamp} ${info.level}: ${info.message}`)
