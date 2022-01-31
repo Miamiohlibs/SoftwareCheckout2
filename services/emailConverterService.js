@@ -53,6 +53,6 @@ module.exports = async (emails) => {
 
   await emailRepo.disconnect();
 
-  logger.info(`emailConverterService.js finished (pid:${pid}))`;
+  logger.info(`emailConverterService.js finished (pid:${pid})`);
   return authoritativeEmails.concat(authFound);
 };
