@@ -96,3 +96,7 @@ logs/dailyStats/AdobeCreativeCloud/2022-03-24.json:119
 ```
 
 It's not very elegant, but you can split that into date and the numbers of "Confirmed" circs per day.
+
+## Credits
+
+Developed by [Ken Irwin](irwinkr@miamioh.edu) at Miami University, in cooperation with Michael Bomholt.
