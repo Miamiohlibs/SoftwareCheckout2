@@ -87,12 +87,13 @@ That will prompt you for the beginning and end dates of the data you want to col
 It will query the LibCal API one day at a time, once every 1500ms -- so it will take about 45 seconds per month of data you request.
 
 Get stats on the responses, you can do something like this on the command line:
-`grep -c Confirmed logs/dailyStats/AdobeCreativeCloud/*`
-It will return data like:
+`grep -c Confirmed logs/dailyStats/AdobeCreativeCloud/* | sed 's/^.*\///' | sed 's/.json:/,/'`
+It will return CSV data like:
 
 ```
-logs/dailyStats/AdobeCreativeCloud/2022-03-23.json:128
-logs/dailyStats/AdobeCreativeCloud/2022-03-24.json:119
+2022-03-22,134
+2022-03-23,128
+2022-03-24,119
 ```
 
 It's not very elegant, but you can split that into date and the numbers of "Confirmed" circs per day.
