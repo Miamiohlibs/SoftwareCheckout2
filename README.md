@@ -77,3 +77,22 @@ Request API keys from LibCal and Adobe. You will enter these values in the confi
 
 - run `./killapp` -- finds the relevant process and kills it (only works if you used `npm run server` to start the app
 - `./restart` or `./killapp -r`: kill and restart (or use `npm run server` as above)
+
+## Stats
+
+LibCal keeps a record of all the request. You can fetch the daily raw stats with a command-line tool by running:
+`node getUsageData`
+That will prompt you for the beginning and end dates of the data you want to collect, and will prompt you to identiy which software package you want to collect data for.
+
+It will query the LibCal API one day at a time, once every 1500ms -- so it will take about 45 seconds per month of data you request.
+
+Get stats on the responses, you can do something like this on the command line:
+`grep -c Confirmed logs/dailyStats/AdobeCreativeCloud/*`
+It will return data like:
+
+```
+logs/dailyStats/AdobeCreativeCloud/2022-03-23.json:128
+logs/dailyStats/AdobeCreativeCloud/2022-03-24.json:119
+```
+
+It's not very elegant, but you can split that into date and the numbers of "Confirmed" circs per day.
