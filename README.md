@@ -77,3 +77,6 @@ Request API keys from LibCal and Adobe. You will enter these values in the confi
 
 - run `./killapp` -- finds the relevant process and kills it (only works if you used `npm run server` to start the app
 - `./restart` or `./killapp -r`: kill and restart (or use `npm run server` as above)
+
+## Credits
+Developed by [Ken Irwin](irwinkr@miamioh.edu) at Miami University, in cooperation with Michael Bomholt. 
