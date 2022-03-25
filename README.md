@@ -86,6 +86,8 @@ That will prompt you for the beginning and end dates of the data you want to col
 
 It will query the LibCal API one day at a time, once every 1500ms -- so it will take about 45 seconds per month of data you request.
 
+### Total license usage on a daily basis
+
 Get stats on the responses, you can do something like this on the command line:
 `grep -c Confirmed logs/dailyStats/AdobeCreativeCloud/* | sed 's/^.*\///' | sed 's/.json:/,/'`
 It will return CSV data like:
@@ -96,7 +98,18 @@ It will return CSV data like:
 2022-03-24,119
 ```
 
-It's not very elegant, but you can split that into date and the numbers of "Confirmed" circs per day.
+### Count of checkouts by license (overall or for a given period)
+
+To get a count of checkouts, you can run a `jq` like this (you may have to [install jq](https://stedolan.github.io/jq/download/) on your system first):
+
+`jq '.[] | select(.status == "Confirmed") | {bookId} ' logs/dailyStats/AdobeCreativeCloud/* | grep bookId | sort | uniq | wc -l`
+
+This reads each daily file, identifies each confirmed booking and returns the bookId, and hands over a list of all the bookIds including duplicates, then eliminates duplicates and counts the results. Note: this will look at every booking in the directory. To get all the results from one year you can modify the file path to something like `logs/dailyStats/AdobeCreativeCloud/2022*`. If you need a more nuanced range, you might consider copying the files you want to consider another directory, and then running the command on the whole directory.
+
+### Count of distinct users (overall or for a given period)
+
+Similar to above, count distinct user emails instead of booking ids:
+`jq '.[] | select(.status == "Confirmed") | {email} ' logs/dailyStats/AdobeCreativeCloud/* | grep email | sort | uniq | wc -l`
 
 ## Credits
 
