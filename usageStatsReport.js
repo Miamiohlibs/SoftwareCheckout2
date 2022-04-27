@@ -13,6 +13,22 @@ const getDirectories = (source) =>
 
 let logfolder = path.resolve(__dirname, './logs/dailyStats/');
 let pkgs = getDirectories(logfolder);
+let allPkgData = [];
+
+const summarize = (pkgName, data, first, last) => {
+  console.log();
+  let span = '';
+  if (first && last) {
+    span = `(${first}-${last})`;
+  }
+  console.log(`${pkgName} ${span}`.green);
+  bookIds = [...new Set(data.map((item) => item.bookId))];
+  console.log('Total Bookings', bookIds.length);
+  console.log(
+    'Total Users',
+    [...new Set(data.map((item) => item.email))].length
+  );
+};
 
 pkgs.forEach((pkg) => {
   let thisdata = [];
@@ -23,15 +39,11 @@ pkgs.forEach((pkg) => {
   files.forEach((file) => {
     let data = require(thisfolder + file);
     thisdata = thisdata.concat(data);
+    allPkgData = allPkgData.concat(data);
   });
   let first = files[0].replace('.json', '');
   let last = files[files.length - 1].replace('.json', '');
-  console.log();
-  console.log(`${pkg} (${first}-${last})`.green);
-  bookIds = [...new Set(thisdata.map((item) => item.bookId))];
-  console.log('Total Bookings', bookIds.length);
-  console.log(
-    'Total Users',
-    [...new Set(thisdata.map((item) => item.email))].length
-  );
+  summarize(pkg, thisdata, first, last);
 });
+
+summarize('All', allPkgData, '', '');
