@@ -86,6 +86,10 @@ That will prompt you for the beginning and end dates of the data you want to col
 
 It will query the LibCal API one day at a time, once every 1500ms -- so it will take about 45 seconds per month of data you request.
 
+You can get a summary of stats for the full time period by running:
+`node usageStatsReport`
+which will retrieve the total bookings and total unique users for the stats collected with the getUsageData script (above).
+
 ### Total license usage on a daily basis
 
 Get stats on the responses, you can do something like this on the command line:
