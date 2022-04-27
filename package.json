@@ -15,6 +15,7 @@
     "@adobe/jwt-auth": "^0.3.1",
     "async": "^3.2.0",
     "axios": "^0.21.1",
+    "colors": "^1.4.0",
     "dayjs": "^1.10.4",
     "debug": "^4.3.1",
     "fast-xml-parser": "^3.19.0",
