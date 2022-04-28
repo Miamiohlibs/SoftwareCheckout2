@@ -21,6 +21,7 @@ const summarize = (pkgName, data, first, last) => {
   if (first && last) {
     span = `(${first}-${last})`;
   }
+  data = data.filter((d) => d.status === 'Confirmed');
   console.log(`${pkgName} ${span}`.green);
   bookIds = [...new Set(data.map((item) => item.bookId))];
   console.log('Total Bookings', bookIds.length);
