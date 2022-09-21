@@ -107,6 +107,7 @@ module.exports = class AdobeUserMgmtService {
       await asyncForEach(reqBodyChunks, async (data) => {
         this.queryConf.data = data;
         await this.actionThrottle.pauseIfNeeded();
+        this.queryConf.timeout = 10000; // 10 seconds
         debug('submitting action with queryConf: ' + this.queryConf);
         let res = await this.api.getQueryResults(this.queryConf);
         this.actionThrottle.increment();
