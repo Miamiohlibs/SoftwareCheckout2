@@ -1,9 +1,45 @@
+/*  
+    Description: Calculates savings from Adobe Creative Cloud licenses
+    Method:
+        1. For each uniq bookId in the dailyStats/AdobeCreativeCloud/*.json files:
+        2. Count cost savings on a per user basis:
+            3. If the user hasn't previously checked out a license in the last 21 days
+                (conf.chargeAfterDays), increment savings by conf.costPerUse
+            4. If this is the third checkout in two months, whether or not to increment
+                savings depends on the conf.thirdCheckoutFreeWithin setting. 
+                (See note below.)
+    Usage:
+        let calc = new AdobeSavingsCalculator();
+        calc.calculateSavings();
+        console.log('Monthly Savings:', calc.monthlySavings);
+        console.log('Total Savings: $', calc.totalSavings);
+    Notes:
+        You can also get a list of users by savings with:
+
+        console.log(
+          'User by savings',
+          calc.users
+            .sort((a, b) => b.savings - a.savings)
+            .map((item) => item.email + ':' + item.savings)
+        );
+
+        thirdCheckoutFreeWithin is a hedge against a particular possible mis-accounting
+        scenario. It's possible for a user to check out a license three times in two
+        months, spaced far enough apart that they would be charged for the third even
+        though it should be "free". The thirdCheckoutFreeWithin setting is the number
+        of days that must elapse between the first and third checkouts for the third
+        checkout to be charge -- any less than that, and the third checkout should be
+        free.
+*/
+
 const { readdirSync } = require('fs');
 const path = require('path');
 const dayjs = require('dayjs');
 
 module.exports = class AdobeSavingsCalculator {
-  constructor(conf = { costPerUse: 20, chargeAfterDays: 21 }) {
+  constructor(
+    conf = { costPerUse: 20, chargeAfterDays: 21, thirdCheckoutFreeWithin: 50 }
+  ) {
     this.conf = conf;
     this.knownBookIds = [];
     this.users = [];
@@ -57,8 +93,16 @@ module.exports = class AdobeSavingsCalculator {
         dayjs(date).diff(user.lastSavingsDate, 'day')
       );
       if (daysSinceSavings > this.conf.chargeAfterDays) {
-        // console.log('daysSinceSavings', daysSinceSavings);
-        this.incrementSavings(user, item);
+        if (user.previousSavingsDate == null) {
+          this.incrementSavings(user, item);
+        } else {
+          let daysSincePreviousSavings = Math.abs(
+            dayjs(date).diff(user.previousSavingsDate, 'day')
+          );
+          if (daysSincePreviousSavings > this.conf.thirdCheckoutFreeWithin) {
+            this.incrementSavings(user, item);
+          }
+        }
       }
     }
     //  if user exists
@@ -77,7 +121,12 @@ module.exports = class AdobeSavingsCalculator {
   }
 
   createUser(email) {
-    let user = { email: email, savings: 0, lastSavingsDate: null };
+    let user = {
+      email: email,
+      savings: 0,
+      lastSavingsDate: null,
+      previousSavingsDate: null,
+    };
     this.users.push(user);
     return user;
   }
@@ -98,6 +147,9 @@ module.exports = class AdobeSavingsCalculator {
       this.monthlySavings[month] = 0;
     }
     this.monthlySavings[month] += cost;
+
+    // set user.previousSavingsDate to user.lastSavingsDate
+    user.previousSavingsDate = user.lastSavingsDate;
 
     // set user.lastSavingsDate to item.fromDate
     user.lastSavingsDate = item.fromDate;
