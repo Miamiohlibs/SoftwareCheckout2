@@ -92,15 +92,9 @@ which will retrieve the total bookings and total unique users for the stats coll
 
 ### Total license usage on a daily basis
 
-Get stats on the responses, you can do something like this on the command line:
-`grep -c Confirmed logs/dailyStats/AdobeCreativeCloud/* | sed 's/^.*\///' | sed 's/.json:/,/'`
-It will return CSV data like:
+Get all usage by date and license category in one file using: `node dailyUsageSummary.js`
 
-```
-2022-03-22,134
-2022-03-23,128
-2022-03-24,119
-```
+If there are any dates or licenses not covered, run `node usageStatsReport` (above) for the relevant licenses and dates and try again.
 
 ### Count of checkouts by license (overall or for a given period)
 
@@ -114,6 +108,13 @@ This reads each daily file, identifies each confirmed booking and returns the bo
 
 Similar to above, count distinct user emails instead of booking ids:
 `jq '.[] | select(.status == "Confirmed") | {email} ' logs/dailyStats/AdobeCreativeCloud/* | grep email | sort | uniq | wc -l`
+
+### Report Adobe Savings
+
+Adobe Creative Cloud licenses are available on a month-to-month basis. At the time of this writing, student licenses cost $20/month. We can get an estimate of how much money our students saved by not purchasing monthly licenses by running:
+`node savingsReporter.js`
+
+More information about how this figure is calculated is in the `models/AdobeSavingsCalculator.js` file.
 
 ## Credits
 
