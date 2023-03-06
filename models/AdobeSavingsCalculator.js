@@ -18,8 +18,8 @@ module.exports = class AdobeSavingsCalculator {
     files.forEach((file) => {
       this.processFile(dirname, file.name);
     });
-    console.log('Monthly Savings', this.monthlySavings);
-    console.log('Total Savings', this.totalSavings);
+    // console.log('Monthly Savings', this.monthlySavings);
+    // console.log('Total Savings', this.totalSavings);
   }
 
   getFiles(dirname) {
