@@ -1,3 +1,3 @@
-let AdobeSavingsCalcuator = require('./models/AdobeSavingsCalculator');
-let calc = new AdobeSavingsCalcuator();
+let AdobeSavingsCalculator = require('./models/AdobeSavingsCalculator');
+let calc = new AdobeSavingsCalculator();
 calc.calculateSavings();

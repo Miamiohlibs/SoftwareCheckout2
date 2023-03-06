@@ -2,13 +2,9 @@ const { readdirSync } = require('fs');
 const path = require('path');
 const dayjs = require('dayjs');
 
-module.exports = class AdobeSavingsCalcuator {
-  constructor(conf) {
-    // this.conf = conf;
-    this.conf = {
-      costPerUse: 20,
-      chargeAfterDays: 32,
-    };
+module.exports = class AdobeSavingsCalculator {
+  constructor(conf = { costPerUse: 20, chargeAfterDays: 21 }) {
+    this.conf = conf;
     this.knownBookIds = [];
     this.users = [];
     this.totalSavings = 0;
@@ -22,8 +18,8 @@ module.exports = class AdobeSavingsCalcuator {
     files.forEach((file) => {
       this.processFile(dirname, file.name);
     });
-    console.log('Total Savings', this.totalSavings);
     console.log('Monthly Savings', this.monthlySavings);
+    console.log('Total Savings', this.totalSavings);
   }
 
   getFiles(dirname) {
