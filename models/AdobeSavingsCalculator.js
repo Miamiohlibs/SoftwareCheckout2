@@ -14,6 +14,10 @@
         console.log('Monthly Savings:', calc.monthlySavings);
         console.log('Total Savings: $', calc.totalSavings);
     Notes:
+        A conf object can be passed to the constructor to override the default.
+        The defaults are set to assume a $20 cost per use and a 14-day checkout 
+        period. chargeAfterDays is 21 to allow a little wiggle room for renewing.
+
         You can also get a list of users by savings with:
 
         console.log(
@@ -29,7 +33,8 @@
         though it should be "free". The thirdCheckoutFreeWithin setting is the number
         of days that must elapse between the first and third checkouts for the third
         checkout to be charge -- any less than that, and the third checkout should be
-        free.
+        free. The default is 50 days, which allows a little wiggle room -- the third
+        checkout (14 days) will extend a bit past 2 months and still be counted as free.
 */
 
 const { readdirSync } = require('fs');
@@ -37,10 +42,17 @@ const path = require('path');
 const dayjs = require('dayjs');
 
 module.exports = class AdobeSavingsCalculator {
-  constructor(
-    conf = { costPerUse: 20, chargeAfterDays: 21, thirdCheckoutFreeWithin: 50 }
-  ) {
-    this.conf = conf;
+  constructor(conf) {
+    this.conf = conf || {};
+    if (conf == null || conf.costPerUse == null) {
+      this.conf.costPerUse = 20;
+    }
+    if (conf == null || conf.chargeAfterDays == null) {
+      this.conf.chargeAfterDays = 21;
+    }
+    if (conf == null || conf.thirdCheckoutFreeWithin == null) {
+      this.conf.thirdCheckoutFreeWithin = 50;
+    }
     this.knownBookIds = [];
     this.users = [];
     this.totalSavings = 0;
@@ -54,8 +66,6 @@ module.exports = class AdobeSavingsCalculator {
     files.forEach((file) => {
       this.processFile(dirname, file.name);
     });
-    // console.log('Monthly Savings', this.monthlySavings);
-    // console.log('Total Savings', this.totalSavings);
   }
 
   getFiles(dirname) {
@@ -78,7 +88,6 @@ module.exports = class AdobeSavingsCalculator {
     confirmedBookings.forEach((item) => {
       if (!this.knownBookIds.includes(item.bookId)) {
         this.knownBookIds.push(item.bookId);
-        // console.log('New bookId', item.bookId);
         this.processItem(item, date);
       }
     });
@@ -86,12 +95,14 @@ module.exports = class AdobeSavingsCalculator {
 
   processItem(item, date) {
     let user = this.getUser(item.email);
+    // always credit savings for first checkout
     if (user.lastSavingsDate == null) {
       this.incrementSavings(user, item);
     } else {
       let daysSinceSavings = Math.abs(
         dayjs(date).diff(user.lastSavingsDate, 'day')
       );
+      // if it's been long enough since last savings, credit savings
       if (daysSinceSavings > this.conf.chargeAfterDays) {
         if (user.previousSavingsDate == null) {
           this.incrementSavings(user, item);
@@ -99,16 +110,13 @@ module.exports = class AdobeSavingsCalculator {
           let daysSincePreviousSavings = Math.abs(
             dayjs(date).diff(user.previousSavingsDate, 'day')
           );
+          // but don't credit savings for the third time in 2 months
           if (daysSincePreviousSavings > this.conf.thirdCheckoutFreeWithin) {
             this.incrementSavings(user, item);
           }
         }
       }
     }
-    //  if user exists
-    //    get last savings date
-    //    if last savings date is more than this.conf.chargeAfterDays days ago
-    //      this.incrementSavings(user, item)
   }
 
   getUser(email) {
@@ -116,7 +124,6 @@ module.exports = class AdobeSavingsCalculator {
     if (!user) {
       user = this.createUser(email);
     }
-    // console.log(user);
     return user;
   }
 
