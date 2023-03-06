@@ -1,8 +1,18 @@
 let AdobeSavingsCalculator = require('./models/AdobeSavingsCalculator');
 let calc = new AdobeSavingsCalculator();
 calc.calculateSavings();
-console.log('Monthly Savings:', calc.monthlySavings);
-console.log('Total Savings: $', calc.totalSavings);
+let firstMonth = calc.monthlySavings[0].month;
+let lastMonth = calc.monthlySavings[calc.monthlySavings.length - 1].month;
+
+let output = {
+  conf: calc.conf,
+  firstMonth: firstMonth,
+  lastMonth: lastMonth,
+  users: calc.users.length,
+  monthlySavings: calc.monthlySavings,
+  totalSavings: calc.totalSavings,
+};
+console.log(JSON.stringify(output, null, 2));
 // console.log('Total Users: ', calc.users.length);
 // console.log(
 //   'User by savings',

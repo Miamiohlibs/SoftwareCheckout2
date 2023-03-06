@@ -150,10 +150,11 @@ module.exports = class AdobeSavingsCalculator {
 
     // increment this.monthlySavings by license cost
     let month = dayjs(item.fromDate).format('YYYY-MM');
-    if (!this.monthlySavings[month]) {
-      this.monthlySavings[month] = 0;
+    if (!this.monthlySavings.find((item) => item.month == month)) {
+      this.monthlySavings.push({ month: month, savings: cost });
+    } else {
+      this.monthlySavings.find((item) => item.month == month).savings += cost;
     }
-    this.monthlySavings[month] += cost;
 
     // set user.previousSavingsDate to user.lastSavingsDate
     user.previousSavingsDate = user.lastSavingsDate;
