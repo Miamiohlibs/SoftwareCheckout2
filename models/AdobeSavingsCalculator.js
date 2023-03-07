@@ -53,6 +53,9 @@ module.exports = class AdobeSavingsCalculator {
     if (conf == null || conf.thirdCheckoutFreeWithin == null) {
       this.conf.thirdCheckoutFreeWithin = 50;
     }
+    if (conf == null || conf.dirname == null) {
+      this.conf.dirname = 'AdobeCreativeCloud';
+    }
     this.knownBookIds = [];
     this.users = [];
     this.totalSavings = 0;
@@ -60,11 +63,10 @@ module.exports = class AdobeSavingsCalculator {
   }
 
   calculateSavings() {
-    // foreach file in ./logs/dailyStats/AdobeCreativeCloud
-    let dirname = 'AdobeCreativeCloud';
-    let files = this.getFiles(dirname);
+    // foreach file in ./logs/dailyStats/AdobeCreativeCloud/*.json
+    let files = this.getFiles(this.conf.dirname);
     files.forEach((file) => {
-      this.processFile(dirname, file.name);
+      this.processFile(this.conf.dirname, file.name);
     });
   }
 
