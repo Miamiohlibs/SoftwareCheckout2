@@ -52,5 +52,6 @@ module.exports = {
     costPerUse: 20, // cost per license per month
     chargeAfterDays: 21,
     thirdCheckoutFreeWithin: 50,
+    dirname: 'AdobeCreativeCloud', // ./logs/dailyStats/AdobeCreativeCloud
   },
 };
