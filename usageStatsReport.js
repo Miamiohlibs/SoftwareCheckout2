@@ -1,7 +1,6 @@
 const config = require('./config/appConf');
 const { readdirSync } = require('fs');
 const path = require('path');
-const dayjs = require('dayjs');
 const colors = require('colors');
 // let software = config.software;
 
