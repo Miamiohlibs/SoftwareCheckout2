@@ -90,6 +90,10 @@ You can get a summary of stats for the full time period by running:
 `node usageStatsReport`
 which will retrieve the total bookings and total unique users for the stats collected with the getUsageData script (above).
 
+### Deidentified info for each checkout
+
+Run `node logEachCheckout` to (re)generate a json file containing one entry per checkout. The results will appear in the `logs/eachCheckout/` folder -- one file per software package, and one file containing all checkouts for all packages.
+
 ### Total license usage on a daily basis
 
 Get all usage by date and license category in one file using: `node dailyUsageSummary.js`
