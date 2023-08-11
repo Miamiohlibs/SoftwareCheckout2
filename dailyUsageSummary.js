@@ -9,9 +9,19 @@ summarizeStats(softwareTitles);
 function summarizeStats(softwareTitles) {
   softwareTitles.forEach((softwareTitle) => {
     let folder = softwareTitle.replace(/ /g, '');
-    let files = fs.readdirSync(`./logs/dailyStats/${folder}`);
+    // get all files that aren't directories
+    let files = fs.readdirSync(`./logs/dailyStats/${folder}`, {
+      withFileTypes: true,
+    });
+    let anonFiles = fs.readdirSync(`./logs/dailyStats/${folder}/anon`, {
+      withFileTypes: true,
+    });
+    files.push(...anonFiles); // all files, anonymous and not
+    files = [...new Set(files)]; // remove duplicates
+    files = files.filter((file) => file.isFile()); // remove directories
+    files.sort(); // sort by date
     files.forEach((file) => {
-      let date = file.split('.')[0];
+      let date = file.name.split('.')[0];
       getDateStats(softwareTitle, date);
     });
   });
@@ -19,7 +29,17 @@ function summarizeStats(softwareTitles) {
 
 function getDateStats(softwareTitle, date) {
   let folder = softwareTitle.replace(/ /g, '');
-  let data = require(`./logs/dailyStats/${folder}/${date}.json`);
+  let filepath = './logs/dailyStats/' + folder + '/' + date + '.json';
+  let anonpath = './logs/dailyStats/' + folder + '/anon/' + date + '.json';
+  let data;
+  if (fs.existsSync(filepath)) {
+    data = require(`./logs/dailyStats/${folder}/${date}.json`);
+  } else if (fs.existsSync(anonpath)) {
+    data = require(`./logs/dailyStats/${folder}/anon/${date}.json`);
+  } else {
+    console.log('No file found for ' + softwareTitle + ' on ' + date);
+    return;
+  }
   let confirmedBookings = data.filter((item) => item.status == 'Confirmed');
   let skipCheckins = confirmedBookings.filter(
     (item) => !item.toDate.match(date + 'T00:00:00')
