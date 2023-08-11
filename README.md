@@ -94,6 +94,10 @@ which will retrieve the total bookings and total unique users for the stats coll
 
 Run `node logEachCheckout` to (re)generate a json file containing one entry per checkout. The results will appear in the `logs/eachCheckout/` folder -- one file per software package, and one file containing all checkouts for all packages.
 
+### Deidentify all stats
+
+The `getUsageData` script downloads each day's data into a folder for each software package (e.g. `/logs/AdobeCC`), and the data includes identifying details such as name and email address. To deidentify the data, run `node anonymizeStats`. This will move each day's data to an "anon" subfolder (e.g. `logs/AdobeCC/anon`), and the identifying LibCal fields will be hashed using the `md5` algorithm. The identifiers will still be unique, but they will not be decryptable to reveal the identity of the users. All of the other stats functions can read data from both the identifiable folder and the anonymous data folder, so it's ok to have a mix of newer data still identifiable and some older data that has been deidentified.
+
 ### Total license usage on a daily basis
 
 Get all usage by date and license category in one file using: `node dailyUsageSummary.js`
