@@ -1,5 +1,28 @@
 module.exports = {
-  nodePort: 9000, // could be any port; 9000 is the default for this app
+  cryptoConfig: {
+    secret: 'you should replace this with gibberish of your own',
+    note: 'this is used to encrypt the user data in the logs',
+  },
+  database: {
+    use: 'test', // which of the following configs to use
+    test: {
+      connection:
+        'mongodb://localhost:27017/softwareCheckout?appname=SoftwareCheckoutTest&ssl=false',
+      config: {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      },
+    },
+    prod: {
+      connection: '',
+      config: {
+        sslValidate: true,
+        sslCA: 'ssl-cert.pem', // in certs folder
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      },
+    },
+  },
   logLevels: {
     logLevels: {
       // false: not currently logging
