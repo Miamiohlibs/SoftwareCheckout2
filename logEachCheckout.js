@@ -61,8 +61,17 @@ pkgs.forEach((pkg) => {
   let files = readdirSync(thisfolder, { withFileTypes: true })
     .filter((dirent) => dirent.isFile())
     .map((dirent) => dirent.name);
+  let anonFiles = readdirSync(thisfolder + '/anon/', { withFileTypes: true })
+    .filter((dirent) => dirent.isFile())
+    .map((dirent) => dirent.name);
+  files.push(...anonFiles);
   files.forEach((file) => {
-    let data = require(thisfolder + file);
+    let data;
+    try {
+      data = require(thisfolder + file);
+    } catch {
+      data = require(thisfolder + '/anon/' + file);
+    }
     thisdata = thisdata.concat(data);
     allPkgData = allPkgData.concat(data);
   });
