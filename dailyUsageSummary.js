@@ -19,7 +19,7 @@ function summarizeStats(softwareTitles) {
     files.push(...anonFiles); // all files, anonymous and not
     files = [...new Set(files)]; // remove duplicates
     files = files.filter((file) => file.isFile()); // remove directories
-    files.sort(); // sort by date
+    files.sort((a, b) => (a.name > b.name ? 1 : -1)); // sort by date
     files.forEach((file) => {
       let date = file.name.split('.')[0];
       getDateStats(softwareTitle, date);
