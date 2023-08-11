@@ -37,7 +37,7 @@
         checkout (14 days) will extend a bit past 2 months and still be counted as free.
 */
 
-const { readdirSync } = require('fs');
+const { readdirSync, existsSync } = require('fs');
 const path = require('path');
 const dayjs = require('dayjs');
 
@@ -76,16 +76,24 @@ module.exports = class AdobeSavingsCalculator {
       __dirname,
       '../logs/dailyStats/' + dirname + '/'
     );
+    let thisfolderAnon = path.resolve(
+      __dirname,
+      '../logs/dailyStats/' + dirname + '/anon/'
+    );
     // return files with datestamp in filename + .json
     let files = readdirSync(thisfolder, { withFileTypes: true })
       .filter((dirent) => dirent.isFile())
       .filter((dirent) => dirent.name.match(/\d\d\d\d-\d\d-\d\d\.json$/));
+    let anonFiles = readdirSync(thisfolderAnon, { withFileTypes: true })
+      .filter((dirent) => dirent.isFile())
+      .filter((dirent) => dirent.name.match(/\d\d\d\d-\d\d-\d\d\.json$/));
+    files.push(...anonFiles);
     return files;
   }
 
   processFile(dirname, filename) {
     let date = filename.replace('.json', '');
-    let data = require(`../logs/dailyStats/${dirname}/${filename}`);
+    let data = this.getFileContents(dirname, filename);
     let confirmedBookings = data.filter((item) => item.status == 'Confirmed');
     confirmedBookings.forEach((item) => {
       if (!this.knownBookIds.includes(item.bookId)) {
@@ -93,6 +101,17 @@ module.exports = class AdobeSavingsCalculator {
         this.processItem(item, date);
       }
     });
+  }
+
+  getFileContents(dirname, filename) {
+    // handle both anon and non-anon files
+    let data;
+    try {
+      data = require(`../logs/dailyStats/${dirname}/${filename}`);
+    } catch {
+      data = require(`../logs/dailyStats/${dirname}/anon/${filename}`);
+    }
+    return data;
   }
 
   processItem(item, date) {
