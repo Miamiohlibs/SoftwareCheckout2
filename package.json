@@ -34,9 +34,9 @@
     "winston": "^3.3.3"
   },
   "devDependencies": {
-    "babel-jest": "^25.2.4",
+    "babel-jest": "^29.6.2",
     "bufferutil": "^4.0.1",
-    "jest": "^25.2.4",
+    "jest": "^29.6.2",
     "minify-xml": "^2.5.0",
     "nodemon": "^2.0.7",
     "utf-8-validate": "^5.0.5"
