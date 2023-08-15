@@ -1,5 +1,5 @@
 const axios = require('axios');
-const jwtAuth = require('@adobe/jwt-auth');
+// const jwtAuth = require('@adobe/jwt-auth');
 const path = require('path');
 const fs = require('fs');
 const debug = require('debug')('AdobeApi');
@@ -20,7 +20,7 @@ module.exports = class AdobeUserMgmtApi {
 
   async getToken() {
     try {
-      let tokenResponse = await jwtAuth(this.credentials);
+      let tokenResponse = await this.executeTokenQuery();
       this.accessToken = tokenResponse.access_token;
     } catch (err) {
       console.log('Failed to get Adobe token in:', __filename);
@@ -28,6 +28,35 @@ module.exports = class AdobeUserMgmtApi {
     }
   }
 
+  async executeTokenQuery() {
+    try {
+      let baseUrl = 'https://ims-na1.adobelogin.com/ims/token/v2';
+      let grantType = 'client_credentials';
+      let scope = 'openid,AdobeID,user_management_sdk';
+
+      var myHeaders = new Headers();
+      myHeaders.append('Content-Type', 'application/x-www-form-urlencoded');
+
+      var urlencoded = new URLSearchParams();
+      urlencoded.append('grant_type', grantType);
+      urlencoded.append('client_id', this.credentials.clientId);
+      urlencoded.append('client_secret', this.credentials.clientSecret);
+      urlencoded.append('scope', scope);
+
+      var requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: urlencoded,
+        redirect: 'follow',
+      };
+
+      let res = await fetch(baseUrl, requestOptions);
+      return await res.json();
+    } catch (err) {
+      console.log('Failed to execute Adobe token query in:', __filename);
+      console.log(err);
+    }
+  }
   async getQueryResults(queryConf) {
     if (!this.hasOwnProperty('accessToken')) {
       debug('getting access token before getQueryResults');
