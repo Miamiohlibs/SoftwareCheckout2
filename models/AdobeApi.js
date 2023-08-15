@@ -1,5 +1,4 @@
 const axios = require('axios');
-// const jwtAuth = require('@adobe/jwt-auth');
 const path = require('path');
 const fs = require('fs');
 const debug = require('debug')('AdobeApi');
