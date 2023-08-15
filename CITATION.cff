@@ -1,0 +1,30 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: Software Checkout
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Ken
+    family-names: Irwin
+    email: irwinkr@miamioh.edu
+    name-particle: Ken
+    orcid: 'https://orcid.org/0000-0002-5445-7175'
+    affiliation: Miami University
+identifiers:
+  - type: url
+    value: 'https://github.com/Miamiohlibs/SoftwareCheckout2'
+    description: GitHub Repository
+repository-code: 'https://github.com/Miamiohlibs/SoftwareCheckout2'
+abstract: >-
+  Check out software licenses to library patrons using
+  LibCal. Works with Adobe and Jamf (Apple) licenses.
+keywords:
+  - software licences
+  - libraries
+  - springshare
+  - libcal
+license: GPL-3.0
