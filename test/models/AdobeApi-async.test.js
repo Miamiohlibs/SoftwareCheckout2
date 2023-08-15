@@ -45,7 +45,7 @@ describe('AdobeUserMgmtRepository: addMembersToGroup', async () => {
   // and hitting the rate limit on the Adobe API
   // if that happens, comment out the preceding tests (but the sleep command ought to prevent this problem)
   it('should be able to add more than 10 users at once (chunked into sep calls)', async () => {
-    jest.setTimeout(5000);
+    jest.setTimeout(8000);
     console.log('sleeping for 3 seconds to avoid rate limiting');
     await new Promise((r) => setTimeout(r, 3000));
     console.log('done sleeping');
