@@ -23,7 +23,7 @@ describe('AdobeUserMgmtApi: getToken', () => {
 //   });
 // });
 
-describe('AdobeUserMgmtRepository: addMembersToGroup', async () => {
+describe('AdobeUserMgmtRepository: addMembersToGroup', () => {
   emailsToAdd1 = ['qum@miamioh.edu'];
   emailsToAdd2 = ['qum@miamioh.edu', 'brownsj1@miamioh.edu'];
   emailsFake1 = ['thisissuchafakeemail@miamioh.edu'];
@@ -40,6 +40,32 @@ describe('AdobeUserMgmtRepository: addMembersToGroup', async () => {
     'conleyj@miamioh.edu',
     'wegnera3@miamioh.edu',
   ];
+
+  it('should be able to fake-add Meng to a list', async () => {
+    let res = await repo.addGroupMembers(emailsToAdd1, testGroupName, 'test');
+    expect(res).toHaveProperty('status');
+    expect(res.status).toBe('success');
+    expect(res).toHaveProperty('message');
+    expect(res.message).toHaveProperty('completedInTestMode');
+    expect(res.message.completedInTestMode).toBe(1);
+  });
+  it('should be able to fake-add two users to a list', async () => {
+    let res = await repo.addGroupMembers(emailsToAdd2, testGroupName, 'test');
+    expect(res).toHaveProperty('status');
+    expect(res.status).toBe('success');
+    expect(res).toHaveProperty('message');
+    expect(res.message).toHaveProperty('completedInTestMode');
+    expect(res.message.completedInTestMode).toBe(2);
+  });
+  it('should fail to fake-add fakeuser to a list', async () => {
+    let res = await repo.addGroupMembers(emailsFake1, testGroupName, 'test');
+    expect(res).toHaveProperty('status');
+    expect(res.status).toBe('error');
+    expect(res).toHaveProperty('message');
+    expect(res.message).toHaveProperty('errors');
+    expect(res.message).toHaveProperty('notCompleted');
+    expect(res.message.notCompleted).toBe(1);
+  });
 
   // if this test is failing, it may be because this test suite is running too fast
   // and hitting the rate limit on the Adobe API
