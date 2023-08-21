@@ -7,14 +7,6 @@ const { axiosLogPrep } = require('../helpers/utils');
 module.exports = class AdobeUserMgmtApi {
   constructor(conf) {
     this.credentials = conf.credentials;
-    this.addPrivateKeyToCredentials(conf);
-  }
-
-  addPrivateKeyToCredentials(conf) {
-    this.credentials.privateKey = fs.readFileSync(
-      path.join(__dirname, conf.certs.privateKeyFile),
-      'utf8'
-    );
   }
 
   async getToken() {

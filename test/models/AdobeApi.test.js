@@ -11,11 +11,6 @@ describe('Initialization', () => {
     expect(typeof api.credentials).toBe('object');
     expect(api.credentials).toHaveProperty('clientId');
   });
-
-  it('should be able to read the private key', () => {
-    expect(api.credentials).toHaveProperty('privateKey');
-    expect(typeof api.credentials.privateKey).toBe('string');
-  });
 });
 
 describe('getAuthHeaders', () => {

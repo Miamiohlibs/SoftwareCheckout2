@@ -7,10 +7,6 @@ module.exports = {
     // metaScopes: 'ent_user_sdk', // Metascopes
   },
 
-  certs: {
-    privateKeyFile: '../certs/private.key', // You will generate this key and upload the public key to Adobe
-  },
-
   // savings calculator configuration, estimate costs saved by using Adobe Checkout
   // default settings assume a $20/month student license and a 14-day checkout period
   // your mileage may vary
