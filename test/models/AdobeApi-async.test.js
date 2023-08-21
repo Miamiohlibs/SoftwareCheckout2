@@ -71,10 +71,8 @@ describe('AdobeUserMgmtRepository: addMembersToGroup', () => {
   // and hitting the rate limit on the Adobe API
   // if that happens, comment out the preceding tests (but the sleep command ought to prevent this problem)
   it('should be able to add more than 10 users at once (chunked into sep calls)', async () => {
-    jest.setTimeout(8000);
-    console.log('sleeping for 3 seconds to avoid rate limiting');
+    // sleep 3000ms to avoid rate limit
     await new Promise((r) => setTimeout(r, 3000));
-    console.log('done sleeping');
     let res = await repo.addGroupMembers(emailsBigList, testGroupName, 'test');
     expect(res).toHaveProperty('status');
     expect(res.status).toBe('success');
@@ -82,5 +80,5 @@ describe('AdobeUserMgmtRepository: addMembersToGroup', () => {
     expect(res.message).toHaveProperty('completedInTestMode');
     let expectedLength = emailsBigList.length;
     expect(res.message.completedInTestMode).toBe(expectedLength);
-  });
+  }, 8000); // 8000 is a timeout in ms
 });
