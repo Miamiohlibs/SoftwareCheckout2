@@ -103,7 +103,14 @@ Get all usage by date and license category in one file using: `node dailyUsageSu
 
 If there are any dates or licenses not covered, run `node usageStatsReport` (above) for the relevant licenses and dates and try again.
 
-### Count of checkouts by license (overall or for a given period)
+### Count of checkouts and distinct users by license and year
+
+To get a count of checkouts and distinct users by license and year, run:
+`node usageSummary.js`
+
+This is wrapper for the following commands, run for each license group and year:
+
+#### Count of checkouts by license (overall or for a given period)
 
 To get a count of checkouts, you can run a `jq` like this (you may have to [install jq](https://stedolan.github.io/jq/download/) on your system first):
 
@@ -111,7 +118,7 @@ To get a count of checkouts, you can run a `jq` like this (you may have to [inst
 
 This reads each daily file, identifies each confirmed booking and returns the bookId, and hands over a list of all the bookIds including duplicates, then eliminates duplicates and counts the results. Note: this will look at every booking in the directory. To get all the results from one year you can modify the file path to something like `logs/dailyStats/AdobeCreativeCloud/2022*`. If you need a more nuanced range, you might consider copying the files you want to consider another directory, and then running the command on the whole directory.
 
-### Count of distinct users (overall or for a given period)
+#### Count of distinct users (overall or for a given period)
 
 Similar to above, count distinct user emails instead of booking ids:
 `jq '.[] | select(.status == "Confirmed") | {email} ' logs/dailyStats/AdobeCreativeCloud/* | grep email | sort | uniq | wc -l`
