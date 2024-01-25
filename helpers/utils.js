@@ -21,9 +21,38 @@ const axiosLogPrep = (obj) => {
   return obj;
 };
 
+// genList generates a list of choices for the inquirer prompt
+// (inquirer is a library for prompting the user for input)
+const genList = ({
+  list, // array of objects
+  message, // prompt text
+  itemNameProp, // object prop with name of the item to be displayed
+  itemValueProp, // object prop with value of the item to be returned
+  outputLabel, // name of the output variable
+}) => {
+  const choices = list.map((item, index) => {
+    // let value = index; // return index as default
+    // if (item.hasOwnProperty(itemNameProp)) {
+    //   value = item[itemNameProp]; // or return the value of the itemNameProp
+    // }
+    return {
+      key: index,
+      name: item[itemNameProp],
+      value: item[itemValueProp],
+    };
+  });
+  return {
+    type: 'rawlist',
+    message: message,
+    name: outputLabel,
+    choices: choices,
+  };
+};
+
 module.exports = {
   sleep,
   filterToEntriesMissingFromSecondArray,
   asyncForEach,
   axiosLogPrep,
+  genList,
 };

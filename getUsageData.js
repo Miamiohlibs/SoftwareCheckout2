@@ -10,9 +10,10 @@ const libCalConf = require('./config/libCal');
 const lcapi = new LibCalApi(libCalConf);
 const fs = require('fs');
 const dayjs = require('dayjs');
-const { sleep } = require('./helpers/utils');
-const path = require('path');
-let software = config.software;
+// const { sleep } = require('./helpers/utils');
+// const path = require('path');
+const software = config.software;
+const { genList } = require('./helpers/utils');
 
 const timer = (ms) => new Promise((res) => setTimeout(res, ms));
 
@@ -35,22 +36,6 @@ async function runQuery(date, cid, folder) {
   );
 }
 
-const genList = (list) => {
-  const choices = list.map((item, index) => {
-    return {
-      key: index,
-      name: item.libCalName,
-      value: index,
-    };
-  });
-  return {
-    type: 'rawlist',
-    message: 'Which software to get stats for?',
-    name: 'softwareOption',
-    choices: choices,
-  };
-};
-
 async function main() {
   const getStart = await inquirer.prompt({
     type: 'input',
@@ -64,14 +49,25 @@ async function main() {
   });
   const startDate = getStart.startDate;
   const endDate = getEnd.endDate;
-  const getSoftware = await inquirer.prompt(genList(software));
-  const softwareIndex = getSoftware.softwareOption;
-  const softwareName = software[softwareIndex].libCalName;
+
+  const getSoftware = await inquirer.prompt(
+    genList({
+      list: software,
+      message: 'Which software to get stats for?',
+      itemNameProp: 'libCalName',
+      itemValueProp: 'libCalCid',
+      outputLabel: 'softwareOption',
+    })
+  );
+  console.log('cid: ', getSoftware.softwareOption);
+  const cid = getSoftware.softwareOption;
+  const softwareName = software.filter((item) => item.libCalCid === cid)[0]
+    .libCalName;
+  console.log('softwareName: ', softwareName);
   const folder = softwareName.replace(/ /g, '');
-  const cid = software[softwareIndex].libCalCid;
   let date = startDate;
 
-  console.log(startDate, endDate, softwareName, folder, cid);
+  // console.log(startDate, endDate, softwareName, folder, cid);
   while (date <= endDate) {
     await runQuery(date, cid, folder);
     console.log(date);

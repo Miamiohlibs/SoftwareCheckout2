@@ -3,30 +3,13 @@ const realAppConf = require('../config/appConf');
 const realConf = require('../config/libcal');
 const LibCalApi = require('../models/LibCalApi');
 const api = new LibCalApi(realConf);
-
+const { genList } = require('../helpers/utils');
 /*
     This demo looks up the software categories for the LibCalCid 
     values specified in the appConf.js file. It then prompts the user 
     to select one of the categories. It then gets the bookings for
     that category and gives the option to display the current bookings.
 */
-
-// genList generates a list of choices for the inquirer prompt
-const genList = (list) => {
-  const choices = list.map((item, index) => {
-    return {
-      key: index,
-      name: item.name,
-      value: item.cid,
-    };
-  });
-  return {
-    type: 'rawlist',
-    message: 'Which category to get bookings for?',
-    name: 'libCalCategory',
-    choices: choices,
-  };
-};
 
 (async () => {
   let res = await api.getSoftwareCategories();
@@ -38,7 +21,15 @@ const genList = (list) => {
   console.log(`categories:`);
   console.log(knownCats);
 
-  let getCats = await inquirer.prompt(genList(knownCatDetails));
+  let getCats = await inquirer.prompt(
+    genList({
+      list: knownCatDetails, // array of objects
+      message: 'Which category to get bookings for?',
+      itemNameProp: 'name',
+      itemValueProp: 'cid',
+      outputLabel: 'libCalCategory',
+    })
+  );
   console.log(`Getting bookings for ${getCats}`);
   console.log(getCats.libCalCategory);
   res = await api.getBookings(getCats.libCalCategory);
