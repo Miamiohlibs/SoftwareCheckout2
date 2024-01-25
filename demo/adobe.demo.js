@@ -78,7 +78,7 @@ const addUser = async () => {
     message: 'Email address?',
   });
   let res = await adobeRepo.addGroupMembers([entry.email], groupName);
-  console.log(res);
+  console.log(JSON.stringify(res));
 };
 
 const removeUsers = async () => {
@@ -90,7 +90,7 @@ const removeUsers = async () => {
     message: 'Email address?',
   });
   let res = await adobeRepo.removeGroupMembers([entry.email], groupName);
-  console.log(res);
+  console.log(JSON.stringify(res, null, 2));
 };
 const listUsers = async () => {
   const getSoftware = await chooseGroup('List');
