@@ -56,8 +56,8 @@ const listGroups = () => {
   console.log(adobeSoftware);
 };
 
-const listUsers = async () => {
-  const getSoftware = await inquirer.prompt(
+const chooseGroup = async () => {
+  return await inquirer.prompt(
     genList({
       list: adobeSoftware,
       message: 'Get users for which group?',
@@ -66,8 +66,35 @@ const listUsers = async () => {
       outputLabel: 'groupName',
     })
   );
+};
+
+const addUser = async () => {
+  const getSoftware = await chooseGroup();
   const groupName = getSoftware.groupName;
-  console.log('groupName: ', groupName);
+  const entry = await inquirer.prompt({
+    type: 'input',
+    name: 'email',
+    message: 'Email address?',
+  });
+  let res = await adobeRepo.addGroupMembers([entry.email], groupName);
+  console.log(res);
+};
+
+const removeUsers = async () => {
+  const getSoftware = await chooseGroup();
+  const groupName = getSoftware.groupName;
+  const entry = await inquirer.prompt({
+    type: 'input',
+    name: 'email',
+    message: 'Email address?',
+  });
+  let res = await adobeRepo.removeGroupMembers([entry.email], groupName);
+  console.log(res);
+};
+const listUsers = async () => {
+  const getSoftware = await chooseGroup();
+  const groupName = getSoftware.groupName;
+  //   console.log('groupName: ', groupName);
   const users = (await adobeRepo.getGroupMembers(groupName)).map(
     ({ email, firstname, lastname }) => ({ email, firstname, lastname })
   );
@@ -77,8 +104,12 @@ const main = async () => {
   const action = await mainMenu();
   switch (action.mainMenu) {
     case 'addUsers':
+      await addUser();
+      main();
       break;
     case 'removeUsers':
+      await removeUsers();
+      main();
       break;
     case 'listUsers':
       await listUsers();
