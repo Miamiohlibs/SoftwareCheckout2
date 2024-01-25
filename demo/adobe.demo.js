@@ -21,6 +21,7 @@ const adobeSoftware = software
   }));
 
 const mainMenu = () => {
+  console.log();
   return inquirer.prompt([
     {
       type: 'list',
@@ -56,11 +57,11 @@ const listGroups = () => {
   console.log(adobeSoftware);
 };
 
-const chooseGroup = async () => {
+const chooseGroup = async (verb) => {
   return await inquirer.prompt(
     genList({
       list: adobeSoftware,
-      message: 'Get users for which group?',
+      message: `${verb} users in which group?`,
       itemNameProp: 'vendorGroupName',
       itemValueProp: 'vendorGroupName',
       outputLabel: 'groupName',
@@ -69,7 +70,7 @@ const chooseGroup = async () => {
 };
 
 const addUser = async () => {
-  const getSoftware = await chooseGroup();
+  const getSoftware = await chooseGroup('Add');
   const groupName = getSoftware.groupName;
   const entry = await inquirer.prompt({
     type: 'input',
@@ -81,7 +82,7 @@ const addUser = async () => {
 };
 
 const removeUsers = async () => {
-  const getSoftware = await chooseGroup();
+  const getSoftware = await chooseGroup('Remove');
   const groupName = getSoftware.groupName;
   const entry = await inquirer.prompt({
     type: 'input',
@@ -92,9 +93,8 @@ const removeUsers = async () => {
   console.log(res);
 };
 const listUsers = async () => {
-  const getSoftware = await chooseGroup();
+  const getSoftware = await chooseGroup('List');
   const groupName = getSoftware.groupName;
-  //   console.log('groupName: ', groupName);
   const users = (await adobeRepo.getGroupMembers(groupName)).map(
     ({ email, firstname, lastname }) => ({ email, firstname, lastname })
   );

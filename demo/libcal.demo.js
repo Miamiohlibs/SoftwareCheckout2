@@ -1,5 +1,5 @@
 const inquirer = require('inquirer');
-const realAppConf = require('../config/appConf');
+// const realAppConf = require('../config/appConf');
 const realConf = require('../config/libCal');
 const LibCalApi = require('../models/LibCalApi');
 const api = new LibCalApi(realConf);
