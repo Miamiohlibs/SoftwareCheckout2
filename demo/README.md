@@ -1,0 +1,1 @@
+The demo folder contains scripts that are sort of like tests, but without the same level of formality. These script run pieces of the larger code and report on the results. They are useful for testing and debugging, but they are not as formal as a true test suite.

@@ -77,6 +77,29 @@ Request API keys from LibCal and Adobe. You will enter these values in the confi
 - run `./killapp` -- finds the relevant process and kills it (only works if you used `npm run server` to start the app
 - `./restart` or `./killapp -r`: kill and restart (or use `npm run server` as above)
 
+## Testing the App
+
+### Unit tests
+
+Run unit tests with `npm test`.
+
+### Demo parts of the app
+
+The `demo` folder contains a few command-line scripts that can be used to test parts of the app without running the whole thing.
+
+- `node demo/libCalApi.js` - test the LibCal API
+
+  - this script will prompt you with a list of software packages and ask you to select one; it will retrieve the current booking for that package and display the results
+
+- `node demo/adobeApi.js` - test the Adobe API
+
+  - this will let you fetch the list of current entitlements for a given license group, and add or subtract a user from that group
+  - relies on the `config/appConf.js` file to identify the license group to use, and on the `config/adobe.js` file to identify the API credentials
+
+- `node demo/jamfApi.js` - test the Jamf API
+  - this will let you fetch the list of current users in a given license group, and add or subtract a user from that group
+  - relies on the `config/appConf.js` file to identify the license group to use, and on the `config/jamf.js` file to identify the API credentials
+
 ## Stats
 
 LibCal keeps a record of all the request. You can fetch the daily raw stats with a command-line tool by running:
