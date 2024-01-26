@@ -12,6 +12,7 @@ const { genList } = require('../helpers/utils');
 const software = config.software;
 const AdobeRepository = require('../repositories/AdobeRepository');
 const adobeRepo = new AdobeRepository(adobeConf);
+const { mainMenu } = require('./mainMenu');
 
 const adobeSoftware = software
   .filter((item) => item.vendor == 'Adobe')
@@ -19,39 +20,6 @@ const adobeSoftware = software
     vendorGroupName,
     active,
   }));
-
-const mainMenu = () => {
-  console.log();
-  return inquirer.prompt([
-    {
-      type: 'list',
-      name: 'mainMenu',
-      message: 'What would you like to do?',
-      choices: [
-        {
-          name: 'Add users to a group',
-          value: 'addUsers',
-        },
-        {
-          name: 'Remove users from a group',
-          value: 'removeUsers',
-        },
-        {
-          name: 'List users in a group',
-          value: 'listUsers',
-        },
-        {
-          name: 'List groups',
-          value: 'listGroups',
-        },
-        {
-          name: 'Quit',
-          value: 'quit',
-        },
-      ],
-    },
-  ]);
-};
 
 const listGroups = () => {
   console.log(adobeSoftware);
