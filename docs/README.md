@@ -2,26 +2,24 @@
 description: Overview
 ---
 
-# Software Checkout
-
-## Overview
+# Overview
 
 **Software Checkout** is a Node.js app for libraries and other institutions to allow dynamic request and assignment of software licenses. Users can request license access by signing up for a time-slot using SpringShare's LibCal; the app then updates license assignments with the vendor's user management API to assign or a revoke licenses at the appropriate time.
 
-### Current Supported Vendors
+## Current Supported Vendors
 
 * Adobe Cloud
 * Jamf (manages Apple software)
 
-### Requirements
+## Requirements
 
 * Node.js 18
 * LibCal subscription
 
-### GitHub Repo
+## GitHub Repo
 
 [https://github.com/Miamiohlibs/SoftwareCheckout2](https://github.com/Miamiohlibs/SoftwareCheckout2)
 
-### Credits
+## Credits
 
 Developed by Ken Irwin at Miami University, in cooperation with Michael Bomholt.
