@@ -76,6 +76,24 @@ module.exports = class JamfRepository {
 
   /* Group Membership methods */
 
+  async getGroups() {
+    try {
+      let url = this.api.userGroupsRoute;
+      await this.throttle.pauseIfNeeded();
+      let res = await this.api.submitGet(url);
+      this.throttle.increment();
+      if (res.hasOwnProperty('user_groups')) {
+        return res.user_groups.map(({ name, id }) => ({ name, id }));
+      } else {
+        return [];
+      }
+    } catch (err) {
+      logger.error(
+        'failed JamfRepo.getGroups' + JSON.stringify({ error: err })
+      );
+    }
+  }
+
   async getGroupMembers(groupId) {
     try {
       let usernames;
