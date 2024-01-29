@@ -32,6 +32,13 @@ Jamf is a mobile device management system that can also manage software licenses
 1. Using the [Adobe I/O Console](https://console.adobe.io/), create a new Project with an associated oAuth Server-to-Server credential.
 2. Copy `config/adobe.sample.js` to `config/adobe.js` and add the Project details to that file (clientId, clientSecret,orgId)
 
+### Jamf Setup
+
+1. Create a Jamf user and grant it access to api integrations.
+2. Create a static user group for each software title you wish to check out.
+3. Create a Content Management invitation scoped to each static software group.
+4. Create a Volume Assignment for each title scoped to the corresponding static user group.
+
 ## App Configuration
 
 This repo comes with several `config/*.sample.js` files; copy each of them over to `config/*.js` e.g. `config/adobe.js` and update the values with local variables and API keys as indicated by the comments in the file.
