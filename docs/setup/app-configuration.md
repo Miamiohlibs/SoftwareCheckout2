@@ -22,5 +22,12 @@ Request API keys from LibCal and Adobe. You will enter these values in the confi
     * `.libCalCid`: LibCal CategoryID for the group (used by the app)
     * `.vendorGroupName`: license group name (used by Adobe)
     * `.vendorGroupId`: license group id (used by Jamf)
+      * note: the Jamf dashboard will not tell you the group id, but it is available through their APIs /usergroups route. You can run `node demo/jamf-demo.js` on the command-line to query the API. Select the "List groups" option to show both which groups are set up in the `config/jamf.js` file and to see what groups exist in the Jamf dashboard. This query will return the list of Jamf dashboard groups along with their group ids, like:\
+        \
+        `{ name: 'Software Checkout Final Cut', id: 3 },` \
+        `{ name: 'Software Checkout Logic Pro and Mainstage', id: 7 },` \
+        `{ name: 'Software Checkout Procreate', id: 9 },` \
+        `{ name: 'Software Checkout Test', id: 8 },`\
+
 
 You will also need to set up LibCal and at least one vendor (Adobe and/or Jamf). See the following sections of this documentation for details on those.
