@@ -30,8 +30,12 @@ const chooseGroup = async (verb) => {
   );
 };
 
-const listGroups = () => {
+const listGroups = async () => {
+  console.log('Jamf Groups in config file:');
   console.log(jamfSoftware);
+  console.log('Jamf Groups in Jamf:');
+  const jamfGroups = await jamfRepo.getGroups();
+  console.log(jamfGroups);
 };
 
 const listUsers = async () => {
