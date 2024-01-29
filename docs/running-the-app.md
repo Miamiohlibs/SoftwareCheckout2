@@ -1,7 +1,3 @@
----
-description: Running, killing, and restarting the app
----
-
 # Running the App
 
 ### Running the app
