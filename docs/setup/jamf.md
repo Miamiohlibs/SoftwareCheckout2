@@ -2,7 +2,7 @@
 
 #### Jamf
 
-Jamf is a mobile device management system that can also manage software licenses. This app uses the [Jamf Classic API](https://developer.jamf.com/jamf-pro/docs/getting-started-2) to add and remove users from license groups for Apple software packages.
+Jamf is a mobile device management system that can also manage software licenses. This app uses the [Jamf Classic API](https://developer.jamf.com/jamf-pro/docs/getting-started-2) to add and remove users from license groups for MacOS and iOS software packages.
 
 #### Jamf Setup
 
