@@ -1,7 +1,6 @@
 # Table of contents
 
 * [Software Checkout](README.md)
-* [Page](page.md)
 * [Setup](setup/README.md)
   * [App Configuration](setup/app-configuration.md)
   * [LibCal](setup/libcal.md)
