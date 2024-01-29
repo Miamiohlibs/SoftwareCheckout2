@@ -5,7 +5,7 @@
 ## Current Supported Vendors
 
 * [Adobe Creative Cloud](https://www.adobe.com/creativecloud.html)
-* [Jamf](https://www.jamf.com/) (manages Apple software)
+* [Jamf](https://www.jamf.com/) (manages MacOS and iOS software)
 
 ## Requirements
 
