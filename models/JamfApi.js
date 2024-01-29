@@ -6,6 +6,7 @@ module.exports = class JamfApi {
   constructor(conf) {
     this.auth = conf.auth;
     this.baseUrl = conf.baseUrl + '/JSSResource';
+    this.userGroupsRoute = this.baseUrl + '/usergroups';
     this.userGroupRoute = this.baseUrl + '/usergroups/id/';
     this.userEmailRoute = this.baseUrl + '/users/email/';
     this.userRoute = this.baseUrl + '/users/id/';
@@ -17,7 +18,9 @@ module.exports = class JamfApi {
 
   async submitPut(url, xml = null) {
     // success = res.status == 201
-    logger.debug('beginning jamfApi.submitPut with url: ' + url + ' and with xml: ' +xml);
+    logger.debug(
+      'beginning jamfApi.submitPut with url: ' + url + ' and with xml: ' + xml
+    );
     try {
       let config = {
         auth: this.auth,
