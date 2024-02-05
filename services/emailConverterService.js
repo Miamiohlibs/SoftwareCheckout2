@@ -16,6 +16,12 @@ let pid = process.pid;
 */
 
 module.exports = async (emails) => {
+  if (!appConf.emailConverter.active) {
+    logger.info(
+      'emailConverterService skipped because it is not set to active. To activate, set emailConverter.active to true in appConf.js'
+    );
+    return emails;
+  }
   logger.info(`starting emailConverterService (pid:${pid})`);
   await emailRepo.connect();
   logger.info(`emailConverterService connected to db (pid:${pid})`);
@@ -24,7 +30,9 @@ module.exports = async (emails) => {
   // alternate definition may or may not result in a faster process
   logger.info(`emailConverterService querying db (pid:${pid})`);
   knownEmails = await emailRepo.queryAllEmails();
-  logger.info(`emailConverterService query complete (pid:${pid})`, { queryResults: knownEmails.length });
+  logger.info(`emailConverterService query complete (pid:${pid})`, {
+    queryResults: knownEmails.length,
+  });
   let { found, missing } = await emailRepo.getKnownAndUnknownEmails(
     emails,
     knownEmails
@@ -32,14 +40,17 @@ module.exports = async (emails) => {
 
   let authoritativeEmails = found;
 
-  logger.info(`emailConverterService sorting results (pid:${pid})`, { found: found.length, missing: missing.length });
-  let {
-    authFound,
-    authMissing,
-    newMatches,
-  } = await convertRepo.getAuthoritativeEmailsBatch(missing);
+  logger.info(`emailConverterService sorting results (pid:${pid})`, {
+    found: found.length,
+    missing: missing.length,
+  });
+  let { authFound, authMissing, newMatches } =
+    await convertRepo.getAuthoritativeEmailsBatch(missing);
 
-  logger.info(`emailConverterService finished getAuthoritativeEmailsBatch (pid:${pid})`, { found: found.length, missing: missing.length });
+  logger.info(
+    `emailConverterService finished getAuthoritativeEmailsBatch (pid:${pid})`,
+    { found: found.length, missing: missing.length }
+  );
 
   if (newMatches.length > 0) {
     logger.info('adding new emails pairs with', newMatches);

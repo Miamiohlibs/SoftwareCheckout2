@@ -1,4 +1,4 @@
-const { JsonWebTokenError } = require('jsonwebtoken');
+// const { JsonWebTokenError } = require('jsonwebtoken');
 const EmailConverterRepository = require('../../repositories/EmailConverterRepository');
 const realAppConf = require('../../config/appConf');
 

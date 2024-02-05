@@ -44,6 +44,7 @@ module.exports = {
     cert: '/path/to/your/ssl.crt', // REPLACE WITH path to your server's SSL cert
   },
   emailConverter: {
+    active: true, // set to false to disable the emailConverterService
     baseUrl: 'https://yourEmailConverterApi/?q=',
     endOfUrl: '', //any additional URL text to include after
     objectPropForReturnValue: 'data.uid', // response object property with the desired return value
