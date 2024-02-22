@@ -30,8 +30,10 @@ const { genList } = require('../helpers/utils');
       outputLabel: 'libCalCategory',
     })
   );
-  console.log(`Getting bookings for ${getCats}`);
-  console.log(getCats.libCalCategory);
+  console.log(
+    `Getting bookings for libcal cat id: ${getCats.libCalCategory}...`
+  );
+  // console.log(`Displaying libCalCategoryId: ${getCats.libCalCategory}`);
   res = await api.getBookings(getCats.libCalCategory);
   console.log(`Received ${res.length} bookings`);
   let showBookings = await inquirer.prompt({
