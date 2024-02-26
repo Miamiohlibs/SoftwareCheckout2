@@ -25,7 +25,7 @@ module.exports = async () => {
 
   asyncForEach(software, async (pkg) => {
     logger.info(
-      `Getting libCalCid (pid:${pid}): ${pkg.libCalCid}, vendorGroupName: ${pkg.vendorGroupName}`
+      `Getting libCalCid (pid:${pid}): ${pkg.libCalCid}, vendorGroupName: ${pkg.vendorGroupName}, vendorGroupId: ${pkg.vendorGroupId}`
     );
 
     // get libCalList based on pkg.libCalCid
@@ -36,9 +36,13 @@ module.exports = async () => {
       content: libCalEmails,
     });
     // // get adobe list based on pkg.vendorGroupName
-    let currAdobeEntitlements = await adobe.getGroupMembers(
-      pkg.vendorGroupName
-    );
+    let group;
+    if (pkg.hasOwnProperty('vendorGroupId')) {
+      group = pkg.vendorGroupId;
+    } else {
+      group = pkg.vendorGroupName;
+    }
+    let currAdobeEntitlements = await adobe.getGroupMembers(group);
     logger.info(
       `length of currAdobeEntitlements: ${currAdobeEntitlements.length} (pid:${pid})`
     );
@@ -96,7 +100,7 @@ module.exports = async () => {
       content: emailsToAdd,
     });
     if (emailsToAdd.length > 0) {
-      res = await adobe.addGroupMembers(emailsToAdd, pkg.vendorGroupName);
+      res = await adobe.addGroupMembers(emailsToAdd, group);
       logger.info(`Response from Adobe add request (pid:${pid})`, {
         status: res.status,
       });
