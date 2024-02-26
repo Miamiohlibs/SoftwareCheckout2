@@ -52,16 +52,32 @@ module.exports = {
   },
   software: [
     {
-      provider: 'Adobe', // 'Adobe' is currently the only supported value, but that could change in the future
-      name: 'Adobe Photoshop', // REPLACE WITH the LIbCal name for the product
-      shortName: 'photoshop', // Short name for your own convenience
-      adobeGroupName: 'MyLibrary Photoshop Patrons', // REPLACE WITH the Adobe User Mgmt User Group Name
+      vendor: 'Adobe', // 'Adobe' and 'Jamf' are currently the only supported values
+      vendorGroupName: 'MyLibrary Photoshop Patrons', // REPLACE WITH the Adobe User Mgmt User Group Name
+      vendorGroupId: '123456789', // REPLACE WITH the Adobe User Mgmt User Group ID
+      libCalName: 'Adobe Photoshop', // REPLACE WITH the LIbCal name for the product
+      libCalCid: '12345', // REPLACE WITH the LIbCal CID for the product
+      active: true,
+      // you can add other fields here for your own use that don't affect the software checkout process
+      // such as:
+      // reservationUrl:
+      //   'https://yourlib.libcal.com/reserve/LibrarySoftware/photoshop',
     },
     {
-      provider: 'Adobe', // 'Adobe' is currently the only supported value, but that could change in the future
-      name: 'Adobe Illustrator', // REPLACE WITH the LIbCal name for the product
-      shortName: 'illustrator',
-      adobeGroupName: 'MyLibrary Illustrator Patrons', // REPLACE WITH the Adobe User Mgmt User Group Name
+      vendor: 'Adobe', // 'Adobe' and 'Jamf' are currently the only supported values
+      vendorGroupId: 'MyLibrary Illustrator Patrons', // REPLACE WITH the Adobe User Mgmt User Group Name
+      vendorGroupId: '012345678', // REPLACE WITH the Adobe User Mgmt User Group ID
+      libCalName: 'Adobe Illustrator', // REPLACE WITH the LIbCal name for the product
+      libCalCid: '67890', // REPLACE WITH the LIbCal CID for the product
+      active: false,
+    },
+    {
+      vendor: 'Jamf', // 'Adobe' and 'Jamf' are currently the only supported values
+      vendorGroupName: 'Logic Pro', // REPLACE WITH the Jamf User Group Name
+      vendorGroupId: 8,
+      libCalName: 'Logic Pro',
+      libCalCid: '12345',
+      active: true,
     },
   ],
 };

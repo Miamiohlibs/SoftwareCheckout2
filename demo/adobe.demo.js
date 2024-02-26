@@ -16,8 +16,9 @@ const { mainMenu } = require('./mainMenu');
 
 const adobeSoftware = software
   .filter((item) => item.vendor == 'Adobe')
-  .map(({ vendorGroupName, active }) => ({
+  .map(({ vendorGroupName, vendorGroupId, active }) => ({
     vendorGroupName,
+    vendorGroupId,
     active,
   }));
 
@@ -30,8 +31,8 @@ const chooseGroup = async (verb) => {
     genList({
       list: adobeSoftware,
       message: `${verb} users in which group?`,
-      itemNameProp: 'vendorGroupName',
-      itemValueProp: 'vendorGroupName',
+      itemNameProp: 'vendorGroupName', // display this
+      itemValueProp: 'vendorGroupId', // return this
       outputLabel: 'groupName',
     })
   );
