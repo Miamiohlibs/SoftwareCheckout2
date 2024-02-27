@@ -57,12 +57,14 @@ module.exports = class AdobeUserMgmtService {
     this.queryConf.url =
       this.baseUrl + 'users' + '/' + this.credentials.orgId + '/0/' + group;
     this.queryConf.method = 'GET';
+    // console.log('queryConf: ' + JSON.stringify(this.queryConf));
     debug('getGroupMembers query conf: ' + this.queryConf);
     let res = await this.getPaginatedResults('users');
     return res;
   }
 
   getEmailsFromGroupMembers(data) {
+    if (!data || data.length == 0) return [];
     return data.map((i) => i.email);
   }
 
