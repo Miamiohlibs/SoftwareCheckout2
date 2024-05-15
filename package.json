@@ -24,6 +24,7 @@
     "jsonwebtoken": "^9.0.1",
     "lodash": "^4.17.21",
     "mongoose": "^5.12.8",
+    "node-fetch": "^3.3.2",
     "object-to-xml": "^2.0.0",
     "process": "^0.11.10",
     "querystring": "^0.2.0",
