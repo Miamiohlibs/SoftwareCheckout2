@@ -54,8 +54,7 @@ const addUsers = async () => {
     name: 'email',
     message: 'Email address?',
   });
-  let res = await jamfRepo.addUsersToGroup(groupId, [entry.email]);
-  console.log(getErrorMessage(res.status));
+  await handleUpdate('add', groupId, entry);
 };
 
 const removeUsers = async () => {
@@ -66,8 +65,21 @@ const removeUsers = async () => {
     name: 'email',
     message: 'Email address?',
   });
-  let res = await jamfRepo.deleteUsersFromGroup(groupId, [entry.email]);
-  console.log(getErrorMessage(res.status));
+  await handleUpdate('delete', groupId, entry);
+};
+
+const handleUpdate = async (verb, groupId, entry) => {
+  let method = 'addUsersToGroup';
+  if (verb == 'delete') {
+    method = 'deleteUsersFromGroup';
+  }
+  let res = await jamfRepo[method](groupId, [entry.email]);
+  if (res === undefined) {
+    console.log('Update Failed: see error log for details.');
+    return;
+  } else {
+    console.log(getErrorMessage(res.status));
+  }
 };
 
 const main = async () => {
