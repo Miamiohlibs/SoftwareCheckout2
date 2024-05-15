@@ -18,6 +18,13 @@ const axiosLogPrep = (obj) => {
   if (obj !== undefined && obj.hasOwnProperty('request')) {
     delete obj.request;
   }
+  if (
+    obj !== undefined &&
+    obj.hasOwnProperty('config') &&
+    obj.config.hasOwnProperty('auth')
+  ) {
+    obj.config.auth = '[Redacted]';
+  }
   return obj;
 };
 
