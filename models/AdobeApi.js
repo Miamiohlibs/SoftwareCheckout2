@@ -3,6 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const debug = require('debug')('AdobeApi');
 const { axiosLogPrep } = require('../helpers/utils');
+const fetch = require('node-fetch');
 
 module.exports = class AdobeUserMgmtApi {
   constructor(conf) {
@@ -25,7 +26,7 @@ module.exports = class AdobeUserMgmtApi {
       let grantType = 'client_credentials';
       let scope = 'openid,AdobeID,user_management_sdk';
 
-      var myHeaders = new Headers();
+      var myHeaders = new fetch.Headers();
       myHeaders.append('Content-Type', 'application/x-www-form-urlencoded');
 
       var urlencoded = new URLSearchParams();

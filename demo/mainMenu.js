@@ -1,3 +1,4 @@
+// This file is used by adobe.demo.js and james.demo.js to display the main menu options
 const inquirer = require('inquirer');
 const mainMenu = () => {
   console.log();
