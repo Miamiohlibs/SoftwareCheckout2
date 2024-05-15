@@ -87,6 +87,13 @@ module.exports = class UniqEmailRepository {
     }
   }
 
+  async deleteEmailByAlias(email) {
+    try {
+      return UniqEmail.findOneAndDelete({ email: email });
+    } catch (err) {
+      logger.error(`Error deleting email ${email}:`, err);
+    }
+  }
   // async disconnect() {
   //   mongoose.connection.close();
   // }
