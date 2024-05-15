@@ -118,6 +118,7 @@ module.exports = async () => {
         `Response from Adobe remove request (group:${pkg.vendorGroupName})(pid:${pid}-${i})`,
         {
           status: res.status,
+          fullResponse: res,
         }
       );
     }
@@ -135,6 +136,7 @@ module.exports = async () => {
         `Response from Adobe add request (group:${pkg.vendorGroupName})(pid:${pid}-${i})`,
         {
           status: res.status,
+          fullResponse: res,
         }
       );
     }
