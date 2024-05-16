@@ -57,20 +57,24 @@ const logCheckoutDates = function (data, filename) {
 
 pkgs.forEach((pkg) => {
   let thisdata = [];
-  let thisfolder = logfolder + '/' + pkg + '/';
-  let files = readdirSync(thisfolder, { withFileTypes: true })
+  let thisFolder = logfolder + '/' + pkg + '/';
+  let anonFolder = thisFolder + 'anon/';
+  if (!fs.existsSync(anonFolder)) {
+    fs.mkdirSync(anonFolder, 0744);
+  }
+  let files = readdirSync(thisFolder, { withFileTypes: true })
     .filter((dirent) => dirent.isFile())
     .map((dirent) => dirent.name);
-  let anonFiles = readdirSync(thisfolder + '/anon/', { withFileTypes: true })
+  let anonFiles = readdirSync(anonFolder, { withFileTypes: true })
     .filter((dirent) => dirent.isFile())
     .map((dirent) => dirent.name);
   files.push(...anonFiles);
   files.forEach((file) => {
     let data;
     try {
-      data = require(thisfolder + file);
+      data = require(thisFolder + file);
     } catch {
-      data = require(thisfolder + '/anon/' + file);
+      data = require(anonFolder + file);
     }
     thisdata = thisdata.concat(data);
     allPkgData = allPkgData.concat(data);
