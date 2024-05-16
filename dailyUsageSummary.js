@@ -2,9 +2,16 @@ const fs = require('fs');
 const config = require('./config/appConf');
 let software = config.software;
 let softwareTitles = software.map((item) => item.libCalName);
-// let softwareTitles = ['Adobe Creative Cloud'];
+let allData = [];
+const { Parser } = require('json2csv');
 
-summarizeStats(softwareTitles);
+// softwareTitles = ['Adobe Creative Cloud', 'Logic Pro'];
+
+let json = summarizeStats(softwareTitles);
+// console.log(JSON.stringify(json, null, 2));
+const parser = new Parser();
+const csv = parser.parse(json);
+console.log(csv);
 
 function summarizeStats(softwareTitles) {
   softwareTitles.forEach((softwareTitle) => {
@@ -23,10 +30,29 @@ function summarizeStats(softwareTitles) {
       files.sort((a, b) => (a.name > b.name ? 1 : -1)); // sort by date
       files.forEach((file) => {
         let date = file.name.split('.')[0];
-        getDateStats(softwareTitle, date);
+        let usage = getDateStats(softwareTitle, date);
+        updateOrAddEntry({ date, softwareTitle, usage });
       });
     }
   });
+  return allData;
+}
+
+function updateOrAddEntry(newEntry) {
+  let found = false;
+
+  for (let i = 0; i < allData.length; i++) {
+    if (allData[i].date === newEntry.date) {
+      allData[i][newEntry.softwareTitle] = newEntry.usage;
+      found = true;
+      break;
+    }
+  }
+
+  if (!found) {
+    let obj = { date: newEntry.date, [newEntry.softwareTitle]: newEntry.usage };
+    allData.push(obj);
+  }
 }
 
 function getDateStats(softwareTitle, date) {
@@ -48,5 +74,6 @@ function getDateStats(softwareTitle, date) {
   );
   let distinctUsers = [...new Set(skipCheckins.map((item) => item.email))];
   let totalUsage = distinctUsers.length;
-  console.log(softwareTitle + ',' + date + ',' + totalUsage);
+  // console.log(softwareTitle + ',' + date + ',' + totalUsage);
+  return totalUsage;
 }
