@@ -17,13 +17,18 @@ function summarizeStats(softwareTitles) {
   softwareTitles.forEach((softwareTitle) => {
     let folder = softwareTitle.replace(/ /g, '');
     // get all files that aren't directories
+    let files, anonFiles;
     if (fs.existsSync(`./logs/dailyStats/${folder}`) != false) {
-      let files = fs.readdirSync(`./logs/dailyStats/${folder}`, {
+      files = fs.readdirSync(`./logs/dailyStats/${folder}`, {
         withFileTypes: true,
       });
-      let anonFiles = fs.readdirSync(`./logs/dailyStats/${folder}/anon`, {
-        withFileTypes: true,
-      });
+      try {
+        anonFiles = fs.readdirSync(`./logs/dailyStats/${folder}/anon`, {
+          withFileTypes: true,
+        });
+      } catch (err) {
+        anonFiles = [];
+      }
       files.push(...anonFiles); // all files, anonymous and not
       files = [...new Set(files)]; // remove duplicates
       files = files.filter((file) => file.isFile()); // remove directories
