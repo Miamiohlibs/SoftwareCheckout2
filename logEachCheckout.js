@@ -79,6 +79,9 @@ pkgs.forEach((pkg) => {
     thisdata = thisdata.concat(data);
     allPkgData = allPkgData.concat(data);
   });
+  if (files.length === 0) {
+    return;
+  }
   let first = files[0].replace('.json', '');
   let last = files[files.length - 1].replace('.json', '');
   logCheckoutDates(thisdata, pkg);
