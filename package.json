@@ -12,6 +12,7 @@
   "author": "Ken Irwin",
   "license": "MIT",
   "dependencies": {
+    "@json2csv/node": "^7.0.6",
     "async": "^3.2.0",
     "axios": "^0.21.1",
     "colors": "^1.4.0",
