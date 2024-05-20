@@ -1,3 +1,7 @@
+/*
+Use after running `node getUsageData.js`
+Retrieves the total bookings and total unique users for the stats collected in the logs/dailyStats folder.
+*/
 const config = require('./config/appConf');
 const { readdirSync } = require('fs');
 const path = require('path');
