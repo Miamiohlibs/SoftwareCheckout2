@@ -12,7 +12,7 @@ const { genList, compactStringify } = require('../helpers/utils');
     that category and gives the option to display the current bookings.
 */
 
-(async () => {
+const main = async () => {
   let res = await api.getSoftwareCategories();
   let knownCats = res[0].categories.map((cat) => {
     return `${cat.name} (${cat.cid})`;
@@ -46,6 +46,7 @@ const { genList, compactStringify } = require('../helpers/utils');
   switch (showBookings.showBookings) {
     case 'Full':
       console.log(JSON.stringify(res, null, 2));
+      main();
       break;
     case 'Mini':
       let miniBookings = res.map(({ bookId, email, status }) => ({
@@ -54,6 +55,7 @@ const { genList, compactStringify } = require('../helpers/utils');
         status,
       }));
       console.log(compactStringify(miniBookings));
+      main();
       break;
     case 'Compressed':
       let bookings = res.map(
@@ -68,8 +70,13 @@ const { genList, compactStringify } = require('../helpers/utils');
         })
       );
       console.log(JSON.stringify(bookings));
+      main();
       break;
     default:
     // do nothing
   }
+};
+
+(async () => {
+  main();
 })();
