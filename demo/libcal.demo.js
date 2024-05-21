@@ -18,9 +18,9 @@ const main = async () => {
     return `${cat.name} (${cat.cid})`;
   });
   let knownCatDetails = res[0].categories;
-  console.log(`name: ${res[0].name}`);
-  console.log(`categories:`);
-  console.log(knownCats);
+  // console.log(`name: ${res[0].name}`);
+  // console.log(`categories:`);
+  // console.log(knownCats);
 
   let getCats = await inquirer.prompt(
     genList({
@@ -41,12 +41,12 @@ const main = async () => {
     type: 'rawlist',
     name: 'showBookings',
     message: 'Show bookings?',
-    choices: ['Compressed', 'Mini', 'No', 'Full'],
+    choices: ['Compressed', 'Mini', 'Full', 'None'],
   });
   switch (showBookings.showBookings) {
     case 'Full':
       console.log(JSON.stringify(res, null, 2));
-      main();
+      next();
       break;
     case 'Mini':
       let miniBookings = res.map(({ bookId, email, status }) => ({
@@ -55,7 +55,7 @@ const main = async () => {
         status,
       }));
       console.log(compactStringify(miniBookings));
-      main();
+      next();
       break;
     case 'Compressed':
       let bookings = res.map(
@@ -70,10 +70,26 @@ const main = async () => {
         })
       );
       console.log(JSON.stringify(bookings));
-      main();
+      next();
       break;
     default:
     // do nothing
+  }
+};
+
+const next = async () => {
+  // inquirer ask if we should do another one or stop
+  let another = await inquirer.prompt({
+    type: 'confirm',
+    name: 'another',
+    message: 'Do another?',
+    default: false,
+  });
+  if (another.another) {
+    main();
+  } else {
+    console.log('Goodbye!');
+    process.exit();
   }
 };
 
