@@ -41,7 +41,7 @@ const main = async () => {
     type: 'rawlist',
     name: 'showBookings',
     message: 'Show bookings?',
-    choices: ['Compressed', 'Mini', 'Full', 'None'],
+    choices: ['Compressed', 'Mini', 'Email only', 'Full', 'None'],
   });
   switch (showBookings.showBookings) {
     case 'Full':
@@ -55,6 +55,11 @@ const main = async () => {
         status,
       }));
       console.log(compactStringify(miniBookings));
+      next();
+      break;
+    case 'Email only':
+      let emailBookings = res.map(({ email }) => email);
+      console.log(compactStringify(emailBookings));
       next();
       break;
     case 'Compressed':
