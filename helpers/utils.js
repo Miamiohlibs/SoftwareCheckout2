@@ -56,10 +56,30 @@ const genList = ({
   };
 };
 
+function compactStringify(obj, space = 2) {
+  const isArray = Array.isArray(obj);
+  const replacer = (key, value) => {
+    if (Array.isArray(value)) {
+      return `[${value.map((item) => JSON.stringify(item)).join(', ')}]`;
+    }
+    return value;
+  };
+  if (isArray) {
+    // Custom stringify for arrays to make each object in array one line
+    return `[\n${obj
+      .map((item) => ' '.repeat(space) + JSON.stringify(item))
+      .join(',\n')}\n]`;
+  } else {
+    // Use JSON.stringify for non-array objects
+    return JSON.stringify(obj, replacer, space);
+  }
+}
+
 module.exports = {
   sleep,
   filterToEntriesMissingFromSecondArray,
   asyncForEach,
   axiosLogPrep,
   genList,
+  compactStringify,
 };

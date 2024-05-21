@@ -3,7 +3,8 @@ const inquirer = require('inquirer');
 const realConf = require('../config/libCal');
 const LibCalApi = require('../models/LibCalApi');
 const api = new LibCalApi(realConf);
-const { genList } = require('../helpers/utils');
+const { genList, compactStringify } = require('../helpers/utils');
+
 /*
     This demo looks up the software categories for the LibCalCid 
     values specified in the appConf.js file. It then prompts the user 
@@ -40,11 +41,19 @@ const { genList } = require('../helpers/utils');
     type: 'rawlist',
     name: 'showBookings',
     message: 'Show bookings?',
-    choices: ['Compressed', 'No', 'Full'],
+    choices: ['Compressed', 'Mini', 'No', 'Full'],
   });
   switch (showBookings.showBookings) {
     case 'Full':
       console.log(JSON.stringify(res, null, 2));
+      break;
+    case 'Mini':
+      let miniBookings = res.map(({ bookId, email, status }) => ({
+        bookId,
+        email,
+        status,
+      }));
+      console.log(compactStringify(miniBookings));
       break;
     case 'Compressed':
       let bookings = res.map(
@@ -58,7 +67,7 @@ const { genList } = require('../helpers/utils');
           status,
         })
       );
-      console.log(JSON.stringify(bookings, null, 2));
+      console.log(JSON.stringify(bookings));
       break;
     default:
     // do nothing
