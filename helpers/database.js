@@ -26,7 +26,8 @@ const conf = (module.exports = {
       await mongoose.connect(connectionString, config);
       console.log('database connected');
     } catch (err) {
-      console.log(err);
+      console.log('could not connect to database');
+      logger.error('could not connect to database: ', err);
     }
   },
 
@@ -35,7 +36,8 @@ const conf = (module.exports = {
       await mongoose.connection.close();
       console.log('database disconnected');
     } catch (err) {
-      console.log(err);
+      console.log('could not disconnect from database');
+      logger.error('could not disconnect from database:', err);
     }
   },
 });
