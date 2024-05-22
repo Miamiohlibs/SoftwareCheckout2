@@ -37,12 +37,6 @@ module.exports = {
       silly: false,
     },
   },
-  server: {
-    // server variables only required if you using https calls to update your software checkouts
-    name: 'server1.yourorg.edu', // REPLACE WITH server name
-    key: '/path/to/your/ssl.key', // REPLACE WITH path to your server's SSL key
-    cert: '/path/to/your/ssl.crt', // REPLACE WITH path to your server's SSL cert
-  },
   emailConverter: {
     baseUrl: 'https://yourEmailConverterApi/?q=',
     endOfUrl: '', //any additional URL text to include after
