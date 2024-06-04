@@ -18,22 +18,28 @@ module.exports = class JamfRepository {
   /* User Create/Delete Methods */
 
   async createUserIfNeeded(email, fullName = '') {
-    logger.debug('begin function jamfRepo.createUserIfNeeded');
+    logger.debug('jamfRepository: begin function jamfRepo.createUserIfNeeded');
     let uniqueId = this.removeEmailSuffix(email);
-    logger.debug('uniqueId: ' + uniqueId);
+    logger.debug('jamfRepository: uniqueId: ' + uniqueId);
     await this.throttle.pauseIfNeeded();
-    logger.debug('getting User by Email: ' + email);
+    logger.debug('jamfRepository: getting User by Email: ' + email);
     let user = await this.getUserByEmail(email);
-    logger.debug('got back user value: ' + JSON.stringify({ user: user }));
+    logger.debug(
+      'jamfRepository: got back user value: ' + JSON.stringify({ user: user })
+    );
     this.throttle.increment();
     if (user) {
-      logger.info('Jamf User found: ' + JSON.stringify({ user: user }));
+      logger.info(
+        'jamfRepository: Jamf User found: ' + JSON.stringify({ user: user })
+      );
       return { success: true, user: user };
     }
-    logger.info('jamf user not found; need to create: ' + email);
+    logger.info(
+      'jamfRepository: jamf user not found; need to create: ' + email
+    );
     let res = await this.createUser(uniqueId, email);
     logger.info(
-      'results from attemt to create: ' +
+      'jamfRepository: results from attemt to create: ' +
         email +
         ' ' +
         JSON.stringify({ res, res })
@@ -41,21 +47,29 @@ module.exports = class JamfRepository {
     return res;
   }
   async createUser(uniqueId, fullName = '') {
-    logger.debug('jamfRepo creating user ' + uniqueId + ' ' + fullName);
+    logger.debug(
+      'jamfRepository: jamfRepo creating user ' + uniqueId + ' ' + fullName
+    );
     let xml = this.generateCreateUserXML(uniqueId, fullName);
-    logger.debug('submitting Jamf new user data' + xml);
-    logger.debug('submitting jamf data to POST: ' + this.api.newUserRoute);
+    logger.debug('jamfRepository: submitting Jamf new user data' + xml);
+    logger.debug(
+      'jamfRepository: submitting jamf data to POST: ' + this.api.newUserRoute
+    );
     await this.throttle.pauseIfNeeded();
     let resXml = await this.api.submitPost(this.api.newUserRoute, xml);
     this.throttle.increment();
-    logger.debug('received xml from jamf user creation: ' + resXml);
+    logger.debug(
+      'jamfRepository: received xml from jamf user creation: ' + resXml
+    );
     let res = xmlParser.parse(resXml);
     if (res.hasOwnProperty('user')) {
-      logger.info('Created Jamf user: ' + uniqueId);
+      logger.info('jamfRepository: Created Jamf user: ' + uniqueId);
       return { success: true, user: res.user };
     } else {
       logger.error(
-        'Failed to create Jamf user: ' + uniqueId + JSON.stringify({ res: res })
+        'jamfRepository: Failed to create Jamf user: ' +
+          uniqueId +
+          JSON.stringify({ res: res })
       );
       return { success: false, res: res };
     }
@@ -89,7 +103,8 @@ module.exports = class JamfRepository {
       }
     } catch (err) {
       logger.error(
-        'failed JamfRepo.getGroups' + JSON.stringify({ error: err })
+        'jamfRepository: failed JamfRepo.getGroups' +
+          JSON.stringify({ error: err })
       );
     }
   }
@@ -109,14 +124,15 @@ module.exports = class JamfRepository {
       }
     } catch (err) {
       logger.error(
-        'failed JamfRepo.getGroupMembers' + JSON.stringify({ error: err })
+        'jamfRepository: failed JamfRepo.getGroupMembers' +
+          JSON.stringify({ error: err })
       );
     }
   }
 
   async addUsersToGroup(groupId, users) {
     logger.debug(
-      'adding Jamf users to group (in addUsersToGroup)' +
+      'jamfRepository: adding Jamf users to group (in addUsersToGroup)' +
         JSON.stringify({
           group: groupId,
           users: users,
@@ -133,7 +149,7 @@ module.exports = class JamfRepository {
 
   async deleteUsersFromGroup(groupId, users) {
     logger.debug(
-      'deleting Jamf users to group (in addUsersToGroup)' +
+      'jamfRepository: deleting Jamf users to group (in addUsersToGroup)' +
         JSON.stringify({
           group: groupId,
           users: users,
@@ -184,9 +200,9 @@ module.exports = class JamfRepository {
   }
 
   async getUserByEmail(email) {
-    logger.debug('starting jamfRepo.getUserByEmail:' + email);
+    logger.debug('jamfRepository: starting jamfRepo.getUserByEmail:' + email);
     let url = this.api.userEmailRoute + email;
-    logger.debug('Getting Url (getUserByEmail): ' + url);
+    logger.debug('jamfRepository: Getting Url (getUserByEmail): ' + url);
     await this.throttle.pauseIfNeeded();
     let res = await this.api.submitGet(url);
     this.throttle.increment();
@@ -194,7 +210,9 @@ module.exports = class JamfRepository {
     if (res.hasOwnProperty('users') && res.users.length > 0) {
       return res.users[0];
     } else {
-      logger.error('JamfRepository getUserByEmail failed to find: ' + email);
+      logger.error(
+        'jamfRepository: JamfRepository getUserByEmail failed to find: ' + email
+      );
       return false;
     }
   }
