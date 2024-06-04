@@ -83,7 +83,11 @@ module.exports = class UniqEmailRepository {
     try {
       return UniqEmail.insertMany(arr);
     } catch (err) {
-      logger.error('Error inserting new emails into database', err, arr);
+      logger.error(
+        'UniqEmailRepository: Error inserting new emails into database',
+        err,
+        arr
+      );
     }
   }
 
@@ -91,7 +95,7 @@ module.exports = class UniqEmailRepository {
     try {
       return UniqEmail.findOneAndDelete({ email: email });
     } catch (err) {
-      logger.error(`Error deleting email ${email}:`, err);
+      logger.error(`UniqEmailRepository: Error deleting email ${email}:`, err);
     }
   }
   // async disconnect() {

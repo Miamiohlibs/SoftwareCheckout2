@@ -16,8 +16,8 @@ module.exports = async (objects) => {
   // first look for emails in our database of known emails
   await uniqRepo.connect();
   knownEmails = await uniqRepo.queryAllEmails();
-  console.log('known emails:', knownEmails);
-  console.log('objects to match:', objects);
+  console.log('emailObjectConverterService: known emails:', knownEmails);
+  console.log('emailObjectConverterService: objects to match:', objects);
   let { found, missing } = uniqRepo.updateObjectsWithKnownEmails(
     objects,
     'email',
@@ -32,15 +32,21 @@ module.exports = async (objects) => {
 
   // add any new matches to the uniqRepo database
   if (newMatches.length > 0) {
-    logger.info('adding new emails pairs with', newMatches);
+    logger.info(
+      'emailObjectConverterService: adding new emails pairs with',
+      newMatches
+    );
     await uniqRepo.addNewEmailPairs(newMatches);
   }
 
   // log any errors
   if (authMissing.length > 0) {
-    logger.error('Failed to get authoritative emails for:', {
-      missing: authMissing,
-    });
+    logger.error(
+      'emailObjectConverterService: Failed to get authoritative emails for:',
+      {
+        missing: authMissing,
+      }
+    );
   }
 
   await uniqRepo.disconnect();

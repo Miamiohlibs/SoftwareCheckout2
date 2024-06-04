@@ -19,7 +19,7 @@ module.exports = class JamfApi {
   async submitPut(url, xml = null) {
     // success = res.status == 201
     logger.debug(
-      'beginning jamfApi.submitPut with url: ' + url + ' and with xml: ' + xml
+      'JamfAPI: beginning submitPut with url: ' + url + ' and with xml: ' + xml
     );
     try {
       let config = {
@@ -29,7 +29,10 @@ module.exports = class JamfApi {
       let res = await axios.put(url, xml, config);
       return res;
     } catch (err) {
-      logger.error('Error submitting Jamf PUT query', axiosLogPrep(err));
+      logger.error(
+        'JamfAPI: Error submitting Jamf PUT query',
+        axiosLogPrep(err)
+      );
     }
   }
 
@@ -39,7 +42,10 @@ module.exports = class JamfApi {
       let res = await axios.get(url, config);
       return res.data;
     } catch (err) {
-      logger.error('Error submitting Jamf GET query', axiosLogPrep(err));
+      logger.error(
+        'JamfAPI: Error submitting Jamf GET query',
+        axiosLogPrep(err)
+      );
       return false;
     }
   }
@@ -53,7 +59,10 @@ module.exports = class JamfApi {
       let res = await axios.post(url, xml, config);
       return res.data;
     } catch (err) {
-      logger.error('Error submitting Jamf POST query', axiosLogPrep(err));
+      logger.error(
+        'JamfAPI: Error submitting Jamf POST query',
+        axiosLogPrep(err)
+      );
     }
   }
 
@@ -63,7 +72,10 @@ module.exports = class JamfApi {
       let res = await axios.delete(url, config);
       return res.data;
     } catch (err) {
-      logger.error('Error submitting Jamf DELETE query', axiosLogPrep(err));
+      logger.error(
+        'JamfAPI: Error submitting Jamf DELETE query',
+        axiosLogPrep(err)
+      );
     }
   }
 };

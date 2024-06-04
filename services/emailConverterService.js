@@ -61,13 +61,19 @@ module.exports = async (emails) => {
     );
 
     if (newMatches.length > 0) {
-      logger.info('adding new emails pairs with', newMatches);
+      logger.info(
+        'emailConverterService: adding new emails pairs with',
+        newMatches
+      );
       await emailRepo.addNewEmailPairs(newMatches);
     }
     if (authMissing.length > 0) {
-      logger.error('Failed to get authoritative emails for:', {
-        missing: authMissing,
-      });
+      logger.error(
+        'emailConverterService: Failed to get authoritative emails for:',
+        {
+          missing: authMissing,
+        }
+      );
     }
 
     await emailRepo.disconnect();

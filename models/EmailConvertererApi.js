@@ -12,7 +12,10 @@ module.exports = class EmailConverterApi {
       this.affixSuffixToReturn = conf.emailConverter.affixSuffixToReturn;
       this.suffix = conf.emailConverter.suffix;
     } catch (err) {
-      logger.error('Failed to set EmailConverterApi configs', { error: err });
+      logger.error(
+        'EmailConverterApi: Failed to set EmailConverterApi configs',
+        { error: err }
+      );
     }
   }
   async getAuthoritativeEmail(email) {
@@ -26,15 +29,15 @@ module.exports = class EmailConverterApi {
 
   async submitQuery(email) {
     let url = this.baseUrl + email + this.endOfUrl;
-    logger.debug('Requesting url', { url: url });
+    logger.debug('EmailConverterApi: Requesting url', { url: url });
     try {
       let res = await axios(url);
-      logger.debug('Email converter results', {
+      logger.debug('EmailConverterApi: Email converter results', {
         EmailConverterResData: res.data,
       });
       return res.data;
     } catch (err) {
-      logger.error('Failed email lookup for: ' + email);
+      logger.error('EmailConverterApi: Failed email lookup for: ' + email);
     }
   }
 };
