@@ -51,10 +51,10 @@ module.exports = class AdobeUserMgmtApi {
   }
   async getQueryResults(queryConf) {
     if (!this.hasOwnProperty('accessToken')) {
-      debug('getting access token before getQueryResults');
+      debug('AdobeAPI: getting access token before getQueryResults');
       await this.getToken();
     }
-    debug('starting getQueryResults', queryConf);
+    debug('AdobeAPI: starting getQueryResults', queryConf);
     queryConf.headers = this.getAuthHeaders();
     try {
       let res = await axios(queryConf);

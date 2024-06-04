@@ -43,25 +43,30 @@ module.exports = class LibCalApi {
     }
     this.queryConf.method = 'get';
     let res = await this.getQueryResults();
-    logger.debug('API response status', res);
-    logger.debug(`API received getBookings for ${cid}`, axiosLogPrep(res));
+    logger.debug('LibCal API response status', res);
+    logger.debug(
+      `LibCal API received getBookings for ${cid}`,
+      axiosLogPrep(res)
+    );
     return res;
   }
 
   async getQueryResults() {
     if (!this.hasOwnProperty('accessToken')) {
-      debug('getting access token before getQueryResults');
+      debug('LibCalApi getting access token before getQueryResults');
       await this.getToken();
     }
     this.queryConf.headers = this.getAuthHeaders();
-    logger.debug('getQueryResults with', { queryConf: this.queryConf });
+    logger.debug('LibCalApi getQueryResults with', {
+      queryConf: this.queryConf,
+    });
     try {
       let res = await axios.request(this.queryConf);
-      logger.debug('Received query results', axiosLogPrep(res));
+      logger.debug('LibCalApi Received query results', axiosLogPrep(res));
       return res.data;
     } catch (err) {
       logger.error(
-        ('Failed LibCal query:' + err.response.status, axiosLogPrep(err))
+        ('Failed LibCalApi query:' + err.response.status, axiosLogPrep(err))
       );
     }
   }
@@ -71,10 +76,10 @@ module.exports = class LibCalApi {
     try {
       const result = await oauth2.clientCredentials.getToken();
       this.accessToken = result.access_token;
-      debug('LibCal Token: ' + this.accessToken);
+      debug('LibCalApi Token: ' + this.accessToken);
       return true;
     } catch (err) {
-      logger.error('LibCalAccess Token Error:', { error: err });
+      logger.error('LibCalApi Access Token Error:', { error: err });
     }
   }
 
