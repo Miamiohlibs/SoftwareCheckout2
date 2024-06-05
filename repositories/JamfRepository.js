@@ -3,7 +3,8 @@ const o2x = require('object-to-xml');
 const logger = require('../services/logger');
 const { uniqueId } = require('lodash');
 const Throttle = require('../helpers/Throttle');
-const xmlParser = require('fast-xml-parser');
+const { XMLParser } = require('fast-xml-parser');
+const xmlParser = new XMLParser();
 
 module.exports = class JamfRepository {
   constructor(conf) {
@@ -46,6 +47,7 @@ module.exports = class JamfRepository {
     );
     return res;
   }
+
   async createUser(uniqueId, fullName = '') {
     logger.debug(
       'jamfRepository: jamfRepo creating user ' + uniqueId + ' ' + fullName
