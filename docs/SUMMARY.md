@@ -9,3 +9,6 @@
 * [Running the App](running-the-app.md)
 * [Testing](testing.md)
 * [Usage Stats](usage-stats.md)
+* [Troubleshooting](troubleshooting/README.md)
+  * [Adobe](troubleshooting/adobe.md)
+  * [Jamf](troubleshooting/jamf.md)

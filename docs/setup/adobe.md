@@ -11,7 +11,7 @@ Adobe account with access to the User Management API
 1. Using the [Adobe I/O Console](https://console.adobe.io/), create a new Project with an associated oAuth Server-to-Server credential.
 2. Copy `config/adobe.sample.js` to `config/adobe.js` and add the Project details to that file (clientId, clientSecret,orgId)
 
-#### LibCal Config
+#### Adobe Config
 
 * `config/adobe.js`: includes API credentials, route to private key, and query config
   * the API credential are supplied when you request and API key from Adobe
