@@ -25,6 +25,14 @@ const axiosLogPrep = (obj) => {
   ) {
     obj.config.auth = '[Redacted]';
   }
+  if (
+    obj !== undefined &&
+    obj.hasOwnProperty('config') &&
+    obj.config.hasOwnProperty('headers') &&
+    obj.config.headers.hasOwnProperty('Authorization')
+  ) {
+    obj.config.headers.Authorization = '[Redacted]';
+  }
   return obj;
 };
 
