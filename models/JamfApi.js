@@ -5,6 +5,7 @@ const { axiosLogPrep } = require('../helpers/utils');
 module.exports = class JamfApi {
   constructor(conf) {
     this.auth = conf.auth;
+    this.authUrl = conf.baseUrl + '/api/v1/auth/token';
     this.baseUrl = conf.baseUrl + '/JSSResource';
     this.userGroupsRoute = this.baseUrl + '/usergroups';
     this.userGroupRoute = this.baseUrl + '/usergroups/id/';
@@ -16,15 +17,30 @@ module.exports = class JamfApi {
     }
   }
 
+  async getToken() {
+    try {
+      const res = await axios.post(this.authUrl, {}, { auth: this.auth });
+      this.token = res.data.token;
+    } catch (err) {
+      console.log('JamfAPI: Error submitting get token', axiosLogPrep(err));
+    }
+  }
+
   async submitPut(url, xml = null) {
     // success = res.status == 201
+    if (!this.token) {
+      await this.getToken();
+    }
     logger.debug(
       'JamfAPI: beginning submitPut with url: ' + url + ' and with xml: ' + xml
     );
     try {
       let config = {
-        auth: this.auth,
-        headers: { 'Content-Type': 'text/xml' },
+        // auth: this.auth,
+        headers: {
+          'Content-Type': 'text/xml',
+          Authorization: `Bearer ${this.token}`,
+        },
       };
       let res = await axios.put(url, xml, config);
       return res;
@@ -37,8 +53,16 @@ module.exports = class JamfApi {
   }
 
   async submitGet(url) {
+    if (!this.token) {
+      await this.getToken();
+    }
     try {
-      let config = { auth: this.auth, headers: { Accept: 'application/json' } };
+      let config = {
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${this.token}`,
+        },
+      };
       let res = await axios.get(url, config);
       return res.data;
     } catch (err) {
@@ -51,10 +75,16 @@ module.exports = class JamfApi {
   }
 
   async submitPost(url, xml = null) {
+    if (!this.token) {
+      await this.getToken();
+    }
     try {
       let config = {
-        auth: this.auth,
-        headers: { 'Content-Type': 'text/xml' },
+        // auth: this.auth,
+        headers: {
+          'Content-Type': 'text/xml',
+          Authorization: `Bearer ${this.token}`,
+        },
       };
       let res = await axios.post(url, xml, config);
       return res.data;
@@ -67,8 +97,11 @@ module.exports = class JamfApi {
   }
 
   async submitDelete(url) {
+    if (!this.token) {
+      await this.getToken();
+    }
     try {
-      let config = { auth: this.auth };
+      let config = { headers: { Authorization: `Bearer ${this.token}` } };
       let res = await axios.delete(url, config);
       return res.data;
     } catch (err) {
