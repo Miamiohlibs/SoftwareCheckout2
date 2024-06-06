@@ -61,17 +61,16 @@ module.exports = async (emails) => {
     );
 
     if (newMatches.length > 0) {
-      logger.info(
-        'emailConverterService: adding new emails pairs with',
-        newMatches
-      );
+      logger.info('emailConverterService: adding new emails pairs with', {
+        content: newMatches,
+      });
       await emailRepo.addNewEmailPairs(newMatches);
     }
     if (authMissing.length > 0) {
       logger.error(
         'emailConverterService: Failed to get authoritative emails for:',
         {
-          missing: authMissing,
+          content: authMissing,
         }
       );
     }
@@ -85,7 +84,7 @@ module.exports = async (emails) => {
   } catch (err) {
     logger.error(
       'emailConverterService.js failed; returning original emails instead of converted ones:',
-      err
+      { content: err }
     );
     return emails;
   }
