@@ -16,7 +16,10 @@ module.exports = class AdobeUserMgmtApi {
       let tokenResponse = await this.executeTokenQuery();
       this.accessToken = tokenResponse.access_token;
     } catch (err) {
-      logger.error('AdobeApi failed to get Adobe token: ', err);
+      logger.error(`AdobeApi failed to get Adobe token: ${err.message}`, {
+        content: axiosLogPrep(err),
+        status: err.response.status,
+      });
     }
   }
 
@@ -45,7 +48,10 @@ module.exports = class AdobeUserMgmtApi {
       let res = await fetch(baseUrl, requestOptions);
       return await res.json();
     } catch (err) {
-      logger.error('AdobeAPI: Failed to execute Adobe token query', err);
+      logger.error(
+        `AdobeAPI: Failed to execute Adobe token query: ${err.message}`,
+        { content: axiosLogPrep(err), status: err.response.status }
+      );
     }
   }
   async getQueryResults(queryConf) {
@@ -53,13 +59,18 @@ module.exports = class AdobeUserMgmtApi {
       logger.debug('AdobeAPI: getting access token before getQueryResults');
       await this.getToken();
     }
-    logger.debug('AdobeAPI: starting getQueryResults', queryConf);
+    logger.debug('AdobeAPI: starting getQueryResults with queryConf', {
+      content: queryConf,
+    });
     queryConf.headers = this.getAuthHeaders();
     try {
       let res = await axios(queryConf);
       return res.data;
     } catch (err) {
-      logger.error('Failed Adobe query:', axiosLogPrep(err));
+      logger.error(`AdobeAPI Failed Adobe query:`, {
+        content: axiosLogPrep(err),
+        status: err.response.status,
+      });
     }
   }
 
