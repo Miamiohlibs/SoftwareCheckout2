@@ -1,7 +1,8 @@
 const axios = require('axios');
 const path = require('path');
 const fs = require('fs');
-const debug = require('debug')('AdobeApi');
+// const debug = require('debug')('AdobeApi');
+const logger = require('../services/logger');
 const { axiosLogPrep } = require('../helpers/utils');
 const fetch = require('node-fetch');
 
@@ -15,8 +16,7 @@ module.exports = class AdobeUserMgmtApi {
       let tokenResponse = await this.executeTokenQuery();
       this.accessToken = tokenResponse.access_token;
     } catch (err) {
-      console.log('Failed to get Adobe token in:', __filename);
-      console.log(err);
+      logger.error('AdobeApi failed to get Adobe token: ', err);
     }
   }
 
@@ -45,22 +45,21 @@ module.exports = class AdobeUserMgmtApi {
       let res = await fetch(baseUrl, requestOptions);
       return await res.json();
     } catch (err) {
-      console.log('Failed to execute Adobe token query in:', __filename);
-      console.log(err);
+      logger.error('AdobeAPI: Failed to execute Adobe token query', err);
     }
   }
   async getQueryResults(queryConf) {
     if (!this.hasOwnProperty('accessToken')) {
-      debug('AdobeAPI: getting access token before getQueryResults');
+      logger.debug('AdobeAPI: getting access token before getQueryResults');
       await this.getToken();
     }
-    debug('AdobeAPI: starting getQueryResults', queryConf);
+    logger.debug('AdobeAPI: starting getQueryResults', queryConf);
     queryConf.headers = this.getAuthHeaders();
     try {
       let res = await axios(queryConf);
       return res.data;
     } catch (err) {
-      console.log(('Failed Adobe query:', axiosLogPrep(err)));
+      logger.error('Failed Adobe query:', axiosLogPrep(err));
     }
   }
 
