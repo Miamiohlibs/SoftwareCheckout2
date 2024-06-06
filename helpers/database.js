@@ -27,7 +27,7 @@ const conf = (module.exports = {
       console.log('database connected');
     } catch (err) {
       console.log('could not connect to database');
-      logger.error('could not connect to database: ', err);
+      logger.error('could not connect to database: ', { content: err });
     }
   },
 
@@ -37,7 +37,7 @@ const conf = (module.exports = {
       console.log('database disconnected');
     } catch (err) {
       console.log('could not disconnect from database');
-      logger.error('could not disconnect from database:', err);
+      logger.error('could not disconnect from database:', { content: err });
     }
   },
 });
