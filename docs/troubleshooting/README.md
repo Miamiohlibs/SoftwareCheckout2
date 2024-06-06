@@ -10,9 +10,17 @@ The files log information in JSON format, but the whole file isn't actually JSON
 
 That will create a json array of the log entries, which can then be parsed using the command-line tool `jq`. Each log entry has several short elements: message, timestamp, uid; where appropriate, two other elements may be included: content and status. The content will sometimes be very long -- long strings of json or xml from API calls, for example.&#x20;
 
-To examine log entries from a particular timeframe, you can use `jq` to limit down to a particular timeframe and reveal only certain fields, e.g.:&#x20;
+If logs are long and slow to process, you may want to create snippets of logs that focus in on the events or time period you're interested in, using `grep` or similar tools, e.g.
+
+`grep '2024-06-06 12' logs/info-2024-06.log > parselogs/example1.log`
+
+You an also examine log entries from a particular timeframe, you can use `jq` to limit down to a particular timeframe and reveal only certain fields, e.g.:&#x20;
 
 `node parselogs/jsonifylogs.js logs/info-2024-06.log | jq '.[] | select(.timestamp | startswith("2024-06-06 12:5")) | { message,level,uid }'`
+
+or
+
+`node parselogs/jsonifylogs.js parselogs/example1.log | jq '.[] | {message,level,uid}'`
 
 This command jsonifies the log, pipes it to jq for parsing, select only the lines with a timestamp between 12:50 and 12:59 of June 6, and then displays only three lines of those entries: message,level,uid.&#x20;
 
@@ -28,13 +36,15 @@ If a particular entry is of interest, perhaps an  error message:&#x20;
 
 Then you can use jq to extract the desired entryby its uid for examination:
 
-`node parselogs/jsonifylogs.js logs/info-2024-06.log | jq '.[] | select(.uid=="5d33bdd3e83")'`
+`node parselogs/jsonifylogs.js parselogs/example1.log | jq '.[] | select(.uid=="5d33bdd3e83")'`
 
 This will return the whole error message, in this case from an API call, with details of the failed query. &#x20;
 
-Using jq to parse the logs is tedious, but effective. For help writing custom jq queries, I have found ChatGPT to be pretty good at turning requests into usable syntax.
+Using jq to parse the logs is tedious, but effective.&#x20;
 
 
 
+### Help with jq syntax
 
+See the [Guide to Linux jq Command for JSON Processing](https://www.baeldung.com/linux/jq-command-json) for a good introduction to jq. For help writing custom jq queries, I have also found ChatGPT to be pretty good at turning requests into usable syntax.&#x20;
 
