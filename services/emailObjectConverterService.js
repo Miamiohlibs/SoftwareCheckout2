@@ -11,6 +11,7 @@ const EmailConverterRepo = require('../repositories/EmailConverterRepository');
 const emailRepo = new EmailConverterRepo(appConf);
 const UniqEmailRepo = require('../repositories/UniqEmailRepository');
 const uniqRepo = new UniqEmailRepo();
+const logger = require('../services/logger');
 
 module.exports = async (objects) => {
   // first look for emails in our database of known emails
@@ -32,10 +33,9 @@ module.exports = async (objects) => {
 
   // add any new matches to the uniqRepo database
   if (newMatches.length > 0) {
-    logger.info(
-      'emailObjectConverterService: adding new emails pairs with',
-      newMatches
-    );
+    logger.info('emailObjectConverterService: adding new emails pairs with', {
+      content: newMatches,
+    });
     await uniqRepo.addNewEmailPairs(newMatches);
   }
 
@@ -44,7 +44,7 @@ module.exports = async (objects) => {
     logger.error(
       'emailObjectConverterService: Failed to get authoritative emails for:',
       {
-        missing: authMissing,
+        content: authMissing,
       }
     );
   }

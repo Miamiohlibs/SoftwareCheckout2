@@ -14,7 +14,7 @@ module.exports = class EmailConverterApi {
     } catch (err) {
       logger.error(
         'EmailConverterApi: Failed to set EmailConverterApi configs',
-        { error: err }
+        { content: err, status: err.response.status }
       );
     }
   }
@@ -29,15 +29,15 @@ module.exports = class EmailConverterApi {
 
   async submitQuery(email) {
     let url = this.baseUrl + email + this.endOfUrl;
-    logger.debug('EmailConverterApi: Requesting url', { url: url });
+    logger.debug('EmailConverterApi: Requesting url', { content: url });
     try {
       let res = await axios(url);
       logger.debug('EmailConverterApi: Email converter results', {
-        EmailConverterResData: res.data,
+        content: res.data,
       });
       return res.data;
     } catch (err) {
-      logger.error('EmailConverterApi: Failed email lookup for: ' + email);
+      logger.error(`EmailConverterApi: Failed email lookup for ${email}`);
     }
   }
 };

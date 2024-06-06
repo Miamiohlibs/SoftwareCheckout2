@@ -31,9 +31,9 @@ module.exports = class JamfApi {
     if (!this.token) {
       await this.getToken();
     }
-    logger.debug(
-      'JamfAPI: beginning submitPut with url: ' + url + ' and with xml: ' + xml
-    );
+    logger.debug('JamfAPI: beginning submitPut with url and with xml', {
+      content: { url, xml },
+    });
     try {
       let config = {
         // auth: this.auth,
@@ -45,10 +45,10 @@ module.exports = class JamfApi {
       let res = await axios.put(url, xml, config);
       return res;
     } catch (err) {
-      logger.error(
-        'JamfAPI: Error submitting Jamf PUT query',
-        axiosLogPrep(err)
-      );
+      logger.error('JamfAPI: Error submitting Jamf PUT query', {
+        content: axiosLogPrep(err),
+        status: err.response.status,
+      });
     }
   }
 
@@ -66,10 +66,10 @@ module.exports = class JamfApi {
       let res = await axios.get(url, config);
       return res.data;
     } catch (err) {
-      logger.error(
-        'JamfAPI: Error submitting Jamf GET query',
-        axiosLogPrep(err)
-      );
+      logger.error('JamfAPI: Error submitting Jamf GET query', {
+        content: axiosLogPrep(err),
+        status: err.response.status,
+      });
       return false;
     }
   }
@@ -89,10 +89,10 @@ module.exports = class JamfApi {
       let res = await axios.post(url, xml, config);
       return res.data;
     } catch (err) {
-      logger.error(
-        'JamfAPI: Error submitting Jamf POST query',
-        axiosLogPrep(err)
-      );
+      logger.error('JamfAPI: Error submitting Jamf POST query', {
+        content: axiosLogPrep(err),
+        status: err.response.status,
+      });
     }
   }
 
@@ -105,10 +105,10 @@ module.exports = class JamfApi {
       let res = await axios.delete(url, config);
       return res.data;
     } catch (err) {
-      logger.error(
-        'JamfAPI: Error submitting Jamf DELETE query',
-        axiosLogPrep(err)
-      );
+      logger.error('JamfAPI: Error submitting Jamf DELETE query', {
+        content: axiosLogPrep(err),
+        status: err.response.status,
+      });
     }
   }
 };

@@ -41,7 +41,9 @@ module.exports = class EmailConverterRepository {
       let email = obj[key];
       await this.lookupThrottle.pauseIfNeeded();
       let res = await this.api.getAuthoritativeEmail(email).catch((err) => {
-        console.log('failed to lookup email in API', err);
+        logger.log('EmailConverterRepo: failed to lookup email in API', {
+          content: err,
+        });
       });
       this.lookupThrottle.increment();
       if (res === undefined) {

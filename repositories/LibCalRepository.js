@@ -10,14 +10,13 @@ module.exports = class LibCalService {
 
   async getCurrentValidBookings(cid) {
     let res = await this.api.getBookings(cid);
-    logger.debug(
-      `LibCalRepository: received from getBookings ${cid}`,
-      axiosLogPrep(res)
-    );
+    logger.debug(`LibCalRepository: received from getBookings ${cid}`, {
+      content: axiosLogPrep(res),
+    });
     let current = this.filterToCurrentBookings(res);
     let valid = this.filterToValidBookings(current);
     logger.debug(`LibCalRepository: getCurrentValidBookings returns ${cid}:`, {
-      validBookings: valid,
+      content: valid,
     });
     return valid;
   }

@@ -66,12 +66,13 @@ module.exports = async () => {
         libCalEmails,
         currJamfEmails
       );
-      logger.info('JamfUserService: Jamf emails to add', emailsToAdd);
+      logger.info('JamfUserService: Jamf emails to add', {
+        content: emailsToAdd,
+      });
     } catch (err) {
-      logger.error(
-        'JamfUserService: Error filtering to Jamf emails to add',
-        err
-      );
+      logger.error('JamfUserService: Error filtering to Jamf emails to add', {
+        content: err,
+      });
     }
 
     // foreach email to add, get the libCal object, modified with an authorizedEmail
@@ -87,17 +88,16 @@ module.exports = async () => {
         email = emailsToAdd[i];
         try {
           logger.debug(
-            'JamfUserService: initiating createUserIfNeeded for ' + email
+            `JamfUserService: initiating createUserIfNeeded for ${email}`
           );
           let res = await jamf.createUserIfNeeded(email);
-          logger.debug(
-            'JamfUserService: response from createUserIfNeeded',
-            res
-          );
+          logger.debug('JamfUserService: response from createUserIfNeeded', {
+            content: res,
+          });
         } catch (err) {
           logger.error(
-            'JamfUserService: jamfRepo createUserIfNeeded failed for ' + email,
-            err
+            `JamfUserService: jamfRepo createUserIfNeeded failed for ${email}`,
+            { content: err }
           );
         }
       }

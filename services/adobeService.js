@@ -79,7 +79,7 @@ module.exports = async () => {
       logger.error(
         `adobeService: Adobe failed emailConverterService (pid:${pid}-${i})`,
         {
-          error: err,
+          content: err,
         }
       );
     }
@@ -124,8 +124,8 @@ module.exports = async () => {
       logger.info(
         `adobeService: Response from Adobe remove request (group:${pkg.vendorGroupName})(pid:${pid}-${i})`,
         {
+          content: res,
           status: res.status,
-          fullResponse: res,
         }
       );
     }
@@ -143,7 +143,7 @@ module.exports = async () => {
         `adobeService: Response from Adobe add request (group:${pkg.vendorGroupName})(pid:${pid}-${i})`,
         {
           status: res.status,
-          fullResponse: res,
+          content: res,
         }
       );
     }

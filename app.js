@@ -7,7 +7,8 @@ let vendors = lg.getActiveVendors();
 let logger = require('./services/logger');
 
 logger.info('starting app');
-logger.info('vendors activated in config/appConf.js:' + vendors);
+const vendorString = vendors.join(', ');
+logger.info(`vendors activated in config/appConf.js: ${vendorString}`);
 
 (async () => {
   if (vendors.includes('Adobe')) {
