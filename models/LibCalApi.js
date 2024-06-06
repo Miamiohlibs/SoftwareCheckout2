@@ -1,5 +1,3 @@
-const Debug = require('debug');
-const debug = new Debug('AdobeApi');
 const axios = require('axios');
 const logger = require('../services/logger');
 const { axiosLogPrep } = require('../helpers/utils');
@@ -53,21 +51,25 @@ module.exports = class LibCalApi {
 
   async getQueryResults() {
     if (!this.hasOwnProperty('accessToken')) {
-      debug('LibCalApi getting access token before getQueryResults');
+      logger.debug('LibCalApi getting access token before getQueryResults');
       await this.getToken();
     }
     this.queryConf.headers = this.getAuthHeaders();
-    logger.debug('LibCalApi getQueryResults with', {
-      queryConf: this.queryConf,
+    logger.debug('LibCalApi getQueryResults with queryConf', {
+      content: this.queryConf,
     });
     try {
       let res = await axios.request(this.queryConf);
-      logger.debug('LibCalApi Received query results', axiosLogPrep(res));
+      let log = axiosLogPrep(res);
+      logger.debug('LibCalApi Received query results', { content: log });
       return res.data;
     } catch (err) {
-      logger.error(
-        ('Failed LibCalApi query:' + err.response.status, axiosLogPrep(err))
-      );
+      let log = axiosLogPrep(err);
+      let status = err.response.status;
+      logger.error(`Failed LibCalApi query with status ${status}`, {
+        status,
+        content: log,
+      });
     }
   }
 
@@ -76,10 +78,12 @@ module.exports = class LibCalApi {
     try {
       const result = await oauth2.clientCredentials.getToken();
       this.accessToken = result.access_token;
-      debug('LibCalApi Token: ' + this.accessToken);
+      logger.debug(`LibCalApi Token: ${this.accessToken}`);
       return true;
     } catch (err) {
-      logger.error('LibCalApi Access Token Error:', { error: err });
+      logger.error(`LibCalApi Access Token Error: ${err.message}`, {
+        content: err,
+      });
     }
   }
 
