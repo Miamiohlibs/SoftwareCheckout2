@@ -67,7 +67,7 @@ module.exports = class AdobeUserMgmtApi {
       let res = await axios(queryConf);
       return res.data;
     } catch (err) {
-      logger.error(`AdobeAPI Failed Adobe query:`, {
+      logger.error(`AdobeAPI Failed Adobe query`, {
         content: axiosLogPrep(err),
         status: err.response.status,
       });
