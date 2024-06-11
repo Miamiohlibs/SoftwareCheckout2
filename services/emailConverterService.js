@@ -26,7 +26,7 @@ module.exports = async (emails) => {
   // connect to database or die trying
   let connected = false;
   try {
-    logger.info(`starting emailConverterService (pid:${pid})`);
+    logger.info(`emailConverterService started (pid:${pid})`);
     connected = await emailDatabaseRepo.connect();
     if (connected) {
       logger.info(
@@ -120,74 +120,8 @@ module.exports = async (emails) => {
   await emailDatabaseRepo.disconnect();
 
   logger.info(`emailConverterService.js finished (pid:${pid})`);
-  // return the list of authoritativeEmails from the datbase
+  // return the list of authoritativeEmails from the database
   // plus the list of authFound from the API
-  return authoritativeEmails.concat(authFound);
+  // plus any missing ones -- better to return the original emails than nothing
+  return authoritativeEmails.concat(authFound).concat(authMissing);
 };
-
-// module.exports = async (emails) => {
-//   try {
-//     logger.info(`starting emailConverterService (pid:${pid})`);
-//     await emailRepo.connect();
-//     logger.info(`emailConverterService connected to db (pid:${pid})`);
-//     // currently the querySpecificEmails option is getting an error
-//     // knownEmails = await emailRepo.querySpecificEmails(emails);
-//     // alternate definition may or may not result in a faster process
-//     logger.info(`emailConverterService querying db (pid:${pid})`);
-//     knownEmails = await emailRepo.queryAllEmails();
-//     logger.info(`emailConverterService query complete (pid:${pid})`, {
-//       queryResults: knownEmails.length,
-//     });
-//     // let knownEmails = []; //comment this out when you uncomment the above
-
-//     let { found, missing } = await emailRepo.getKnownAndUnknownEmails(
-//       emails,
-//       knownEmails
-//     );
-
-//     let authoritativeEmails = found;
-
-//     logger.info(`emailConverterService sorting results (pid:${pid})`, {
-//       content: { found: found.length, missing: missing.length },
-//     });
-
-//     // authFound = array of emails we found matches for in the converter API
-//     // authMissing = array of emails with no match
-//     // newMatches = array of pairs: email & uniqEmail (these are the same emails as authFound, but with more info to pass to the db)
-//     let { authFound, authMissing, newMatches } =
-//       await convertRepo.getAuthoritativeEmailsBatch(missing);
-
-//     logger.info(
-//       `emailConverterService finished getAuthoritativeEmailsBatch (pid:${pid})`,
-//       { content: { found: found.length, missing: missing.length } }
-//     );
-
-//     if (newMatches.length > 0) {
-//       logger.info('emailConverterService: adding new emails pairs with', {
-//         content: newMatches,
-//       });
-//       await emailRepo.addNewEmailPairs(newMatches);
-//     }
-//     if (authMissing.length > 0) {
-//       logger.error(
-//         'emailConverterService: Failed to get authoritative emails for:',
-//         {
-//           content: authMissing,
-//         }
-//       );
-//     }
-
-//     await emailRepo.disconnect();
-
-//     logger.info(`emailConverterService.js finished (pid:${pid})`);
-//     // return the list of authoritativeEmails from the datbase
-//     // plus the list of authFound from the API
-//     return authoritativeEmails.concat(authFound);
-//   } catch (err) {
-//     logger.error(
-//       'emailConverterService.js failed; returning original emails instead of converted ones:',
-//       { content: err }
-//     );
-//     return emails;
-//   }
-// };
