@@ -21,6 +21,7 @@ module.exports = class EmailConverterApi {
   async getAuthoritativeEmail(email) {
     // get authoritative email from email converter, return it as a fully qualified email address
     // e.g. converts my.email.alias@xyz.com to my.unique.id@xyz.com
+    logger.debug(`EmailConverterApi: Getting authoritative email for ${email}`);
     let res = await this.submitQuery(email);
     let uniq = _.get(res, this.objectPropForReturnValue); // gets a deep value from response object
     if (this.affixSuffixToReturn && uniq !== undefined) {

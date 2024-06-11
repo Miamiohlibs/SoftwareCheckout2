@@ -29,6 +29,9 @@ module.exports = class EmailConverterRepository {
     // found = array of emails we found matches for
     // missing = array of emails with no match
     // newMatches = array of pairs: email & uniqEmail
+    logger.debug('EmailConverterRepo: getAuthoritativeEmailsBatch returns', {
+      content: { found: found, missing: missing, newMatches: newMatches },
+    });
     return { authFound: found, authMissing: missing, newMatches: newMatches };
   }
 
