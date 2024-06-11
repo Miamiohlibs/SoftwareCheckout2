@@ -1,4 +1,4 @@
-const EmailConverterApi = require('../models/EmailConvertererApi');
+const EmailConverterApi = require('../models/EmailConverterApi');
 const utils = require('../helpers/utils');
 const logger = require('../services/logger');
 const Throttle = require('../helpers/Throttle');
@@ -42,7 +42,7 @@ module.exports = class EmailConverterRepository {
       await this.lookupThrottle.pauseIfNeeded();
       let res = await this.api.getAuthoritativeEmail(email).catch((err) => {
         logger.log('EmailConverterRepo: failed to lookup email in API', {
-          content: err,
+          content: { error: err, email: email },
         });
       });
       this.lookupThrottle.increment();
