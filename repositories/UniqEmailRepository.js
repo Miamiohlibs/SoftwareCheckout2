@@ -7,7 +7,13 @@ const { asyncForEach } = require('../helpers/utils');
 
 module.exports = class UniqEmailRepository {
   async connect() {
-    return await database.connect();
+    try {
+      return await database.connect();
+    } catch (err) {
+      logger.error('UniqEmailRepository: Error connecting to database', {
+        content: err,
+      });
+    }
   }
 
   async disconnect() {

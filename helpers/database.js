@@ -27,7 +27,10 @@ const conf = (module.exports = {
       console.log('database connected');
     } catch (err) {
       console.log('could not connect to database');
-      logger.error('could not connect to database: ', { content: err });
+      logger.error('database.js: could not connect to database: ', {
+        content: err,
+      });
+      throw new Error(err);
     }
   },
 
