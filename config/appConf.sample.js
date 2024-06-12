@@ -3,9 +3,17 @@ module.exports = {
     secret: 'you should replace this with gibberish of your own',
     note: 'this is used to encrypt the user data in the logs',
   },
+  emailConverter: {
+    active: false, // set to true to use the email converter, values below also need to be configured
+    baseUrl: 'https://yourEmailConverterApi/?q=',
+    endOfUrl: '', //any additional URL text to include after
+    objectPropForReturnValue: 'data.uid', // response object property with the desired return value
+    affixSuffixToReturn: true, // if converter returns only a userId and not an email, may need to be true
+    suffix: '@miamioh.edu', // suffix to append to results of API if needed
+  },
   database: {
     // database is only needed if using emailConverter
-    active: false, // set to false to disable database connection, or true and setup db connection below
+    active: false, // set to false to disable database connection, or true and setup db connection here
     use: 'test', // which of the following configs to use
     test: {
       connection:
@@ -35,17 +43,9 @@ module.exports = {
       info: 'monthly',
       http: false,
       verbose: false,
-      debug: false, // 'daily'
+      debug: 'daily',
       silly: false,
     },
-  },
-  emailConverter: {
-    active: false, // set to true to use the email converter, requires a working API set up below
-    baseUrl: 'https://yourEmailConverterApi/?q=',
-    endOfUrl: '', //any additional URL text to include after
-    objectPropForReturnValue: 'data.uid', // response object property with the desired return value
-    affixSuffixToReturn: true, // if converter returns only a userId and not an email, may need to be true
-    suffix: '@miamioh.edu', // suffix to append to results of API if needed
   },
   software: [
     {
