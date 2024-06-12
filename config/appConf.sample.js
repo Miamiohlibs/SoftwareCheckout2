@@ -5,7 +5,7 @@ module.exports = {
   },
   database: {
     // database is only needed if using emailConverter
-    active: true, // set to false to disable database connection, or true and setup db connection below
+    active: false, // set to false to disable database connection, or true and setup db connection below
     use: 'test', // which of the following configs to use
     test: {
       connection:
