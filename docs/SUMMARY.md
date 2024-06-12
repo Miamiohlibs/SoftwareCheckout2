@@ -6,6 +6,7 @@
   * [LibCal](setup/libcal.md)
   * [Adobe](setup/adobe.md)
   * [Jamf](setup/jamf.md)
+  * [Component Demos/Tests](setup/component-demos-tests.md)
 * [Running the App](running-the-app.md)
 * [Testing](testing.md)
 * [Usage Stats](usage-stats.md)
