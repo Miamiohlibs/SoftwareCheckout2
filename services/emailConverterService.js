@@ -27,13 +27,14 @@ module.exports = async (emails) => {
   let connected = false;
   try {
     logger.info(`emailConverterService started (pid:${pid})`);
-    connected = await emailDatabaseRepo.connect();
-    if (connected) {
-      logger.info(
-        `emailConverterService database connected: ${connected} (pid: ${pid})`
-      );
+    if (appConf.emailConverter.active) {
+      connected = await emailDatabaseRepo.connect();
+      if (connected) {
+        logger.info(
+          `emailConverterService database connected: ${connected} (pid: ${pid})`
+        );
+      }
     }
-    // }
   } catch (err) {
     logger.error('emailConverterService failed to connect to db:', {
       content: err,

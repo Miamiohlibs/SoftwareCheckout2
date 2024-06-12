@@ -38,6 +38,7 @@ module.exports = {
     },
   },
   emailConverter: {
+    active: false, // set to true to use the email converter, requires a working API set up below
     baseUrl: 'https://yourEmailConverterApi/?q=',
     endOfUrl: '', //any additional URL text to include after
     objectPropForReturnValue: 'data.uid', // response object property with the desired return value
