@@ -1,7 +1,7 @@
 {
   "name": "software-checkout",
-  "version": "2.2.0",
-  "description": "Connect LibCal checkouts with Active Directory groups",
+  "version": "2.3.0",
+  "description": "Use LibCal to assign software licenses in Adobe and Jamf",
   "main": "app.js",
   "scripts": {
     "test": "jest --watch",
