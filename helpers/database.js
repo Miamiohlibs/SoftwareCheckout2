@@ -25,9 +25,13 @@ const conf = (module.exports = {
       mongoose.Promise = global.Promise;
       await mongoose.connect(connectionString, config);
       console.log('database connected');
+      return true;
     } catch (err) {
       console.log('could not connect to database');
-      logger.error('could not connect to database: ', { content: err });
+      logger.error('database.js: could not connect to database: ', {
+        content: err,
+      });
+      throw new Error(err);
     }
   },
 

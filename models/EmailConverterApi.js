@@ -14,13 +14,16 @@ module.exports = class EmailConverterApi {
     } catch (err) {
       logger.error(
         'EmailConverterApi: Failed to set EmailConverterApi configs',
-        { content: err, status: err.response.status }
+        { content: err }
       );
     }
   }
   async getAuthoritativeEmail(email) {
+    // get authoritative email from email converter, return it as a fully qualified email address
+    // e.g. converts my.email.alias@xyz.com to my.unique.id@xyz.com
+    logger.debug(`EmailConverterApi: Getting authoritative email for ${email}`);
     let res = await this.submitQuery(email);
-    let uniq = _.get(res, this.objectPropForReturnValue);
+    let uniq = _.get(res, this.objectPropForReturnValue); // gets a deep value from response object
     if (this.affixSuffixToReturn && uniq !== undefined) {
       uniq += this.suffix;
     }
