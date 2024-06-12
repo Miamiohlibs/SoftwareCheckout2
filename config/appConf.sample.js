@@ -4,6 +4,8 @@ module.exports = {
     note: 'this is used to encrypt the user data in the logs',
   },
   database: {
+    // database is only needed if using emailConverter
+    active: true, // set to false to disable database connection, or true and setup db connection below
     use: 'test', // which of the following configs to use
     test: {
       connection:
@@ -38,6 +40,7 @@ module.exports = {
     },
   },
   emailConverter: {
+    active: false, // set to true to use the email converter, requires a working API set up below
     baseUrl: 'https://yourEmailConverterApi/?q=',
     endOfUrl: '', //any additional URL text to include after
     objectPropForReturnValue: 'data.uid', // response object property with the desired return value

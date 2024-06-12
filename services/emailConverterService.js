@@ -23,17 +23,24 @@ them in the database for future use.
 */
 
 module.exports = async (emails) => {
+  // if the emailConverterService is inactive, return the emails as is
+  if (appConf.emailConverter.active === false) {
+    logger.debug('emailConverterService is inactive');
+    return emails;
+  }
+
   // connect to database or die trying
   let connected = false;
   try {
     logger.info(`emailConverterService started (pid:${pid})`);
-    connected = await emailDatabaseRepo.connect();
-    if (connected) {
-      logger.info(
-        `emailConverterService database connected: ${connected} (pid: ${pid})`
-      );
+    if (appConf.database.active) {
+      connected = await emailDatabaseRepo.connect();
+      if (connected) {
+        logger.info(
+          `emailConverterService database connected: ${connected} (pid: ${pid})`
+        );
+      }
     }
-    // }
   } catch (err) {
     logger.error('emailConverterService failed to connect to db:', {
       content: err,
