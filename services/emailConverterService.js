@@ -20,6 +20,9 @@ them in the database for future use.
 - log any remaining stragglers to error log
 - if there are any new emails, add them to the db
 - if this process fails, return the original emails [most will still be valid, so better this than nothing]
+
+UniqEmailRepository connects to the database of stored (already established) authoritative emails.
+EmailConverterRepository looks up unknown emails in the emailConverter API; they will then be added to the UniqEmails database.
 */
 
 module.exports = async (emails) => {
