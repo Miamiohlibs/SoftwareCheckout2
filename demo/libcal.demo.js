@@ -41,7 +41,14 @@ const main = async () => {
     type: 'rawlist',
     name: 'showBookings',
     message: 'Show bookings?',
-    choices: ['Compressed', 'Mini', 'Email only', 'Full', 'None'],
+    choices: [
+      'Compressed',
+      'Mini',
+      'Email only',
+      'Full',
+      'Look for one email',
+      'None',
+    ],
   });
   switch (showBookings.showBookings) {
     case 'Full':
@@ -75,6 +82,16 @@ const main = async () => {
         })
       );
       console.log(JSON.stringify(bookings));
+      next();
+      break;
+    case 'Look for one email':
+      let email = await inquirer.prompt({
+        type: 'input',
+        name: 'email',
+        message: 'Enter email to look for:',
+      });
+      let found = res.filter((booking) => booking.email === email.email);
+      console.log(JSON.stringify(found, null, 2));
       next();
       break;
     default:
