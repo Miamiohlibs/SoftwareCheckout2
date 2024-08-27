@@ -14,7 +14,13 @@ module.exports = class LicenseGroup {
   }
 
   getLicenseGroupsByVendor(vendor, limitToActive = true) {
-    return this.software.filter((i) => i.vendor == vendor && i.active == true);
+    if (limitToActive) {
+      return this.software.filter(
+        (i) => i.vendor == vendor && i.active == true
+      );
+    } else {
+      return this.software.filter((i) => i.vendor == vendor);
+    }
   }
 
   getVendorGroupNamesByVendor(vendor, limitToActive = true) {
