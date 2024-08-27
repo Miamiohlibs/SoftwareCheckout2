@@ -21,6 +21,10 @@ const mainMenu = () => {
           value: 'listUsers',
         },
         {
+          name: 'Find user in a group',
+          value: 'findUser',
+        },
+        {
           name: 'List groups',
           value: 'listGroups',
         },
