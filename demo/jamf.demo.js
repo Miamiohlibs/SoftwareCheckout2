@@ -45,6 +45,18 @@ const listUsers = async () => {
   const users = await jamfRepo.getGroupMembers(groupId);
   console.log(JSON.stringify(users, null, 2));
 };
+const findUser = async () => {
+  const getSoftware = await chooseGroup('Find');
+  const groupId = getSoftware.groupId;
+  const entry = await inquirer.prompt({
+    type: 'input',
+    name: 'email',
+    message: 'Email address?',
+  });
+  const users = await jamfRepo.getGroupMembers(groupId);
+  let res = users.filter((item) => item == entry.email);
+  console.log(JSON.stringify(res, null, 2));
+};
 
 const addUsers = async () => {
   const getSoftware = await chooseGroup('Add');
@@ -95,6 +107,10 @@ const main = async () => {
       break;
     case 'listUsers':
       await listUsers();
+      main();
+      break;
+    case 'findUser':
+      await findUser();
       main();
       break;
     case 'listGroups':
