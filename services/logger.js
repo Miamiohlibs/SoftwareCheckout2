@@ -7,9 +7,9 @@ const { createLogger, format, transports } = require('winston');
 const { combine, timestamp, label, prettyPrint } = format;
 const { uid } = require('uid');
 
-transportsArr = [];
-for (level in appConf.logLevels) {
-  filename = '';
+let transportsArr = [];
+for (let level in appConf.logLevels) {
+  let filename = '';
   if (appConf.logLevels[level] == 'daily') {
     filename = path.join(__dirname, '..', 'logs', level + '-' + today + '.log');
   } else if (appConf.logLevels[level] == 'monthly') {
