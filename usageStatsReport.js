@@ -131,4 +131,4 @@ pkgs.forEach((pkg) => {
   summarize(pkg, thisdata, first, last);
 });
 
-// summarize('All', allPkgData, '', '');
+summarize('All', allPkgData, '', '');
