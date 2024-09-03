@@ -23,7 +23,6 @@ const VendorList = () => {
 
   return (
     <>
-        <h2>Vendors</h2>
         <div className='cards'>
         {vendors.map((vendor, index) => (
             
