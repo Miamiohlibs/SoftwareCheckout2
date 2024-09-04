@@ -1,16 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Software Checkout Admin</title>
-</head>
-<body>
-    <% data.forEach(function(item) { %>
-        <h2><%= item.vendor %></h2>
-        <% item.groups.forEach(function(group) { %>
-            <li><%= group.libCalName %> <a href="/api/<%= item.vendor.toLowerCase() %>/compare?group=<%= group.vendorGroupId %>&cid=<%= group.libCalCid %>">Compare</a> <a href="/api/<%= item.vendor %>?group=<%= group.vendorGroupId %>">Details</a></li>
+<%- include ('./partials/header.ejs') %>
+    <div class="cards">
+        <% data.forEach(function(item) { %>
+            <div class="card m-3">
+                <div class="card-header">
+                    <h2><%= item.vendor %></h2>
+                </div>
+                <div class="card-body">
+                    <% item.groups.forEach(function(group) { %>
+                        <div class="row">
+                            <div class="cell col-3"><%= group.libCalName %></div>
+                            <div class="cell col-3"><a href="/compare?vendor=<%= item.vendor.toLowerCase() %>&group=<%= group.vendorGroupId %>&cid=<%= group.libCalCid %>&groupName=<%= group.libCalName%> (<%= group.vendorGroupName%>)">Compare</a> 
+                            </div>
+                            <div class="cell col-3">
+                            <a href="/api/<%= item.vendor %>?group=<%= group.vendorGroupId %>">Vendor</a>
+                            </div>
+                            <div class="cell col-3">
+                                <a href="/api/libcal?group=<%= group.libCalCid %>">LibCal</a>
+                            </div>
+                        </div>
+
+                    <% }); %>
+                </div>
+            </div>
         <% }); %>
-    <% }); %>
-</body>
-</html>
+    </div>
+<%- include ('./partials/footer.ejs') %>

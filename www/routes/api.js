@@ -1,3 +1,4 @@
+const dayjs = require('dayjs');
 const express = require('express');
 const router = express.Router();
 const { text } = require('express');
@@ -22,6 +23,12 @@ async function getLibCalBookingsByCid(cid) {
   const LibCalRepository = require('../../repositories/LibCalRepository');
   const libcal = new LibCalRepository(libcalConf);
   let bookings = await libcal.getCurrentValidBookings(cid);
+  bookings = bookings.map((i) => {
+    i.timeWaiting = i.created
+      ? dayjs().diff(dayjs(i.created), 'minutes') + ' minutes'
+      : null;
+    return i;
+  });
   return bookings;
 }
 
@@ -80,6 +87,7 @@ router.get('/adobe/compare', async (req, res) => {
   const adobeBookings = await getAdobeBookingsByGroup(group);
   const adobeEmails = adobeBookings.map((i) => i.email);
   const libCalBookings = await getLibCalBookingsByCid(cid);
+
   const libCalEmails = libCalBookings.map((i) => i.email);
   let emailsToRemove = filterToEntriesMissingFromSecondArray(
     adobeEmails,
@@ -89,10 +97,12 @@ router.get('/adobe/compare', async (req, res) => {
     libCalEmails,
     adobeEmails
   );
+
+  bookingsToAdd = libCalBookings.filter((i) => emailsToAdd.includes(i.email));
   res.json({
     emailsToRemove: emailsToRemove,
-    emailsToAdd: emailsToAdd,
-    adobeEmails: adobeEmails,
+    bookingsToAdd: bookingsToAdd,
+    vendorEmails: adobeEmails,
     libCalEmails: libCalEmails,
   });
 
@@ -116,10 +126,11 @@ router.get('/jamf/compare', async (req, res) => {
     libCalEmails,
     jamfEmails
   );
+  bookingsToAdd = libCalBookings.filter((i) => emailsToAdd.includes(i.email));
   res.json({
     emailsToRemove: emailsToRemove,
-    emailsToAdd: emailsToAdd,
-    adobeEmails: jamfEmails,
+    bookingsToAdd: bookingsToAdd,
+    vendorEmails: jamfEmails,
     libCalEmails: libCalEmails,
   });
 });

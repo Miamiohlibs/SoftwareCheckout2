@@ -1,0 +1,34 @@
+<%- include('partials/header') %>
+<h1>Compare LibCal Checkouts to License Assignments</h1>
+<h2><span class="caps"><%= vendor %></span>: <%= groupName %> (<%= group %>) </h2>
+
+<div class="cards">
+    <div class="card m-3 border border-warning">
+        <h3>To Add</h3>
+        <div class="accordion accordion-flush" id="accordionFlushExample">
+            <% for (let i=0; i<data.bookingsToAdd.length; i++) { %>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="flush-heading<%= i %>">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse<%= i %>" aria-expanded="false" aria-controls="flush-collapse<%= i %>">
+                            <%= data.bookingsToAdd[i].email %> (<%= data.bookingsToAdd[i].timeWaiting %>)
+                        </button>
+                    </h2>
+                    <div id="flush-collapse<%= i %>" class="accordion-collapse collapse" aria-labelledby="flush-heading<%= i %>" data-bs-parent="#accordionFlushExample">
+                        <div class="accordion-body">
+                            <pre>
+                                <%= JSON.stringify(data.bookingsToAdd[i], null, 2) %>
+                            </pre>
+                        </div>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+    </div>
+    <div class="card m-3 border border-danger"><h3>To Remove</h3>
+        <pre>
+            <%= JSON.stringify(data.emailsToRemove, null, 2) %>
+            </pre>
+    </div>
+</div>
+
+<%- include('partials/footer') %>
