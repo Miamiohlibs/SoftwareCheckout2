@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Software Checkout Admin</title>
+</head>
+<body>
+    <% data.forEach(function(item) { %>
+        <h2><%= item.vendor %></h2>
+        <% item.groups.forEach(function(group) { %>
+            <li><%= group.libCalName %> <a href="/api/<%= item.vendor.toLowerCase() %>/compare?group=<%= group.vendorGroupId %>&cid=<%= group.libCalCid %>">Compare</a> <a href="/api/<%= item.vendor %>?group=<%= group %>">Details</a></li>
+        <% }); %>
+    <% }); %>
+</body>
+</html>
