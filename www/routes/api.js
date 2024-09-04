@@ -25,6 +25,14 @@ async function getLibCalBookingsByCid(cid) {
   return bookings;
 }
 
+async function getJamfBookingsByGroupId(group) {
+  const jamfConf = require('../../config/jamf');
+  const JamfRepository = require('../../repositories/JamfRepository');
+  const jamf = new JamfRepository(jamfConf);
+  let bookings = await jamf.getGroupMembers(group);
+  return bookings;
+}
+
 router.get('/vendors', async (req, res) => {
   //   res.json({ text: 'Hello World!' });
   let vendors = await lg.getActiveVendors();
@@ -92,12 +100,28 @@ router.get('/adobe/compare', async (req, res) => {
 });
 
 router.get('/jamf', async (req, res) => {
-  const jamfConf = require('../../config/jamf');
-  const JamfRepository = require('../../repositories/JamfRepository');
-  const jamf = new JamfRepository(jamfConf);
-  let group = req.query.group;
-  let members = await jamf.getGroupMembers(group);
-  res.json(members);
+  let jamfBookings = await getJamfBookingsByGroupId(req.query.group);
+  res.json(jamfBookings);
+});
+
+router.get('/jamf/compare', async (req, res) => {
+  let jamfEmails = await getJamfBookingsByGroupId(req.query.group);
+  const libCalBookings = await getLibCalBookingsByCid(req.query.cid);
+  const libCalEmails = libCalBookings.map((i) => i.email);
+  let emailsToRemove = filterToEntriesMissingFromSecondArray(
+    jamfEmails,
+    libCalEmails
+  );
+  let emailsToAdd = filterToEntriesMissingFromSecondArray(
+    libCalEmails,
+    jamfEmails
+  );
+  res.json({
+    emailsToRemove: emailsToRemove,
+    emailsToAdd: emailsToAdd,
+    adobeEmails: jamfEmails,
+    libCalEmails: libCalEmails,
+  });
 });
 
 module.exports = router;

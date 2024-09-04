@@ -9,7 +9,7 @@
     <% data.forEach(function(item) { %>
         <h2><%= item.vendor %></h2>
         <% item.groups.forEach(function(group) { %>
-            <li><%= group.libCalName %> <a href="/api/<%= item.vendor.toLowerCase() %>/compare?group=<%= group.vendorGroupId %>&cid=<%= group.libCalCid %>">Compare</a> <a href="/api/<%= item.vendor %>?group=<%= group %>">Details</a></li>
+            <li><%= group.libCalName %> <a href="/api/<%= item.vendor.toLowerCase() %>/compare?group=<%= group.vendorGroupId %>&cid=<%= group.libCalCid %>">Compare</a> <a href="/api/<%= item.vendor %>?group=<%= group.vendorGroupId %>">Details</a></li>
         <% }); %>
     <% }); %>
 </body>
