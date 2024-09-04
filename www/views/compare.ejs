@@ -3,7 +3,7 @@
 <h2><span class="caps"><%= vendor %></span>: <%= groupName %> (<%= group %>) </h2>
 
 <div class="cards">
-    <div class="card m-3 border border-warning">
+    <div class="card m-3 p-2 border border-warning">
         <h3>To Add</h3>
         <div class="accordion accordion-flush" id="accordionFlushExample">
             <% for (let i=0; i<data.bookingsToAdd.length; i++) { %>
@@ -24,10 +24,30 @@
             <% } %>
         </div>
     </div>
-    <div class="card m-3 border border-danger"><h3>To Remove</h3>
+    <div class="card m-3 p-2 border border-danger"><h3>To Remove</h3>
         <pre>
             <%= JSON.stringify(data.emailsToRemove, null, 2) %>
             </pre>
+    </div>
+</div>
+
+<div class="cards">
+    <div class="card m-3 p-2 border border-success">
+        <h3>LibCal Reservations
+            (<%= data.libCalEmails.length %>)
+        </h3>
+        <pre>
+            <%= JSON.stringify(data.libCalEmails, null, 2) %>
+        </pre>
+    </div>
+    <div class="card m-3 p-2 border border-info">
+        <h3>
+            <span class="caps"><%= vendor %></span> emails
+            (<%= data.vendorEmails.length %>)
+        </h3>
+        <pre>
+            <%= JSON.stringify(data.vendorEmails, null, 2) %>
+        </pre>
     </div>
 </div>
 

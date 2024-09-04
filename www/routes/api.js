@@ -8,6 +8,7 @@ const lg = new LicenseGroup(appConf);
 const {
   filterToEntriesMissingFromSecondArray,
 } = require('../../helpers/utils');
+const libCal = require('../../config/libcal');
 const baseUrl = 'http://localhost:3010';
 
 async function getAdobeBookingsByGroup(group) {
@@ -97,7 +98,8 @@ router.get('/adobe/compare', async (req, res) => {
     libCalEmails,
     adobeEmails
   );
-
+  adobeEmails.sort();
+  libCalEmails.sort();
   bookingsToAdd = libCalBookings.filter((i) => emailsToAdd.includes(i.email));
   res.json({
     emailsToRemove: emailsToRemove,
@@ -126,6 +128,8 @@ router.get('/jamf/compare', async (req, res) => {
     libCalEmails,
     jamfEmails
   );
+  libCalEmails.sort();
+  jamfEmails.sort();
   bookingsToAdd = libCalBookings.filter((i) => emailsToAdd.includes(i.email));
   res.json({
     emailsToRemove: emailsToRemove,
