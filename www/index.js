@@ -7,7 +7,6 @@ require('./auth');
 const config = require('../config/appConf');
 
 const app = express();
-const port = 3010;
 
 // Session configuration
 app.use(
@@ -54,6 +53,7 @@ app.use(express.static(__dirname + '/public'));
 
 // Routes
 let apiRouter = require('./routes/api');
+app.use('/api', apiKeyAuth, apiRouter);
 
 app.get('/', (req, res) => {
   res.render('landing', { error: req.query.error });
@@ -129,10 +129,8 @@ app.get('/logout', function (req, res, next) {
   });
 });
 
-// API routes
-app.use('/api', apiKeyAuth, apiRouter);
-
 // Start server
+const port = config.admin.port || 3010;
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
