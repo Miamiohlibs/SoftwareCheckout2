@@ -2,8 +2,9 @@ const path = require('path');
 const express = require('express');
 const session = require('express-session');
 const passport = require('passport');
-const fetch = require('node-fetch'); // Ensure this is installed
-require('./auth'); // Ensure Google OAuth is configured here
+const fetch = require('node-fetch');
+require('./auth');
+const config = require('../config/appConf');
 
 const app = express();
 const port = 3010;
@@ -22,6 +23,19 @@ app.use(passport.session());
 
 function isLoggedIn(req, res, next) {
   req.user ? next() : res.sendStatus(401);
+}
+
+function apiKeyAuth(req, res, next) {
+  const apiKey = req.headers['authorization'];
+  if (apiKey && apiKey === `Bearer ${config.admin.apiKey}`) {
+    return next();
+  } else {
+    res.status(401).json({
+      message: 'Unauthorized',
+      key: apiKey,
+      config: config.admin.apiKey,
+    });
+  }
 }
 
 // View and static files setup
@@ -57,7 +71,9 @@ app.get('/auth/failure', (req, res) => {
 
 app.get('/main', isLoggedIn, async (req, res) => {
   try {
-    let data = await fetch(`http://localhost:${port}/api/groups`);
+    let data = await fetch(`http://localhost:${port}/api/groups`, {
+      headers: { Authorization: `Bearer ${config.admin.apiKey}` },
+    });
     let json = await data.json();
     res.render('main', { data: json });
   } catch (err) {
@@ -65,10 +81,11 @@ app.get('/main', isLoggedIn, async (req, res) => {
   }
 });
 
-app.get('/compare', async (req, res) => {
+app.get('/compare', isLoggedIn, async (req, res) => {
   try {
     let data = await fetch(
-      `http://localhost:${port}/api/${req.query.vendor}/compare?group=${req.query.group}&cid=${req.query.cid}`
+      `http://localhost:${port}/api/${req.query.vendor}/compare?group=${req.query.group}&cid=${req.query.cid}`,
+      { headers: { Authorization: `Bearer ${config.admin.apiKey}` } }
     );
     let json = await data.json();
     res.render('compare', {
@@ -104,7 +121,7 @@ app.get('/logout', function (req, res, next) {
 });
 
 // API routes
-app.use('/api', apiRouter);
+app.use('/api', apiKeyAuth, apiRouter);
 
 // Start server
 app.listen(port, () => {
