@@ -21,9 +21,14 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+function isPermittedUser(req) {
+  return config.admin.allowedUsers.includes(req.user.email);
+}
 function isLoggedIn(req, res, next) {
   if (config.admin.requireLogin) {
-    return req.isAuthenticated() ? next() : res.redirect('/');
+    return req.isAuthenticated() && isPermittedUser(req)
+      ? next()
+      : res.redirect('/?error=unauthorized');
   }
   return next();
   // req.user ? next() : res.sendStatus(401);
@@ -51,7 +56,7 @@ app.use(express.static(__dirname + '/public'));
 let apiRouter = require('./routes/api');
 
 app.get('/', (req, res) => {
-  res.send('<a href="/auth/google">Login with Google</a>');
+  res.render('landing', { error: req.query.error });
 });
 
 app.get(
@@ -65,6 +70,11 @@ app.get(
     failureRedirect: '/auth/failure',
   }),
   (req, res) => {
+    req.session.user = {
+      id: req.user.id,
+      email: req.user.email,
+      name: req.user.displayName,
+    };
     res.redirect('/main');
   }
 );
@@ -79,7 +89,7 @@ app.get('/main', isLoggedIn, async (req, res) => {
       headers: { Authorization: `Bearer ${config.admin.apiKey}` },
     });
     let json = await data.json();
-    res.render('main', { data: json });
+    res.render('main', { data: json, user: req.user });
   } catch (err) {
     res.status(500).send('Error fetching data');
   }
@@ -98,17 +108,12 @@ app.get('/compare', isLoggedIn, async (req, res) => {
       group: req.query.group,
       groupName: req.query.groupName,
       cid: req.query.cid,
+      user: req.user || false,
     });
   } catch (err) {
     res.status(500).send('Error fetching comparison data');
   }
 });
-
-// app.get('/logout', (req, res) => {
-//   req.logout();
-//   req.session.destroy();
-//   res.redirect('/');
-// });
 
 app.get('/logout', function (req, res, next) {
   req.logout(function (err) {

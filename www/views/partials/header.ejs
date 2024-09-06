@@ -13,5 +13,10 @@
     <nav class="navbar navbar-dark bg-secondary">
         <div class="container-fluid">
           <a class="navbar-brand" href="/">Software Checkout Admin</a>
+          <% if (user) { %>
+            <div class="d-flex">
+              <a href="/logout" class="btn btn-warning">Logout</a>
+            </div>
+          <% } %> 
         </div>
       </nav>
