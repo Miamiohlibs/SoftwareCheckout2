@@ -22,7 +22,11 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 function isLoggedIn(req, res, next) {
-  req.user ? next() : res.sendStatus(401);
+  if (config.admin.requireLogin) {
+    return req.isAuthenticated() ? next() : res.redirect('/');
+  }
+  return next();
+  // req.user ? next() : res.sendStatus(401);
 }
 
 function apiKeyAuth(req, res, next) {
