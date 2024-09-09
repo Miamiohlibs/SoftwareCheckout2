@@ -10,6 +10,9 @@ const libCalConf = require('./config/libCal');
 const lcapi = new LibCalApi(libCalConf);
 const fs = require('fs');
 const dayjs = require('dayjs');
+const yargs = require('yargs');
+const argv = yargs(process.argv.slice(2)).argv;
+const chrono = require('chrono-node');
 // const { sleep } = require('./helpers/utils');
 // const path = require('path');
 const software = config.software;
@@ -37,30 +40,43 @@ async function runQuery(date, cid, folder) {
 }
 
 async function main() {
-  const getStart = await inquirer.prompt({
-    type: 'input',
-    name: 'startDate',
-    message: 'Start date?',
-  });
-  const getEnd = await inquirer.prompt({
-    type: 'input',
-    name: 'endDate',
-    message: 'End date?',
-  });
-  const startDate = getStart.startDate;
-  const endDate = getEnd.endDate;
+  let startDate, endDate, cid;
 
-  const getSoftware = await inquirer.prompt(
-    genList({
-      list: software,
-      message: 'Which software to get stats for?',
-      itemNameProp: 'libCalName',
-      itemValueProp: 'libCalCid',
-      outputLabel: 'softwareOption',
-    })
-  );
-  console.log('cid: ', getSoftware.softwareOption);
-  const cid = getSoftware.softwareOption;
+  if (argv.startDate && argv.endDate && argv.libCalCid) {
+    startDate = argv.startDate;
+    endDate = argv.endDate;
+    cid = argv.libCalCid.toString();
+  } else {
+    const getStart = await inquirer.prompt({
+      type: 'input',
+      name: 'startDate',
+      message: 'Start date?',
+    });
+    const getEnd = await inquirer.prompt({
+      type: 'input',
+      name: 'endDate',
+      message: 'End date?',
+    });
+    startDate = getStart.startDate;
+    endDate = getEnd.endDate;
+
+    const getSoftware = await inquirer.prompt(
+      genList({
+        list: software,
+        message: 'Which software to get stats for?',
+        itemNameProp: 'libCalName',
+        itemValueProp: 'libCalCid',
+        outputLabel: 'softwareOption',
+      })
+    );
+    console.log('cid: ', getSoftware.softwareOption);
+    cid = getSoftware.softwareOption;
+  }
+
+  startDate = dayjs(chrono.parseDate(startDate)).format('YYYY-MM-DD');
+  endDate = dayjs(chrono.parseDate(endDate)).format('YYYY-MM-DD');
+  console.log(startDate, endDate, cid);
+  // console.log(software);
   const softwareName = software.filter((item) => item.libCalCid === cid)[0]
     .libCalName;
   console.log('softwareName: ', softwareName);
