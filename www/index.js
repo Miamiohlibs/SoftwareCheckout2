@@ -115,6 +115,20 @@ app.get('/compare', isLoggedIn, async (req, res) => {
   }
 });
 
+app.get('/fetch', isLoggedIn, async (req, res) => {
+  try {
+    let data = await fetch(
+      `http://localhost:${port}/api/${req.query.vendor}?group=${req.query.group}`,
+      { headers: { Authorization: `Bearer ${config.admin.apiKey}` } }
+    );
+    let json = await data.json();
+    res.json(json);
+    // res.render('fetch', { data: json, vendor: req.query.vendor, cid: req.query.cid });
+  } catch (err) {
+    res.status(500).send('Error fetching data');
+  }
+});
+
 app.get('/logout', function (req, res, next) {
   req.logout(function (err) {
     if (err) {
