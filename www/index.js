@@ -56,7 +56,11 @@ let apiRouter = require('./routes/api');
 app.use('/api', apiKeyAuth, apiRouter);
 
 app.get('/', (req, res) => {
-  res.render('landing', { error: req.query.error });
+  if (config.admin.requireLogin) {
+    res.render('landing', { error: req.query.error });
+  } else {
+    res.redirect('/main');
+  }
 });
 
 app.get(
@@ -122,7 +126,13 @@ app.get('/fetch', isLoggedIn, async (req, res) => {
       { headers: { Authorization: `Bearer ${config.admin.apiKey}` } }
     );
     let json = await data.json();
-    res.json(json);
+    // res.json(json);
+    res.render('vendorGroup', {
+      data: json,
+      vendor: req.query.vendor,
+      group: req.query.group,
+      groupName: req.query.groupName,
+    });
     // res.render('fetch', { data: json, vendor: req.query.vendor, cid: req.query.cid });
   } catch (err) {
     res.status(500).send('Error fetching data');
