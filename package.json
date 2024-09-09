@@ -7,7 +7,8 @@
     "test": "jest --watch",
     "start": "node app",
     "server": "node app --listen --name=software-checkout >> logs/app.log 2>&1 &",
-    "dev": "nodemon app"
+    "dev": "nodemon app",
+    "web": "node www/index --name=software-checkout-webconsole >> logs/web.log 2>&1 &"
   },
   "author": "Ken Irwin",
   "license": "MIT",
