@@ -13,6 +13,7 @@ const dayjs = require('dayjs');
 const yargs = require('yargs');
 const argv = yargs(process.argv.slice(2)).argv;
 const chrono = require('chrono-node');
+const { asyncForEach } = require('./helpers/utils');
 // const { sleep } = require('./helpers/utils');
 // const path = require('path');
 const software = config.software;
@@ -39,9 +40,22 @@ async function runQuery(date, cid, folder) {
   );
 }
 
+async function getStats(startDate, endDate, cid, softwareName) {
+  console.log('softwareName: ', softwareName);
+  const folder = softwareName.replace(/ /g, '');
+  let date = startDate;
+
+  // console.log(startDate, endDate, softwareName, folder, cid);
+  while (date <= endDate) {
+    await runQuery(date, cid, folder);
+    console.log(date);
+    date = dayjs(date).add(1, 'day').format('YYYY-MM-DD');
+    await timer(1500);
+  }
+}
+
 async function main() {
   let startDate, endDate, cid;
-
   if (argv.startDate && argv.endDate && argv.libCalCid) {
     startDate = argv.startDate;
     endDate = argv.endDate;
@@ -75,20 +89,20 @@ async function main() {
 
   startDate = dayjs(chrono.parseDate(startDate)).format('YYYY-MM-DD');
   endDate = dayjs(chrono.parseDate(endDate)).format('YYYY-MM-DD');
-  console.log(startDate, endDate, cid);
-  // console.log(software);
-  const softwareName = software.filter((item) => item.libCalCid === cid)[0]
-    .libCalName;
-  console.log('softwareName: ', softwareName);
-  const folder = softwareName.replace(/ /g, '');
-  let date = startDate;
 
-  // console.log(startDate, endDate, softwareName, folder, cid);
-  while (date <= endDate) {
-    await runQuery(date, cid, folder);
-    console.log(date);
-    date = dayjs(date).add(1, 'day').format('YYYY-MM-DD');
-    await timer(1500);
+  if (cid == 'all') {
+    let activeSoftware = software.filter((item) => item.active === true);
+    asyncForEach(activeSoftware, async (item) => {
+      await getStats(startDate, endDate, item.libCalCid, item.libCalName);
+    });
+    // activeSoftware.forEach(async (item) => {
+    //   await getStats(startDate, endDate, item.libCalCid, item.libCalName);
+    // });
+    return;
+  } else {
+    const softwareName = software.filter((item) => item.libCalCid === cid)[0]
+      .libCalName;
+    await getStats(startDate, endDate, cid, softwareName);
   }
 }
 
