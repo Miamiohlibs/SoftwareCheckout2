@@ -3,6 +3,17 @@ module.exports = {
     secret: 'you should replace this with gibberish of your own',
     note: 'this is used to encrypt the user data in the logs',
   },
+  admin: {
+    port: 3010,
+    requireLogin: true,
+    allowedUsers: [], // list allowed emails here
+    apiKey: 'writeYourOwnKeyHereTheValueIsNotImportant',
+    host: 'http://localhost',
+    googleClientId:
+      'get a google client id from https://console.developers.google.com/apis/credentials',
+    googleClientSecret: 'get a google client secret from the same place',
+    authCallback: 'http://localhost:3010/google/callback',
+  },
   emailConverter: {
     active: false, // set to true to use the email converter, values below also need to be configured
     baseUrl: 'https://yourEmailConverterApi/?q=',

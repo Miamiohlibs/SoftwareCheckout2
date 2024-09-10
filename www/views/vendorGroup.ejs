@@ -1,0 +1,27 @@
+<%- include('partials/header') %>
+<script src="js/openClose.js"></script>
+<div class="container">
+<h1><span class="caps"><%= vendor %></span> <%= groupName %> (<%= group %>) Assignments</h1>
+<button id="toggle-all" class="btn btn-success" data-bs-toggle="collapse" data-bs-target=".multi-collapse">Expand All</button>
+
+    <div class="card m-3 p-2 border border-warning">
+        <div class="accordion accordion-flush" id="accordionFlushExample">
+            <% for (let i=0; i<data.length; i++) { %>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="flush-heading<%= i %>">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse<%= i %>" aria-expanded="false" aria-controls="flush-collapse<%= i %>">
+                            <%= data[i].email %>
+                        </button>
+                    </h2>
+                    <div id="flush-collapse<%= i %>" class="accordion-collapse collapse multi-collapse" aria-labelledby="flush-heading<%= i %>" data-bs-parent="#accordionFlushExample">
+                        <div class="accordion-body">
+                            <pre>
+                                <%= JSON.stringify(data[i], null, 2) %>
+                            </pre>
+                        </div>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</div>

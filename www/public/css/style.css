@@ -1,0 +1,21 @@
+.caps {
+    text-transform: capitalize;
+}
+.cards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.cards > .card { 
+    width: 500px;
+}
+.card .row:hover {
+    background-color: #333;
+    color: #fff;
+}
+.card .row:hover a {
+    color: #fff;
+}
+.card .row a:hover {
+    color: yellow;
+}
