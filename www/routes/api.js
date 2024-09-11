@@ -145,7 +145,24 @@ router.get('/stats/daily', (req, res) => {
   if (req.query.format) {
     format = req.query.format;
   }
-  const data = dailyStatsService(req.query.format);
+  const data = dailyStatsService(format);
+  if (format === 'json') {
+    res.json(data);
+  } else if (format === 'csv') {
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', 'attachment; filename=dailyStats.csv');
+    res.send(data);
+  }
+});
+
+router.get('/stats/summary', async (req, res) => {
+  let format = 'csv';
+  if (req.query.format) {
+    format = req.query.format;
+  }
+  const StatsSummary = require('../../services/summaryStatsService');
+  const data = StatsSummary(format);
+
   if (format === 'json') {
     res.json(data);
   } else if (format === 'csv') {
