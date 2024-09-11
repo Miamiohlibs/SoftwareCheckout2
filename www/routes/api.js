@@ -20,9 +20,9 @@ async function getAdobeBookingsByGroup(group) {
 }
 
 async function getLibCalBookingsByCid(cid) {
-  const libcalConf = require('../../config/libcal');
+  const libCalConf = require('../../config/libcal');
   const LibCalRepository = require('../../repositories/LibCalRepository');
-  const libcal = new LibCalRepository(libcalConf);
+  const libcal = new LibCalRepository(libCalConf);
   let bookings = await libcal.getCurrentValidBookings(cid);
   bookings = bookings.map((i) => {
     i.timeWaiting = i.created
@@ -139,4 +139,19 @@ router.get('/jamf/compare', async (req, res) => {
   });
 });
 
+router.get('/stats/daily', (req, res) => {
+  const dailyStatsService = require('../../services/dailyStatsService');
+  let format = 'csv';
+  if (req.query.format) {
+    format = req.query.format;
+  }
+  const data = dailyStatsService(req.query.format);
+  if (format === 'json') {
+    res.json(data);
+  } else if (format === 'csv') {
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', 'attachment; filename=dailyStats.csv');
+    res.send(data);
+  }
+});
 module.exports = router;

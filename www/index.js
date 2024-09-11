@@ -41,7 +41,7 @@ function apiKeyAuth(req, res, next) {
     res.status(401).json({
       message: 'Unauthorized',
       key: apiKey,
-      config: config.admin.apiKey,
+      // config: config.admin.apiKey,
     });
   }
 }
@@ -54,6 +54,8 @@ app.use(express.static(__dirname + '/public'));
 // Routes
 let apiRouter = require('./routes/api');
 app.use('/api', apiKeyAuth, apiRouter);
+let statsRouter = require('./routes/stats');
+app.use('/stats', isLoggedIn, statsRouter);
 
 app.get('/', (req, res) => {
   if (config.admin.requireLogin) {
