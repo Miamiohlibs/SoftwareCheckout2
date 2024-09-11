@@ -17,7 +17,7 @@
     "@json2csv/node": "^7.0.6",
     "async": "^3.2.0",
     "axios": "^0.28.1",
-    "chrono-node": "^1.4.9",
+    "chrono-node": "^2.7.6",
     "colors": "^1.4.0",
     "crypto": "^1.0.1",
     "dayjs": "^1.10.4",
