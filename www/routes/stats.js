@@ -50,7 +50,10 @@ router.get('/daily', async (req, res) => {
     });
     const csvData = await data.text();
     const table = csvToHtmlTable(csvData);
-    res.render('statsTable', { table: table, pageTitle: 'Daily Stats' });
+    res.render('statsTable', {
+      table: table,
+      pageTitle: 'Daily Stats: Licenses in Use per Day',
+    });
   } catch (err) {
     console.log(err);
     res.status(500).send('Error fetching data', err);

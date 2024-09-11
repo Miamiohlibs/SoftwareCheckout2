@@ -18,8 +18,20 @@ const { asyncForEach } = require('./helpers/utils');
 // const path = require('path');
 const software = config.software;
 const { genList } = require('./helpers/utils');
+const e = require('express');
 
 const timer = (ms) => new Promise((res) => setTimeout(res, ms));
+
+function help() {
+  console.log('Usage: node getUsageData.js');
+  console.log('Options:');
+  console.log(
+    '  --startDate=YYYY-MM-DD (also supports dates like "two weeks ago" or "yesterday")'
+  );
+  console.log('  --endDate=YYYY-MM-DD (or other date format)');
+  console.log('  --libCalCid=libCalCid or "all"');
+  console.log('  --help');
+}
 
 async function runQuery(date, cid, folder) {
   let res = await lcapi.getBookings(cid, date);
@@ -56,6 +68,13 @@ async function getStats(startDate, endDate, cid, softwareName) {
 
 async function main() {
   let startDate, endDate, cid;
+  // console.log('argv: ', argv);
+  if (argv.h === true) {
+    help();
+    return;
+  } else {
+    console.log('For help, run with -h');
+  }
   if (argv.startDate && argv.endDate && argv.libCalCid) {
     startDate = argv.startDate;
     endDate = argv.endDate;
