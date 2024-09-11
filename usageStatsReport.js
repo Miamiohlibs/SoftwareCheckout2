@@ -10,7 +10,10 @@ const data = statsSummary.summaries;
 
 console.log('-----------------------'.blue);
 data.forEach((entry) => {
-  console.log(`Package: ${entry.pkgName} ${entry.span}`.green);
+  console.log(`Package: ${entry.pkgName}`.green);
+  console.log(
+    `Dates: ` + `${entry.first}`.yellow + ` - ` + `${entry.last}`.yellow
+  );
   console.log(`Total Bookings: ` + `${entry.totalBookings}`.yellow);
   console.log(`Total Users: ` + `${entry.totalUsers}`.yellow);
   console.log('-----------------------'.blue);

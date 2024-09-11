@@ -6,6 +6,8 @@ module.exports = class StatsSummary {
   constructor() {
     this.allPkgData = [];
     this.summaries = [];
+    this.overallFirst = '';
+    this.overallLast = '';
     let thisDir = path.dirname(__filename);
     this.statsPath = path.join(thisDir, '../logs/dailyStats');
     this.pkgs = this.getDirectories(this.statsPath);
@@ -26,7 +28,7 @@ module.exports = class StatsSummary {
     let bookIds = [...new Set(data.map((item) => item.bookId))];
     let totalBookings = bookIds.length;
     let totalUsers = [...new Set(data.map((item) => item.email))].length;
-    return { pkgName, span, totalBookings, totalUsers };
+    return { pkgName, first, last, totalBookings, totalUsers };
   };
 
   getEarlierDate(dateOne, dateTwo) {
@@ -106,8 +108,25 @@ module.exports = class StatsSummary {
 
       let first = this.getEarlierDate(filesFirst, anonFirst);
       let last = this.getLaterDate(filesLast, anonLast);
+      if (!this.overallFirst) {
+        this.overallFirst = first;
+      } else {
+        this.overallFirst = this.getEarlierDate(this.overallFirst, first);
+      }
+      if (!this.overallLast) {
+        this.overallLast = last;
+      } else {
+        this.overallLast = this.getLaterDate(this.overallLast, last);
+      }
       this.summaries.push(this.summarize(pkg, thisdata, first, last));
     });
-    this.summaries.push(this.summarize('All', this.allPkgData));
+    this.summaries.push(
+      this.summarize(
+        'All',
+        this.allPkgData,
+        this.overallFirst,
+        this.overallLast
+      )
+    );
   }
 };
