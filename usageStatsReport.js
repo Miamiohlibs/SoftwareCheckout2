@@ -15,6 +15,6 @@ data.forEach((entry) => {
     `Dates: ` + `${entry.first}`.yellow + ` - ` + `${entry.last}`.yellow
   );
   console.log(`Total Bookings: ` + `${entry.totalBookings}`.yellow);
-  console.log(`Total Users: ` + `${entry.totalUsers}`.yellow);
+  console.log(`Distinct Users: ` + `${entry.distinctUsers}`.yellow);
   console.log('-----------------------'.blue);
 });

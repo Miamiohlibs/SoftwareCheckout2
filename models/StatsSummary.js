@@ -27,8 +27,8 @@ module.exports = class StatsSummary {
     data = data.filter((d) => d.status === 'Confirmed');
     let bookIds = [...new Set(data.map((item) => item.bookId))];
     let totalBookings = bookIds.length;
-    let totalUsers = [...new Set(data.map((item) => item.email))].length;
-    return { pkgName, first, last, totalBookings, totalUsers };
+    let distinctUsers = [...new Set(data.map((item) => item.email))].length;
+    return { pkgName, first, last, totalBookings, distinctUsers };
   };
 
   getEarlierDate(dateOne, dateTwo) {
