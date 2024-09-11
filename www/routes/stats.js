@@ -3,6 +3,9 @@ const router = express.Router();
 const config = require('../../config/appConf');
 const baseUrl = `${config.admin.host}:${config.admin.port}`;
 
+function stripQuotes(str) {
+  return str.replace(/^"(.*)"$/, '$1');
+}
 function csvToHtmlTable(csvData) {
   // Split the CSV data into lines
   const lines = csvData.trim().split('\n');
@@ -19,7 +22,7 @@ function csvToHtmlTable(csvData) {
   // Create the <thead> with table headers
   htmlTable += '  <thead>\n    <tr>\n';
   headers.forEach((header) => {
-    htmlTable += `      <th>${header.trim()}</th>\n`;
+    htmlTable += `      <th>${stripQuotes(header.trim())}</th>\n`;
   });
   htmlTable += '    </tr>\n  </thead>\n';
 
@@ -28,7 +31,7 @@ function csvToHtmlTable(csvData) {
   rows.forEach((row) => {
     htmlTable += '    <tr>\n';
     row.forEach((cell) => {
-      htmlTable += `      <td>${cell.trim()}</td>\n`;
+      htmlTable += `      <td>${stripQuotes(cell.trim())}</td>\n`;
     });
     htmlTable += '    </tr>\n';
   });
@@ -48,6 +51,20 @@ router.get('/daily', async (req, res) => {
     const csvData = await data.text();
     const table = csvToHtmlTable(csvData);
     res.render('statsTable', { table: table, pageTitle: 'Daily Stats' });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send('Error fetching data', err);
+  }
+});
+
+router.get('/summary', async (req, res) => {
+  try {
+    const data = await fetch(`${baseUrl}/api/stats/summary`, {
+      headers: { Authorization: `Bearer ${config.admin.apiKey}` },
+    });
+    const csvData = await data.text();
+    const table = csvToHtmlTable(csvData);
+    res.render('statsTable', { table: table, pageTitle: 'Summary Stats' });
   } catch (err) {
     console.log(err);
     res.status(500).send('Error fetching data', err);
