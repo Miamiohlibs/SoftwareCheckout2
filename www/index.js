@@ -1,12 +1,27 @@
 const path = require('path');
+const https = require('https');
+const fs = require('fs');
 const express = require('express');
 const session = require('express-session');
 const passport = require('passport');
 const fetch = require('node-fetch');
 require('./auth');
 const config = require('../config/appConf');
+const port = config.admin.port || 3010;
 
 const app = express();
+
+global.onServer =
+    config.hasOwnProperty('admin') && config.admin.hasOwnProperty('onServer') && config.admin.onServer === true;
+
+let protocol = 'http';
+let hostname = 'localhost';
+if (global.onServer) {
+    protocol = 'https';
+    hostname = config.admin.server.hostname || 'hostname not found in config';
+}
+
+
 
 // Session configuration
 app.use(
@@ -91,20 +106,20 @@ app.get('/auth/failure', (req, res) => {
 
 app.get('/main', isLoggedIn, async (req, res) => {
   try {
-    let data = await fetch(`http://localhost:${port}/api/groups`, {
+    let data = await fetch(`${protocol}://${hostname}:${port}/api/groups`, {
       headers: { Authorization: `Bearer ${config.admin.apiKey}` },
     });
     let json = await data.json();
     res.render('main', { data: json, user: req.user });
   } catch (err) {
-    res.status(500).send('Error fetching data');
+      res.status(500).send('Error fetching data: ' + JSON.stringify(err));
   }
 });
 
 app.get('/compare', isLoggedIn, async (req, res) => {
   try {
     let data = await fetch(
-      `http://localhost:${port}/api/${req.query.vendor}/compare?group=${req.query.group}&cid=${req.query.cid}`,
+      `${protocol}://${hostname}:${port}/api/${req.query.vendor}/compare?group=${req.query.group}&cid=${req.query.cid}`,
       { headers: { Authorization: `Bearer ${config.admin.apiKey}` } }
     );
     let json = await data.json();
@@ -124,7 +139,7 @@ app.get('/compare', isLoggedIn, async (req, res) => {
 app.get('/fetch', isLoggedIn, async (req, res) => {
   try {
     let data = await fetch(
-      `http://localhost:${port}/api/${req.query.vendor}?group=${req.query.group}`,
+      `${protocol}://${hostname}:${port}/api/${req.query.vendor}?group=${req.query.group}`,
       { headers: { Authorization: `Bearer ${config.admin.apiKey}` } }
     );
     let json = await data.json();
@@ -155,8 +170,28 @@ app.get('/logout', function (req, res, next) {
   });
 });
 
+
 // Start server
-const port = config.admin.port || 3010;
+if (global.onServer === true) {
+  const server = config.admin.server;
+ 
+  https
+    .createServer(
+      {
+        key: fs.readFileSync(server.key),
+        cert: fs.readFileSync(server.cert),
+      },
+      app
+    )
+    .listen(port, function () {
+      console.log(
+        `Server app listening on port ${port}! Go to https://${server.hostname}:${port}/`
+      );
+    });
+} else {
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
+
+}

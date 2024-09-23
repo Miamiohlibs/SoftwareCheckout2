@@ -8,7 +8,7 @@ const lg = new LicenseGroup(appConf);
 const {
   filterToEntriesMissingFromSecondArray,
 } = require('../../helpers/utils');
-const libCal = require('../../config/libcal');
+const libCal = require('../../config/libCal');
 const baseUrl = 'http://localhost:3010';
 
 async function getAdobeBookingsByGroup(group) {
