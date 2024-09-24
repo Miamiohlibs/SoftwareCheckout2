@@ -4,6 +4,13 @@ module.exports = {
     note: 'this is used to encrypt the user data in the logs',
   },
   admin: {
+    onServer: false,
+    server: {
+      key: '/path/to/public_key.key',
+      cert: '/path/to/certificate.crt',
+      hostname: 'your.hostname.edu',
+      note: 'if onServer is true, you need to provide the key and cert paths + hostname',
+    },
     port: 3010,
     requireLogin: true,
     allowedUsers: [], // list allowed emails here
