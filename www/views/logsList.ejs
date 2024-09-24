@@ -6,17 +6,17 @@
         <div class="col-3 col-md-2 col-lg-1"><%= log.date.replace('-undefined', '') %></div>
         <div class="col-3 col-md-2 col-lg-1">
             <% if (log.logType.includes('info')) { %>
-                <button class="btn btn-info">Info</button>
+                <a href="/logs/show/<%= log.file %>"><button class="btn btn-info">Info</button></a>
             <% } %>
         </div>
         <div class="col-3 col-md-2 col-lg-1">
             <% if (log.logType.includes('error')) { %>
-                <button class="btn btn-danger">Error</button>
+                <a href="/logs/show/<%= log.file %>"><button class="btn btn-danger">Error</button></a>
             <% } %>
         </div>
         <div class="col-3 col-md-2 col-lg-1">
             <% if (log.logType.includes('debug')) { %>
-                <button class="btn btn-warning">Debug</button>
+                <a href="/logs/show/<%= log.file %>"><button class="btn btn-warning">Debug</button></a>
             <% } %>
         </div>
     </div>

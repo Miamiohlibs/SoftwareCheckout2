@@ -43,8 +43,8 @@ module.exports = class LogQuerier {
     });
   }
 
-  readLogFile(filepath) {
-    let jsonLog = jsonifyLog(path.resolve(this.logDir + filepath));
+  readLogFile(filename) {
+    let jsonLog = jsonifyLog(path.resolve(this.logDir + '/' + filename));
     return jsonLog;
   }
 

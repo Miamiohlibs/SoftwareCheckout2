@@ -146,6 +146,12 @@ router.get('/logs', async (req, res) => {
   res.json(logs);
 });
 
+router.get('/logs/show/:date', async (req, res) => {
+  const logQuerier = new LogQuerier();
+  let log = logQuerier.readLogFile(req.params.date);
+  res.json(log);
+});
+
 router.get('/stats/daily', (req, res) => {
   const dailyStatsService = require('../../services/dailyStatsService');
   let format = 'csv';
