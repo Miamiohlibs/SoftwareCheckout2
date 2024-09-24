@@ -5,7 +5,7 @@ const express = require('express');
 const session = require('express-session');
 const passport = require('passport');
 const fetch = require('node-fetch');
-const sslRootCAs = require('ssl-root-cas')
+const sslRootCAs = require('ssl-root-cas');
 sslRootCAs.inject();
 require('./auth');
 const config = require('../config/appConf');
@@ -14,16 +14,16 @@ const port = config.admin.port || 3010;
 const app = express();
 
 global.onServer =
-    config.hasOwnProperty('admin') && config.admin.hasOwnProperty('onServer') && config.admin.onServer === true;
+  config.hasOwnProperty('admin') &&
+  config.admin.hasOwnProperty('onServer') &&
+  config.admin.onServer === true;
 
 let protocol = 'http';
 let hostname = 'localhost';
 if (global.onServer) {
-    protocol = 'https';
-    hostname = config.admin.server.hostname || 'hostname not found in config';
+  protocol = 'https';
+  hostname = config.admin.server.hostname || 'hostname not found in config';
 }
-
-
 
 // Session configuration
 app.use(
@@ -114,7 +114,7 @@ app.get('/main', isLoggedIn, async (req, res) => {
     let json = await data.json();
     res.render('main', { data: json, user: req.user });
   } catch (err) {
-      res.status(500).send('Error fetching data: ' + JSON.stringify(err));
+    res.status(500).send('Error fetching data: ' + JSON.stringify(err));
   }
 });
 
@@ -172,11 +172,10 @@ app.get('/logout', function (req, res, next) {
   });
 });
 
-
 // Start server
 if (global.onServer === true) {
   const server = config.admin.server;
- 
+
   https
     .createServer(
       {
@@ -191,9 +190,7 @@ if (global.onServer === true) {
       );
     });
 } else {
-
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
-});
-
+  app.listen(port, () => {
+    console.log(`Example app listening on port ${port}`);
+  });
 }
