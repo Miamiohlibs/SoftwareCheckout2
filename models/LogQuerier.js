@@ -43,27 +43,47 @@ module.exports = class LogQuerier {
     });
   }
 
-  redactFields(obj, redactedFields) {
+  redactFields(obj, redactedFields = [], redactedValuePrefixes = []) {
     // Iterate over the keys of the object
-    console.log('Redacting', redactedFields);
+    // console.log('Redacting', redactedFields, redactedValuePrefixes);
+
     for (let key in obj) {
       if (obj.hasOwnProperty(key)) {
-        // If the key is "Authorization", redact the value
+        // If the key is in the redactedFields list, redact the value
         if (redactedFields.includes(key)) {
           obj[key] = '[Redacted]';
         }
+        // If the value is a string, check if it starts with any of the redacted value prefixes
+        else if (typeof obj[key] === 'string') {
+          for (let prefix of redactedValuePrefixes) {
+            if (obj[key].startsWith(prefix)) {
+              // Redact the value but keep the prefix in the output
+              obj[key] = `${prefix}[Redacted]`;
+              break;
+            }
+          }
+        }
         // If the value is an object or array, recursively call the function
         else if (typeof obj[key] === 'object' && obj[key] !== null) {
-          this.redactFields(obj[key], redactedFields);
+          this.redactFields(obj[key], redactedFields, redactedValuePrefixes);
         }
       }
     }
+
     return obj;
   }
 
   readLogFile(filename) {
     let jsonLog = jsonifyLog(path.resolve(this.logDir + '/' + filename));
-    jsonLog = this.redactFields(jsonLog, ['Authorization']);
+    jsonLog = this.redactFields(
+      jsonLog,
+      ['Authorization'],
+      [
+        'LibCalApi Token:',
+        'Bearer ',
+        'https://usermanagement.adobe.io/v2/usermanagement/users/',
+      ]
+    );
     return jsonLog;
   }
 
