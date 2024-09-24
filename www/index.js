@@ -5,6 +5,8 @@ const express = require('express');
 const session = require('express-session');
 const passport = require('passport');
 const fetch = require('node-fetch');
+const sslRootCAs = require('ssl-root-cas')
+sslRootCAs.inject();
 require('./auth');
 const config = require('../config/appConf');
 const port = config.admin.port || 3010;
