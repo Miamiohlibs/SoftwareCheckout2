@@ -8,7 +8,7 @@ const lg = new LicenseGroup(appConf);
 const {
   filterToEntriesMissingFromSecondArray,
 } = require('../../helpers/utils');
-const libCal = require('../../config/libcal');
+const libCal = require('../../config/libCal');
 const baseUrl = 'http://localhost:3010';
 
 async function getAdobeBookingsByGroup(group) {
@@ -20,7 +20,7 @@ async function getAdobeBookingsByGroup(group) {
 }
 
 async function getLibCalBookingsByCid(cid) {
-  const libCalConf = require('../../config/libcal');
+  const libCalConf = require('../../config/libCal');
   const LibCalRepository = require('../../repositories/LibCalRepository');
   const libcal = new LibCalRepository(libCalConf);
   let bookings = await libcal.getCurrentValidBookings(cid);
@@ -48,7 +48,7 @@ router.get('/vendors', async (req, res) => {
 });
 
 router.get('/libcal', async (req, res) => {
-  const libcalConf = require('../../config/libcal');
+  const libcalConf = require('../../config/libCal');
   const LibCalRepository = require('../../repositories/LibCalRepository');
   const libcal = new LibCalRepository(libcalConf);
   let group = req.query.group;
