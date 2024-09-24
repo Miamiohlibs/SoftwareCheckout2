@@ -5,6 +5,7 @@ const { text } = require('express');
 const appConf = require('../../config/appConf');
 const LicenseGroup = require('../../helpers/LicenseGroup');
 const lg = new LicenseGroup(appConf);
+const LogQuerier = require('../../models/LogQuerier');
 const {
   filterToEntriesMissingFromSecondArray,
 } = require('../../helpers/utils');
@@ -137,6 +138,12 @@ router.get('/jamf/compare', async (req, res) => {
     vendorEmails: jamfEmails,
     libCalEmails: libCalEmails,
   });
+});
+
+router.get('/logs', async (req, res) => {
+  const logQuerier = new LogQuerier();
+  let logs = logQuerier.getLogDates();
+  res.json(logs);
 });
 
 router.get('/stats/daily', (req, res) => {

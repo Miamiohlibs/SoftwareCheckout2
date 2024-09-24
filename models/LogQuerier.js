@@ -27,6 +27,7 @@ module.exports = class LogQuerier {
             .logType.push(prefix);
         } else {
           logsByDate.push({
+            file,
             year,
             month,
             day,
@@ -40,6 +41,11 @@ module.exports = class LogQuerier {
     return logsByDate.sort((a, b) => {
       return a.date < b.date ? 1 : -1;
     });
+  }
+
+  readLogFile(filepath) {
+    let jsonLog = jsonifyLog(path.resolve(this.logDir + filepath));
+    return jsonLog;
   }
 
   //   const getUniqUids = '.entries | map (.uid) | unique';

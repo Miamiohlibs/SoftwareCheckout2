@@ -1,0 +1,6 @@
+<%- include('partials/header') %>
+<h1>Log Files</h1>
+<% data.forEach((log) => { %>
+    <li><%= log.file %></li>
+<% }) %>
+<%- include('partials/footer') %>
