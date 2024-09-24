@@ -1,6 +1,25 @@
 <%- include('partials/header') %>
-<h1>Log Files</h1>
-<% data.forEach((log) => { %>
-    <li><%= log.file %></li>
+<div class="mx-5">
+    <h1>Log Files</h1>
+    <% data.forEach((log) => { %>
+    <div class="row mb-4">
+        <div class="col-3 col-md-2 col-lg-1"><%= log.date.replace('-undefined', '') %></div>
+        <div class="col-3 col-md-2 col-lg-1">
+            <% if (log.logType.includes('info')) { %>
+                <button class="btn btn-info">Info</button>
+            <% } %>
+        </div>
+        <div class="col-3 col-md-2 col-lg-1">
+            <% if (log.logType.includes('error')) { %>
+                <button class="btn btn-danger">Error</button>
+            <% } %>
+        </div>
+        <div class="col-3 col-md-2 col-lg-1">
+            <% if (log.logType.includes('debug')) { %>
+                <button class="btn btn-warning">Debug</button>
+            <% } %>
+        </div>
+    </div>
 <% }) %>
+</div>
 <%- include('partials/footer') %>
