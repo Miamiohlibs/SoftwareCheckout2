@@ -43,8 +43,27 @@ module.exports = class LogQuerier {
     });
   }
 
+  redactFields(obj, redactedFields) {
+    // Iterate over the keys of the object
+    console.log('Redacting', redactedFields);
+    for (let key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        // If the key is "Authorization", redact the value
+        if (redactedFields.includes(key)) {
+          obj[key] = '[Redacted]';
+        }
+        // If the value is an object or array, recursively call the function
+        else if (typeof obj[key] === 'object' && obj[key] !== null) {
+          this.redactFields(obj[key], redactedFields);
+        }
+      }
+    }
+    return obj;
+  }
+
   readLogFile(filename) {
     let jsonLog = jsonifyLog(path.resolve(this.logDir + '/' + filename));
+    jsonLog = this.redactFields(jsonLog, ['Authorization']);
     return jsonLog;
   }
 
