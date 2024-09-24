@@ -11,27 +11,35 @@ module.exports = class LogQuerier {
   getLogDates() {
     const files = fs.readdirSync(this.logDir);
     const logsByDate = [];
+    const knownDates = [];
     files.map((file) => {
-      file = file.split('.')[0];
+      let date = file.split('.')[0];
       //   console.log(file);
-      if (file.match(/\d\d\d\d-\d\d\-\d\d/)) {
-        let [prefix, year, month, day] = file.split('-');
-        // return { year, month, day };
-        if (year != undefined && month != undefined && day != undefined) {
-          if (!logsByDate.hasOwnProperty(year)) {
-            logsByDate[year] = [];
-          }
-          if (!logsByDate[year].hasOwnProperty(month)) {
-            logsByDate[year][month] = [];
-          }
-          if (!logsByDate[year][month].hasOwnProperty(day)) {
-            logsByDate[year][month][day] = [];
-          }
-          logsByDate[year][month][day].push(prefix);
+      let [prefix, year, month, day] = date.split('-');
+      // return { year, month, day };
+      if (year != undefined) {
+        if (knownDates.includes(`${year}-${month}-${day}`)) {
+          logsByDate
+            .find(
+              (log) =>
+                log.year === year && log.month === month && log.day === day
+            )
+            .logType.push(prefix);
+        } else {
+          logsByDate.push({
+            year,
+            month,
+            day,
+            date: `${year}-${month}-${day}`,
+            logType: [prefix],
+          });
+          knownDates.push(`${year}-${month}-${day}`);
         }
       }
     });
-    return logsByDate;
+    return logsByDate.sort((a, b) => {
+      return a.date < b.date ? 1 : -1;
+    });
   }
 
   //   const getUniqUids = '.entries | map (.uid) | unique';
