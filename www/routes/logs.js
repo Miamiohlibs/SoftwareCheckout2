@@ -18,6 +18,38 @@ router.get('/', async (req, res) => {
   }
 });
 
+router.get('/examine/:file/:uid', async (req, res) => {
+  try {
+    const data = await fetch(
+      `${baseUrl}/api/logs/examine/${req.params.file}/${req.params.uid}`,
+      {
+        headers: { Authorization: `Bearer ${config.admin.apiKey}` },
+      }
+    );
+    const json = await data.json();
+    // res.render('logsDetail', {
+    //   data: json,
+    // });
+    res.json(json);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send('Error fetching data', err);
+  }
+});
+router.get('/uids/:file', async (req, res) => {
+  try {
+    const data = await fetch(`${baseUrl}/api/logs/uids/${req.params.file}`, {
+      headers: { Authorization: `Bearer ${config.admin.apiKey}` },
+    });
+    const json = await data.json();
+    res.render('logsUids', { data: json, file: req.params.file });
+    // res.send(json);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send('Error fetching data', err);
+  }
+});
+
 router.get('/show/:file', async (req, res) => {
   try {
     const data = await fetch(`${baseUrl}/api/logs/show/${req.params.file}`, {

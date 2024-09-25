@@ -87,6 +87,30 @@ module.exports = class LogQuerier {
     return jsonLog;
   }
 
+  getUniqUids(entries) {
+    const getUniqUids = '.entries | map (.uid) | unique';
+    return jq.run(getUniqUids, JSON.stringify(entries), {
+      input: 'string',
+    });
+  }
+
+  async getFirstTimestampForUids(entries) {
+    const firstTimestampForUids =
+      '[.entries | group_by(.uid)| map({uid: .[0].uid,first_timestamp: (map(.timestamp) | min)}) | sort_by(.first_timestamp)]';
+    const data = await jq.run(firstTimestampForUids, JSON.stringify(entries), {
+      input: 'string',
+    });
+    return JSON.parse(data)[0];
+  }
+
+  async selectEntriesByField(entries, field, value) {
+    const selectEntriesByField = `.entries | map(select(.${field} == "${value}"))`;
+    const data = await jq.run(selectEntriesByField, JSON.stringify(entries), {
+      input: 'string',
+    });
+    return JSON.parse(data);
+  }
+
   //   const getUniqUids = '.entries | map (.uid) | unique';
   // const firstTimestampForUids =
   //   '[.entries | group_by(.uid)| map({uid: .[0].uid,first_timestamp: (map(.timestamp) | min)})]';
