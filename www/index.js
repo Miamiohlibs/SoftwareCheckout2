@@ -82,7 +82,7 @@ app.get('/', (req, res) => {
   if (config.admin.requireLogin) {
     res.render('landing', { error: req.query.error });
   } else {
-    res.redirect('/main');
+    res.redirect('/systemStatus');
   }
 });
 
@@ -102,7 +102,7 @@ app.get(
       email: req.user.email,
       name: req.user.displayName,
     };
-    res.redirect('/main');
+    res.redirect('/systemStatus');
   }
 );
 
@@ -110,13 +110,13 @@ app.get('/auth/failure', (req, res) => {
   res.send('Failed to authenticate');
 });
 
-app.get('/main', isLoggedIn, async (req, res) => {
+app.get('/systemStatus', isLoggedIn, async (req, res) => {
   try {
     let data = await fetch(`${protocol}://${hostname}:${port}/api/groups`, {
       headers: { Authorization: `Bearer ${config.admin.apiKey}` },
     });
     let json = await data.json();
-    res.render('main', { data: json, user: req.user });
+    res.render('systemStatus', { data: json, user: req.user });
   } catch (err) {
     res.status(500).send('Error fetching data: ' + JSON.stringify(err));
   }
