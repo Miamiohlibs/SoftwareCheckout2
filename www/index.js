@@ -38,6 +38,9 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 function isPermittedUser(req) {
+  if (!req.user) {
+    return false;
+  }
   return config.admin.allowedUsers.includes(req.user.email);
 }
 function isLoggedIn(req, res, next) {
@@ -79,7 +82,7 @@ app.use('/stats', isLoggedIn, statsRouter);
 app.set('json spaces', 2);
 
 app.get('/', (req, res) => {
-  if (config.admin.requireLogin) {
+  if (config.admin.requireLogin & !isPermittedUser(req)) {
     res.render('landing', { error: req.query.error });
   } else {
     res.redirect('/systemStatus');
