@@ -76,7 +76,7 @@ app.use('/logs', isLoggedIn, logsRouter);
 let statsRouter = require('./routes/stats');
 app.use('/stats', isLoggedIn, statsRouter);
 
-// app.set('json spaces', 2);
+app.set('json spaces', 2);
 
 app.get('/', (req, res) => {
   if (config.admin.requireLogin) {

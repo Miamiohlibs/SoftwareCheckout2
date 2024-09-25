@@ -3,20 +3,20 @@
     <h1>Log Files</h1>
     <% data.forEach((log) => { %>
     <div class="row mb-4">
-        <div class="col-3 col-md-2 col-lg-1"><%= log.date.replace('-undefined', '') %></div>
+        <div class="col-3 col-md-2 col-lg-1 align-middle"><%= log.date.replace('-undefined', '') %></div>
         <div class="col-3 col-md-2 col-lg-1">
             <% if (log.logType.includes('info')) { %>
-                <a href="/logs/show/<%= log.file %>"><button class="btn btn-info">Info</button></a>
+                <a href="/logs/uids/<%= log.file %>"><button class="btn btn-info">Info</button></a>
             <% } %>
         </div>
         <div class="col-3 col-md-2 col-lg-1">
             <% if (log.logType.includes('error')) { %>
-                <a href="/logs/show/<%= log.file %>"><button class="btn btn-danger">Error</button></a>
+                <a href="/logs/uids/<%= log.file %>"><button class="btn btn-danger">Error</button></a>
             <% } %>
         </div>
         <div class="col-3 col-md-2 col-lg-1">
             <% if (log.logType.includes('debug')) { %>
-                <a href="/logs/show/<%= log.file %>"><button class="btn btn-warning">Debug</button></a>
+                <a href="/logs/uids/<%= log.file %>"><button class="btn btn-warning">Debug</button></a>
             <% } %>
         </div>
     </div>
