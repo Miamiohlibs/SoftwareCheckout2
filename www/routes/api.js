@@ -5,6 +5,7 @@ const { text } = require('express');
 const appConf = require('../../config/appConf');
 const LicenseGroup = require('../../helpers/LicenseGroup');
 const lg = new LicenseGroup(appConf);
+const LogQuerier = require('../../models/LogQuerier');
 const {
   filterToEntriesMissingFromSecondArray,
 } = require('../../helpers/utils');
@@ -137,6 +138,36 @@ router.get('/jamf/compare', async (req, res) => {
     vendorEmails: jamfEmails,
     libCalEmails: libCalEmails,
   });
+});
+
+router.get('/logs', async (req, res) => {
+  const logQuerier = new LogQuerier();
+  let logs = logQuerier.getLogDates();
+  res.json(logs);
+});
+
+router.get('/logs/examine/:file/:uid', async (req, res) => {
+  const logQuerier = new LogQuerier();
+  let logs = logQuerier.readLogFile(req.params.file);
+  let entries = await logQuerier.selectEntriesByField(
+    logs,
+    'uid',
+    req.params.uid
+  );
+  res.json(entries);
+});
+
+router.get('/logs/uids/:file', async (req, res) => {
+  const logQuerier = new LogQuerier();
+  let logs = logQuerier.readLogFile(req.params.file);
+  let uids = await logQuerier.getFirstTimestampForUids(logs);
+  res.json(uids);
+});
+
+router.get('/logs/show/:date', async (req, res) => {
+  const logQuerier = new LogQuerier();
+  let log = logQuerier.readLogFile(req.params.date);
+  res.json(log);
 });
 
 router.get('/stats/daily', (req, res) => {

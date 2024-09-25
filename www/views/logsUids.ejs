@@ -1,0 +1,8 @@
+<%- include('partials/header') %>
+<h1>Log Files: UIDs for each run in <%= file %></h1>
+<ul class="mx-5 mt-3">
+    <% data.forEach((log) => { %>
+        <li><a href="/logs/examine/<%= file %>/<%= log.uid %>"><%= log.uid %> (Started: <%= log.first_timestamp %>)</a></li>
+    <% }) %>
+</ul>
+<%- include('partials/footer') %>

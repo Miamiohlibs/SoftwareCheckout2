@@ -34,6 +34,7 @@
     "lodash": "^4.17.21",
     "mongoose": "^5.12.8",
     "node-fetch": "^2.7.0",
+    "node-jq": "^6.0.1",
     "object-to-xml": "^2.0.0",
     "passport": "^0.7.0",
     "passport-google-oauth2": "^0.2.0",
