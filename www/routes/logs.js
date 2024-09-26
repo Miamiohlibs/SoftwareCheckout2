@@ -27,10 +27,10 @@ router.get('/examine/:file/:uid', async (req, res) => {
       }
     );
     const json = await data.json();
-    // res.render('logsDetail', {
-    //   data: json,
-    // });
-    res.json(json);
+    res.render('logsDetail', {
+      data: json,
+    });
+    // res.json(json);
   } catch (err) {
     console.log(err);
     res.status(500).send('Error fetching data', err);
