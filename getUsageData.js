@@ -9,6 +9,7 @@ const LibCalApi = require('./models/LibCalApi');
 const libCalConf = require('./config/libCal');
 const lcapi = new LibCalApi(libCalConf);
 const fs = require('fs');
+const path = require('path');
 const dayjs = require('dayjs');
 const yargs = require('yargs');
 const argv = yargs(process.argv.slice(2)).argv;
@@ -35,7 +36,7 @@ function help() {
 
 async function runQuery(date, cid, folder) {
   let res = await lcapi.getBookings(cid, date);
-  let dir = './logs/dailyStats/' + folder;
+  let dir = path.resolve(__dirname + '/logs/dailyStats/' + folder);
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, 0744);
   }
