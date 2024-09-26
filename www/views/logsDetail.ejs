@@ -1,0 +1,53 @@
+<%- include('partials/header') %>
+<div class="container">
+<h1>Logs: <%= file; %> &mdash; UID: <%= uid %></h1>
+    <button id="toggle-all" class="btn btn-success mt-4" data-bs-toggle="collapse" data-bs-target=".multi-collapse">Expand All</button>
+
+    <div class="card m-3 p-2 border border-warning">
+        <div class="accordion accordion-flush" id="accordionFlushExample">
+            <% for (let i=0; i<data.length; i++) { %>
+                <div class="accordion-item">
+                    <% let badgeClass = 'success' %>     
+                    <% switch (data[i].level) {
+                        case 'error':
+                            badgeClass = 'danger';
+                            break;
+                        case 'warn':
+                            badgeClass = 'warning';
+                            break;
+                        case 'info':
+                            badgeClass = 'info';
+                            break;
+                        case 'debug':
+                            badgeClass = 'secondary';
+                            break;
+                        default:
+                            badgeClass = 'success';
+                            break;
+                    } %>           
+                    <h2 class="accordion-header" id="flush-heading<%= i %>">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse<%= i %>" aria-expanded="false" aria-controls="flush-collapse<%= i %>">
+                            <span style="width: 10rem">
+                                <%= data[i].timestamp %>
+                            </span>
+                            <span style="width: 5rem">
+                                <span class="badge bg-<%=badgeClass%>"><%=data[i].level %></span> 
+                            </span>
+                            <span class="col-9">
+                                <%= data[i].message %>
+                            </span>
+                        </button>
+                    </h2>
+                    <div id="flush-collapse<%= i %>" class="accordion-collapse collapse multi-collapse" aria-labelledby="flush-heading<%= i %>" data-bs-parent="#accordionFlushExample">
+                        <div class="accordion-body">
+                            <pre>
+                                <%= JSON.stringify(data[i], null, 2) %>
+                            </pre>
+                        </div>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</div>
+<%- include('partials/footer') %>
