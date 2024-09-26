@@ -29,6 +29,8 @@ router.get('/examine/:file/:uid', async (req, res) => {
     const json = await data.json();
     res.render('logsDetail', {
       data: json,
+      file: req.params.file,
+      uid: req.params.uid,
     });
     // res.json(json);
   } catch (err) {
