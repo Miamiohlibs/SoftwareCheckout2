@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const jq = require('node-jq');
 const jsonifyLog = require('../helpers/jsonifyLog');
+const firstline = require('firstline');
 
 module.exports = class LogQuerier {
   constructor() {
@@ -13,27 +14,48 @@ module.exports = class LogQuerier {
     const logsByDate = [];
     const knownDates = [];
     files.map((file) => {
+      // console.log(file);
+      this.firstEntry = { message: '', level: '' };
       let filepath = path.resolve(this.logDir + '/' + file);
       var stats = fs.statSync(filepath);
       if (stats.size == 0) {
         return;
       } // if fileSizeInBytes = 0, skip
       let date = file.split('.')[0];
-      let filenames = {}; // array of filenames for a given date
-      //   console.log(file);
       let [prefix, year, month, day] = date.split('-');
+      let levels = {}; // array of filenames for a given date
+
       // return { year, month, day };
       if (year != undefined) {
+        // firstline(filepath).then((line) => {
+        //   try {
+        //     this.firstEntry = JSON.parse(line) || {};
+        //     console.log('set first entry:', this.firstEntry.message);
+        //   } catch (e) {
+        //     // console.log(e);
+        //   }
+        // });
+
         if (knownDates.includes(`${year}-${month}-${day}`)) {
           let thisLog = logsByDate.find(
             (log) => log.year === year && log.month === month && log.day === day
           );
           thisLog.logType.push(prefix);
-          thisLog.filenames[`${prefix}`] = file;
+          thisLog.levels[`${prefix}`] = {
+            filename: file,
+            // firstEntryMessage: this.firstEntry.message,
+            // firstEntryLevel: this.firstEntry.level,
+            fileSizeinBytes: stats.size,
+          };
         } else {
-          filenames[`${prefix}`] = file;
+          levels[`${prefix}`] = {
+            filename: file,
+            // firstEntryMessage: this.firstEntry.message,
+            // firstEntryLevel: this.firstEntry.level,
+            fileSizeinBytes: stats.size,
+          };
           logsByDate.push({
-            filenames,
+            levels,
             year,
             month,
             day,
@@ -44,6 +66,7 @@ module.exports = class LogQuerier {
         }
       }
     });
+
     return logsByDate.sort((a, b) => {
       return a.date < b.date ? 1 : -1;
     });
