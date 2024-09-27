@@ -10,7 +10,9 @@ sslRootCAs.inject();
 require('./auth');
 const config = require('../config/appConf');
 const port = config.admin.port || 3010;
+let logger = require('../services/logger');
 
+logger.info('starting admin web console');
 const app = express();
 
 global.onServer =
