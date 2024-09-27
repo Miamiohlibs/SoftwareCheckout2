@@ -5,18 +5,18 @@
     <div class="row mb-4">
         <div class="col-3 col-md-2 col-lg-1 align-middle"><%= log.date.replace('-undefined', '') %></div>
         <div class="col-3 col-md-2 col-lg-1">
-            <% if (log.logType.includes('error')) { %>
-                <a href="/logs/uids/<%= log.filenames.error %>"><button class="btn btn-danger">Error</button></a>
+            <% if (log.levels.hasOwnProperty('error')) { %>
+                <a href="/logs/uids/<%= log.levels.error.filename %>"><button class="btn btn-danger">Error</button></a>
             <% } %>
         </div>
         <div class="col-3 col-md-2 col-lg-1">
-            <% if (log.logType.includes('info')) { %>
-                <a href="/logs/uids/<%= log.filenames.info %>"><button class="btn btn-info">Info</button></a>
+            <% if (log.levels.hasOwnProperty('info')) { %>
+                <a href="/logs/uids/<%= log.levels.info.filename %>"><button class="btn btn-info">Info</button></a>
             <% } %>
         </div>
         <div class="col-3 col-md-2 col-lg-1">
-            <% if (log.logType.includes('debug')) { %>
-                <a href="/logs/uids/<%= log.filenames.debug %>"><button class="btn btn-warning">Debug</button></a>
+            <% if (log.levels.hasOwnProperty('debug')) { %>
+                <a href="/logs/uids/<%= log.levels.filename %>"><button class="btn btn-warning">Debug</button></a>
             <% } %>
         </div>
     </div>
