@@ -5,13 +5,13 @@
     <div class="row mb-4">
         <div class="col-3 col-md-2 col-lg-1 align-middle"><%= log.date.replace('-undefined', '') %></div>
         <div class="col-3 col-md-2 col-lg-1">
-            <% if (log.logType.includes('info')) { %>
-                <a href="/logs/uids/<%= log.filenames.info %>"><button class="btn btn-info">Info</button></a>
+            <% if (log.logType.includes('error')) { %>
+                <a href="/logs/uids/<%= log.filenames.error %>"><button class="btn btn-danger">Error</button></a>
             <% } %>
         </div>
         <div class="col-3 col-md-2 col-lg-1">
-            <% if (log.logType.includes('error')) { %>
-                <a href="/logs/uids/<%= log.filenames.error %>"><button class="btn btn-danger">Error</button></a>
+            <% if (log.logType.includes('info')) { %>
+                <a href="/logs/uids/<%= log.filenames.info %>"><button class="btn btn-info">Info</button></a>
             <% } %>
         </div>
         <div class="col-3 col-md-2 col-lg-1">
