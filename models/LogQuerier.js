@@ -13,6 +13,11 @@ module.exports = class LogQuerier {
     const logsByDate = [];
     const knownDates = [];
     files.map((file) => {
+      let filepath = path.resolve(this.logDir + '/' + file);
+      var stats = fs.statSync(filepath);
+      if (stats.size == 0) {
+        return;
+      } // if fileSizeInBytes = 0, skip
       let date = file.split('.')[0];
       let filenames = {}; // array of filenames for a given date
       //   console.log(file);
