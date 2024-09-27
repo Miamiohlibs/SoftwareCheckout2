@@ -14,20 +14,21 @@ module.exports = class LogQuerier {
     const knownDates = [];
     files.map((file) => {
       let date = file.split('.')[0];
+      let filenames = {}; // array of filenames for a given date
       //   console.log(file);
       let [prefix, year, month, day] = date.split('-');
       // return { year, month, day };
       if (year != undefined) {
         if (knownDates.includes(`${year}-${month}-${day}`)) {
-          logsByDate
-            .find(
-              (log) =>
-                log.year === year && log.month === month && log.day === day
-            )
-            .logType.push(prefix);
+          let thisLog = logsByDate.find(
+            (log) => log.year === year && log.month === month && log.day === day
+          );
+          thisLog.logType.push(prefix);
+          thisLog.filenames[`${prefix}`] = file;
         } else {
+          filenames[`${prefix}`] = file;
           logsByDate.push({
-            file,
+            filenames,
             year,
             month,
             day,
