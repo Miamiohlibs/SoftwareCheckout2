@@ -1,8 +1,20 @@
 <%- include('partials/header') %>
 <h1>Log Files: UIDs for each run in <%= file %></h1>
-<ul class="mx-5 mt-3">
-    <% data.forEach((log) => { %>
-        <li><a href="/logs/examine/<%= file %>/<%= log.uid %>"><%= log.uid %> (Started: <%= log.first_timestamp %>)</a></li>
-    <% }) %>
-</ul>
+<div class="mx-5 mt-3">
+    <ul class="list-group m-3 p-2">
+            <% for (let i=0; i<data.length; i++) { %>
+                <li class="list-group-item">
+                    <span style="col-3">
+                        <a href="/logs/examine/<%= file %>/<%= data[i].uid %>">
+                            <%= data[i].uid %></a>
+                    </span>
+                    <span class="col-9">
+                        &nbsp;(Started: <%= data[i].first_timestamp %>)
+                    </span>
+                </li>
+                        
+            <% } %>
+        </ul>
+    </div>
+</div>
 <%- include('partials/footer') %>
