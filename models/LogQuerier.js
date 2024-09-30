@@ -2,21 +2,33 @@ const fs = require('fs');
 const path = require('path');
 const jq = require('node-jq');
 const jsonifyLog = require('../helpers/jsonifyLog');
-// const firstline = require('firstline');
+const firstline = require('firstline');
+const { first } = require('lodash');
 
 module.exports = class LogQuerier {
   constructor() {
     this.logDir = path.resolve(__dirname + '/../logs/');
   }
 
-  getLogDates() {
-    const files = fs.readdirSync(this.logDir);
+  async getLogDates() {
+    const allFiles = fs.readdirSync(this.logDir);
+    const files = allFiles.filter((file) => file.endsWith('.log'));
+    // const files = fs.readdirSync(logDir);
+    let knownDates = [];
     const logsByDate = [];
-    const knownDates = [];
-    files.map((file) => {
-      // console.log(file);
-      this.firstEntry = { message: '', level: '' };
+
+    let promises = files.map(async (file) => {
       let filepath = path.resolve(this.logDir + '/' + file);
+      let resRaw = await firstline(filepath);
+      let firstEntry;
+      try {
+        firstEntry = JSON.parse(resRaw) || {};
+      } catch (e) {
+        firstEntry = {};
+      }
+      // console.log(firstEntry.message);
+      // info.push({ file, message: res.message });
+
       var stats = fs.statSync(filepath);
       if (stats.size == 0) {
         return;
@@ -25,16 +37,15 @@ module.exports = class LogQuerier {
       let [prefix, year, month, day] = date.split('-');
       let levels = {}; // array of filenames for a given date
 
-      // return { year, month, day };
       if (year != undefined) {
-        // firstline(filepath).then((line) => {
-        //   try {
-        //     this.firstEntry = JSON.parse(line) || {};
-        //     console.log('set first entry:', this.firstEntry.message);
-        //   } catch (e) {
-        //     // console.log(e);
-        //   }
-        // });
+        firstline(filepath).then((line) => {
+          try {
+            this.firstEntry = JSON.parse(line) || {};
+            console.log('set first entry:', firstEntry.message);
+          } catch (e) {
+            // console.log(e);
+          }
+        });
 
         if (knownDates.includes(`${year}-${month}-${day}`)) {
           let thisLog = logsByDate.find(
@@ -43,15 +54,17 @@ module.exports = class LogQuerier {
           thisLog.logType.push(prefix);
           thisLog.levels[`${prefix}`] = {
             filename: file,
-            // firstEntryMessage: this.firstEntry.message,
-            // firstEntryLevel: this.firstEntry.level,
+            firstEntryMessage: firstEntry.message,
+            firstEntryLevel: firstEntry.level,
+            // firstEntryContent: firstEntry.content,
             fileSizeinBytes: stats.size,
           };
         } else {
           levels[`${prefix}`] = {
             filename: file,
-            // firstEntryMessage: this.firstEntry.message,
-            // firstEntryLevel: this.firstEntry.level,
+            firstEntryMessage: firstEntry.message,
+            firstEntryLevel: firstEntry.level,
+            // firstEntryContent: firstEntry.content,
             fileSizeinBytes: stats.size,
           };
           logsByDate.push({
@@ -67,9 +80,8 @@ module.exports = class LogQuerier {
       }
     });
 
-    return logsByDate.sort((a, b) => {
-      return a.date < b.date ? 1 : -1;
-    });
+    await Promise.all(promises);
+    return logsByDate;
   }
 
   redactFields(obj, redactedFields = [], redactedValuePrefixes = []) {
