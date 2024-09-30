@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const jq = require('node-jq');
 const jsonifyLog = require('../helpers/jsonifyLog');
-const firstline = require('firstline');
+// const firstline = require('firstline');
 
 module.exports = class LogQuerier {
   constructor() {
