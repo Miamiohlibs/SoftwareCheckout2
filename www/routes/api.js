@@ -142,7 +142,7 @@ router.get('/jamf/compare', async (req, res) => {
 
 router.get('/logs', async (req, res) => {
   const logQuerier = new LogQuerier();
-  let logs = await logQuerier.getLogDates();
+  let logs = logQuerier.getLogDates();
   res.json(logs);
 });
 
