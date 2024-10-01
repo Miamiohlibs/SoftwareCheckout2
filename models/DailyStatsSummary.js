@@ -35,6 +35,8 @@ module.exports = class StatsSummary {
         });
       }
     });
+    // sort by date before returning
+    this.allData.sort((a, b) => (a.date > b.date ? 1 : -1));
     return this.allData;
   }
 
