@@ -14,7 +14,6 @@ module.exports = class LogQuerier {
     const knownDates = [];
     files.map((file) => {
       // console.log(file);
-      this.firstEntry = { message: '', level: '' };
       let filepath = path.resolve(this.logDir + '/' + file);
       var stats = fs.statSync(filepath);
       if (stats.size == 0) {
@@ -108,10 +107,10 @@ module.exports = class LogQuerier {
     });
   }
 
-  async getFirstTimestampForUids(entries) {
-    const firstTimestampForUids =
+  async getFirstEntryByUid(entries) {
+    const firstEntriesJqQuery =
       '[.entries | group_by(.uid)| map({uid: .[0].uid, first_message: .[0].message, first_content: .[0].content, first_level: .[0].level, first_timestamp: (map(.timestamp) | min), total_entries: length, total_size_kb: ((map(tostring | length) | add) / 1024 | round)}) | sort_by(.first_timestamp)]';
-    const data = await jq.run(firstTimestampForUids, JSON.stringify(entries), {
+    const data = await jq.run(firstEntriesJqQuery, JSON.stringify(entries), {
       input: 'string',
     });
     return JSON.parse(data)[0];
@@ -124,15 +123,4 @@ module.exports = class LogQuerier {
     });
     return JSON.parse(data);
   }
-
-  //   const getUniqUids = '.entries | map (.uid) | unique';
-  // const firstTimestampForUids =
-  //   '[.entries | group_by(.uid)| map({uid: .[0].uid,first_timestamp: (map(.timestamp) | min)})]';
-
-  // (async () => {
-  //   const uids = await jq.run(firstTimestampForUids, JSON.stringify(entries), {
-  //     input: 'string',
-  //   });
-  //   console.log(uids);
-  // })();
 };
