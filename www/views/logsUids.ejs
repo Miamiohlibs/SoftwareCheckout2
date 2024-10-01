@@ -1,16 +1,35 @@
 <%- include('partials/header') %>
+<style>
+    #uid-list a {
+        text-decoration: none;
+    }
+    .list-group-item:hover, .list-group-item:hover a {
+        background-color: #333 !important;
+        color: yellow;
+        text-decoration: underline;
+    }
+</style>
 <h1>Log Files: UIDs for each run in <%= file %></h1>
 <div class="mx-5 mt-3">
-    <ul class="list-group m-3 p-2">
+    <ul class="list-group m-3 p-2" id="uid-list">
             <% for (let i=0; i<data.length; i++) { %>
                 <li class="list-group-item">
-                    <span style="col-3">
-                        <a href="/logs/examine/<%= file %>/<%= data[i].uid %>">
-                            <%= data[i].uid %></a>
-                    </span>
-                    <span class="col-9">
-                        &nbsp;(Started: <%= data[i].first_timestamp %>)
-                    </span>
+                    <a href="/logs/examine/<%= file %>/<%= data[i].uid %>">
+                    <div class="row">
+                        <span class="col-md-2 col-4">
+                                UID:<%= data[i].uid %>
+                        </span>
+                        <span class="col-md-2 col-4">
+                            (<%= data[i].first_timestamp %>)
+                        </span>
+                        <span class="col-md-2 col-4">
+                            <%= data[i].total_entries %> entries (<%= data[i].total_size_kb %> KB)
+                        </span>
+                        <span class="col-md-6 col-12">
+                            &nbsp;First message: <%= data[i].first_message %>
+                        </span>
+                    </div>
+                </a>
                 </li>
                         
             <% } %>
