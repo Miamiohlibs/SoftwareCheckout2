@@ -110,7 +110,7 @@ module.exports = class LogQuerier {
 
   async getFirstTimestampForUids(entries) {
     const firstTimestampForUids =
-      '[.entries | group_by(.uid)| map({uid: .[0].uid, first_message: .[0].message, first_timestamp: (map(.timestamp) | min)}) | sort_by(.first_timestamp)]';
+      '[.entries | group_by(.uid)| map({uid: .[0].uid, first_message: .[0].message, first_content: .[0].content, first_timestamp: (map(.timestamp) | min), total_entries: length, total_size_in_bytes: (map(tostring | length) | add)}) | sort_by(.first_timestamp)]';
     const data = await jq.run(firstTimestampForUids, JSON.stringify(entries), {
       input: 'string',
     });
