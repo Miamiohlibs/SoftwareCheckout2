@@ -1,6 +1,7 @@
 const config = require('../config/appConf');
 const { readdirSync } = require('fs');
 const path = require('path');
+const logger = require('../services/logger');
 
 module.exports = class StatsSummary {
   constructor() {
@@ -68,18 +69,31 @@ module.exports = class StatsSummary {
       let files = [];
       let anonFiles = [];
 
-      if (readdirSync(thisfolder, { withFileTypes: true }).length > 0) {
-        files = readdirSync(thisfolder, { withFileTypes: true })
-          .filter((dirent) => dirent.isFile())
-          .map((dirent) => dirent.name);
+      try {
+        if (readdirSync(thisfolder, { withFileTypes: true }).length > 0) {
+          files = readdirSync(thisfolder, { withFileTypes: true })
+            .filter((dirent) => dirent.isFile())
+            .map((dirent) => dirent.name);
+        }
+      } catch (err) {
+        logger.debug('StatsSummary.js: unable to open log folder', {
+          content: err,
+        });
       }
+
       // if folder has an anon subfolder, add those files to the data
       let anonFolder = thisfolder + 'anon/';
-      if (readdirSync(anonFolder, { withFileTypes: true }).length) {
-        anonFiles = readdirSync(anonFolder, { withFileTypes: true })
-          .filter((dirent) => dirent.isFile())
-          .map((dirent) => dirent.name);
-        // files = files.concat(anonFiles);
+      try {
+        // anon folder may not exist
+        if (readdirSync(anonFolder, { withFileTypes: true }).length) {
+          anonFiles = readdirSync(anonFolder, { withFileTypes: true })
+            .filter((dirent) => dirent.isFile())
+            .map((dirent) => dirent.name);
+        }
+      } catch (err) {
+        logger.debug('StatsSummary.js: unable to open "anon" log folder', {
+          content: err,
+        });
       }
       files.forEach((file) => {
         let data = require(thisfolder + file);
