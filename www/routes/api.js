@@ -1,7 +1,6 @@
 const dayjs = require('dayjs');
 const express = require('express');
 const router = express.Router();
-const { text } = require('express');
 const appConf = require('../../config/appConf');
 const LicenseGroup = require('../../helpers/LicenseGroup');
 const lg = new LicenseGroup(appConf);
@@ -9,8 +8,6 @@ const LogQuerier = require('../../models/LogQuerier');
 const {
   filterToEntriesMissingFromSecondArray,
 } = require('../../helpers/utils');
-const libCal = require('../../config/libCal');
-const baseUrl = 'http://localhost:3010';
 
 async function getAdobeBookingsByGroup(group) {
   const adobeConf = require('../../config/adobe');

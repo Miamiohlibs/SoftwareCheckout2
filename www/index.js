@@ -21,10 +21,9 @@ global.onServer =
   config.admin.onServer === true;
 
 let protocol = 'http';
-let hostname = 'localhost';
+const hostname = config.admin.hostname;
 if (global.onServer) {
   protocol = 'https';
-  hostname = config.admin.server.hostname || 'hostname not found in config';
 }
 
 // Session configuration
@@ -117,9 +116,12 @@ app.get('/auth/failure', (req, res) => {
 
 app.get('/systemStatus', isLoggedIn, async (req, res) => {
   try {
-    let data = await fetch(`${protocol}://${hostname}:${port}/api/groups`, {
-      headers: { Authorization: `Bearer ${config.admin.apiKey}` },
-    });
+    let data = await fetch(
+      `${protocol}://${config.admin.hostname}:${port}/api/groups`,
+      {
+        headers: { Authorization: `Bearer ${config.admin.apiKey}` },
+      }
+    );
     let json = await data.json();
     res.render('systemStatus', { data: json, user: req.user });
   } catch (err) {
@@ -195,7 +197,7 @@ if (global.onServer === true) {
     )
     .listen(port, function () {
       console.log(
-        `Server app listening on port ${port}! Go to https://${server.hostname}:${port}/`
+        `Server app listening on port ${port}! Go to https://${hostname}:${port}/`
       );
     });
 } else {
