@@ -8,14 +8,13 @@ module.exports = {
     server: {
       key: '/path/to/public_key.key',
       cert: '/path/to/certificate.crt',
-      hostname: 'your.hostname.edu',
-      note: 'if onServer is true, you need to provide the key and cert paths + hostname',
+      note: 'if onServer is true, you need to provide the key and cert paths',
     },
     port: 3010,
     requireLogin: true,
     allowedUsers: [], // list allowed emails here
     apiKey: 'writeYourOwnKeyHereTheValueIsNotImportant',
-    host: 'http://localhost',
+    hostname: 'localhost', // or 'your.hostname.edu'
     googleClientId:
       'get a google client id from https://console.developers.google.com/apis/credentials',
     googleClientSecret: 'get a google client secret from the same place',

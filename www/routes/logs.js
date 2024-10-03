@@ -1,7 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const config = require('../../config/appConf');
-const baseUrl = `${config.admin.host}:${config.admin.port}`;
+let protocol = 'https';
+if (!config.admin.onServer) {
+  protocol = 'http';
+}
+
+const baseUrl = `${protocol}://${config.admin.hostname}:${config.admin.port}`;
 
 router.get('/', async (req, res) => {
   try {
