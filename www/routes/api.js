@@ -8,6 +8,9 @@ const LogQuerier = require('../../models/LogQuerier');
 const {
   filterToEntriesMissingFromSecondArray,
 } = require('../../helpers/utils');
+const path = require('path');
+const fs = require('fs');
+const { Parser } = require('json2csv');
 
 async function getAdobeBookingsByGroup(group) {
   const adobeConf = require('../../config/adobe');
@@ -199,4 +202,36 @@ router.get('/stats/summary', async (req, res) => {
     res.send(data);
   }
 });
+
+router.get('/stats/eachCheckout', async (req, res) => {
+  let folder = 'logs/eachCheckout';
+  let files = fs.readdirSync(path.join(__dirname, '../../', folder));
+  res.json(files);
+});
+
+router.get('/stats/eachCheckout/:file', async (req, res) => {
+  let folder = 'logs/eachCheckout';
+  let file = req.params.file;
+  let filepath = path.join(__dirname, '../../', folder, file);
+  let data = fs.readFileSync(filepath, 'utf8');
+  const json = JSON.parse(data);
+  if (req.query.format === 'json') {
+    res.send(json); // json
+  } else {
+    //csv
+    try {
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader(
+        'Content-Disposition',
+        'attachment; filename=eachCheckout.csv'
+      );
+      const parser = new Parser({});
+      const csv = parser.parse(json);
+      res.send(csv);
+    } catch (err) {
+      res.status(500).send({ status: 500, message: err.message });
+    }
+  }
+});
+
 module.exports = router;

@@ -1,5 +1,4 @@
 <%- include('partials/header') %>
-<h1><%= pageTitle %></h1>
 <style>
     .container {
       overflow-y: auto;
@@ -19,5 +18,8 @@
       text-align: center;
     }
   </style>
-<%- table %>
+<div class="mx-5 mt-3">
+  <h1><%= pageTitle %></h1>
+  <%- table %>
+</div>
 <%- include('partials/footer') %>

@@ -1,0 +1,13 @@
+<%- include('partials/header') %>
+<div class="mx-5 mt-3">
+    <h1>Each Checkout by Software Package</h1>
+    <ul class="list-group">
+
+<% files.forEach((file)=>  { %>
+        <li class="list-group-item">
+            <a href="/stats/eachCheckout/<%= file %>"><%= file %></a>
+        </li>
+<% }) %>
+    </ul>
+</div>
+<%- include('partials/footer') %>

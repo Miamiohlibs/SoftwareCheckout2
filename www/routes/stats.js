@@ -78,4 +78,37 @@ router.get('/summary', async (req, res) => {
   }
 });
 
+router.get('/eachCheckout', async (req, res) => {
+  try {
+    const data = await fetch(`${baseUrl}/api/stats/eachCheckout`, {
+      headers: { Authorization: `Bearer ${config.admin.apiKey}` },
+    });
+    const files = await data.json();
+    res.render('eachCheckoutList', { files: files });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send('Error fetching data', err);
+  }
+});
+
+router.get('/eachCheckout/:file', async (req, res) => {
+  try {
+    const data = await fetch(
+      `${baseUrl}/api/stats/eachCheckout/${req.params.file}`,
+      {
+        headers: { Authorization: `Bearer ${config.admin.apiKey}` },
+      }
+    );
+    const csvData = await data.text();
+    const table = csvToHtmlTable(csvData);
+    res.render('statsTable', {
+      table: table,
+      pageTitle: `Each Checkout: ${req.params.file}`,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send('Error fetching data', err);
+  }
+});
+
 module.exports = router;
