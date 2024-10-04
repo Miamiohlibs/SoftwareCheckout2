@@ -20,6 +20,9 @@
   </style>
 <div class="mx-5 mt-3">
   <h1><%= pageTitle %></h1>
+  <% if (typeof downloadLink != 'undefined' && downloadLink) { %>
+    <a href="<%= downloadLink %>" download>Download as CSV</a>
+  <% } %>
   <%- table %>
 </div>
 <%- include('partials/footer') %>

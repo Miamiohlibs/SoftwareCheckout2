@@ -92,6 +92,8 @@ router.get('/eachCheckout', async (req, res) => {
 });
 
 router.get('/eachCheckout/:file', async (req, res) => {
+  let fileStr = req.params.file.replace('.json', '');
+  let downloadLink = `/stats/eachCheckout/${req.params.file}?format=csv`;
   try {
     const data = await fetch(
       `${baseUrl}/api/stats/eachCheckout/${req.params.file}`,
@@ -101,10 +103,20 @@ router.get('/eachCheckout/:file', async (req, res) => {
     );
     const csvData = await data.text();
     const table = csvToHtmlTable(csvData);
-    res.render('statsTable', {
-      table: table,
-      pageTitle: `Each Checkout: ${req.params.file}`,
-    });
+    if (req.query.format === 'csv') {
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader(
+        'Content-Disposition',
+        `attachment; filename=eachCheckout-${fileStr}.csv`
+      );
+      res.send(table);
+    } else {
+      res.render('statsTable', {
+        table: table,
+        pageTitle: `Each Checkout: ${req.params.file}`,
+        downloadLink,
+      });
+    }
   } catch (err) {
     console.log(err);
     res.status(500).send('Error fetching data', err);
