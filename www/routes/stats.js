@@ -54,9 +54,21 @@ router.get('/daily', async (req, res) => {
     });
     const csvData = await data.text();
     const table = csvToHtmlTable(csvData);
+
+    if (req.query.format === 'csv') {
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader(
+        'Content-Disposition',
+        'attachment; filename=dailyStats.csv'
+      );
+      res.send(csvData);
+      return;
+    }
+
     res.render('statsTable', {
       table: table,
       pageTitle: 'Daily Stats: Licenses in Use per Day',
+      downloadLink: '/stats/daily?format=csv',
     });
   } catch (err) {
     console.log(err);
