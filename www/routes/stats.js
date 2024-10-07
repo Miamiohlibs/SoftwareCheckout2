@@ -89,12 +89,24 @@ router.get('/summary', async (req, res) => {
     });
     const csvData = await data.text();
     const table = csvToHtmlTable(csvData);
+
+    if (req.query.format === 'csv') {
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader(
+        'Content-Disposition',
+        'attachment; filename=summaryStats.csv'
+      );
+      res.send(csvData);
+      return;
+    }
+
     res.render('statsTable', {
       table: table,
       pageTitle: 'Summary Stats',
       showDateLimits: true,
       reportStartDate,
       reportEndDate,
+      downloadLink: `/stats/summary?format=csv&${queryString}`,
     });
   } catch (err) {
     console.log(err);
