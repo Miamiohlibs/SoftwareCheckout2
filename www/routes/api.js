@@ -192,7 +192,9 @@ router.get('/stats/summary', async (req, res) => {
     format = req.query.format;
   }
   const StatsSummary = require('../../services/summaryStatsService');
-  const data = StatsSummary(format);
+  const reportStartDate = req.query.reportStartDate || '';
+  const reportEndDate = req.query.reportEndDate || '';
+  const data = StatsSummary(format, reportStartDate, reportEndDate);
 
   if (format === 'json') {
     res.json(data);

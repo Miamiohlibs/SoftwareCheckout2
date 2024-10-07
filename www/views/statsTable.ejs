@@ -20,6 +20,22 @@
   </style>
 <div class="mx-5 mt-3">
   <h1><%= pageTitle %></h1>
+  <% if (typeof showDateLimits!= "undefined" && showDateLimits) { %>
+    <% if (reportStartDate != '' || reportEndDate != '') { %>
+    <h2><%= reportStartDate %> &mdash; <%= reportEndDate %></h2>
+    <% } %>
+    <form action="/stats/summary" method="get">
+      <div class="form-group">
+        <label for="reportStartDate">Start Date:</label>
+        <input type="date" id="reportStartDate" name="reportStartDate" value="<%= reportStartDate %>">
+      </div>
+      <div class="form-group">
+        <label for="reportEndDate">End Date:</label>
+        <input type="date" id="reportEndDate" name="reportEndDate" value="<%= reportEndDate %>">
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  <% } %>
   <% if (typeof downloadLink != 'undefined' && downloadLink) { %>
     <a href="<%= downloadLink %>" download>Download as CSV</a>
   <% } %>

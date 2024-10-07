@@ -65,13 +65,25 @@ router.get('/daily', async (req, res) => {
 });
 
 router.get('/summary', async (req, res) => {
+  const reportStartDate = req.query.reportStartDate || '';
+  const reportEndDate = req.query.reportEndDate || '';
+  const queryString = new URLSearchParams({
+    reportStartDate,
+    reportEndDate,
+  }).toString();
   try {
-    const data = await fetch(`${baseUrl}/api/stats/summary`, {
+    const data = await fetch(`${baseUrl}/api/stats/summary?${queryString}`, {
       headers: { Authorization: `Bearer ${config.admin.apiKey}` },
     });
     const csvData = await data.text();
     const table = csvToHtmlTable(csvData);
-    res.render('statsTable', { table: table, pageTitle: 'Summary Stats' });
+    res.render('statsTable', {
+      table: table,
+      pageTitle: 'Summary Stats',
+      showDateLimits: true,
+      reportStartDate,
+      reportEndDate,
+    });
   } catch (err) {
     console.log(err);
     res.status(500).send('Error fetching data', err);

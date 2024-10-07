@@ -2,6 +2,7 @@ const config = require('../config/appConf');
 const { readdirSync } = require('fs');
 const path = require('path');
 const logger = require('../services/logger');
+const { all } = require('../www/routes/api');
 
 module.exports = class StatsSummary {
   constructor() {
@@ -62,7 +63,9 @@ module.exports = class StatsSummary {
     return parsedDateOne > parsedDateTwo ? dateOne : dateTwo;
   }
 
-  summarizeEachPkg() {
+  summarizeEachPkg(reportStartDate = '', reportEndDate = '') {
+    this.reportStartDate = reportStartDate;
+    this.reportEndDate = reportEndDate;
     this.pkgs.forEach((pkg) => {
       let thisdata = [];
       let thisfolder = this.statsPath + '/' + pkg + '/';
@@ -111,6 +114,32 @@ module.exports = class StatsSummary {
       let anonFirst = '';
       let anonLast = '';
 
+      if (reportStartDate != '') {
+        files = files.filter((file) => {
+          return file >= this.reportStartDate + '.json';
+        });
+        anonFiles = anonFiles.filter(
+          (file) => file >= this.reportStartDate + '.json'
+        );
+        thisdata = thisdata.filter((item) => {
+          return item.toDate >= this.reportStartDate;
+        });
+        this.allPkgData = this.allPkgData.filter((item) => {
+          return item.toDate >= this.reportStartDate;
+        });
+      }
+      if (reportEndDate != '') {
+        files = files.filter((file) => file <= this.reportEndDate + '.json');
+        anonFiles = anonFiles.filter(
+          (file) => file <= this.reportEndDate + '.json'
+        );
+        thisdata = thisdata.filter((item) => {
+          return item.fromDate <= this.reportEndDate;
+        });
+        this.allPkgData = this.allPkgData.filter((item) => {
+          return item.fromDate <= this.reportEndDate;
+        });
+      }
       if (files.length) {
         filesFirst = files[0].replace('.json', '');
         filesLast = files[files.length - 1].replace('.json', '');
