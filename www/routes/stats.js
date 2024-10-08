@@ -54,9 +54,21 @@ router.get('/daily', async (req, res) => {
     });
     const csvData = await data.text();
     const table = csvToHtmlTable(csvData);
+
+    if (req.query.format === 'csv') {
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader(
+        'Content-Disposition',
+        'attachment; filename=dailyStats.csv'
+      );
+      res.send(csvData);
+      return;
+    }
+
     res.render('statsTable', {
       table: table,
       pageTitle: 'Daily Stats: Licenses in Use per Day',
+      downloadLink: '/stats/daily?format=csv',
     });
   } catch (err) {
     console.log(err);
@@ -65,13 +77,108 @@ router.get('/daily', async (req, res) => {
 });
 
 router.get('/summary', async (req, res) => {
+  const reportStartDate = req.query.reportStartDate || '';
+  const reportEndDate = req.query.reportEndDate || '';
+  const queryString = new URLSearchParams({
+    reportStartDate,
+    reportEndDate,
+  }).toString();
   try {
-    const data = await fetch(`${baseUrl}/api/stats/summary`, {
+    const data = await fetch(`${baseUrl}/api/stats/summary?${queryString}`, {
       headers: { Authorization: `Bearer ${config.admin.apiKey}` },
     });
     const csvData = await data.text();
     const table = csvToHtmlTable(csvData);
-    res.render('statsTable', { table: table, pageTitle: 'Summary Stats' });
+
+    if (req.query.format === 'csv') {
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader(
+        'Content-Disposition',
+        'attachment; filename=summaryStats.csv'
+      );
+      res.send(csvData);
+      return;
+    }
+
+    res.render('statsTable', {
+      table: table,
+      pageTitle: 'Summary Stats',
+      showDateLimits: true,
+      reportStartDate,
+      reportEndDate,
+      downloadLink: `/stats/summary?format=csv&${queryString}`,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send('Error fetching data', err);
+  }
+});
+
+router.get('/eachCheckout', async (req, res) => {
+  try {
+    const data = await fetch(`${baseUrl}/api/stats/eachCheckout`, {
+      headers: { Authorization: `Bearer ${config.admin.apiKey}` },
+    });
+    const files = await data.json();
+    res.render('eachCheckoutList', { files: files });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send('Error fetching data', err);
+  }
+});
+
+router.get('/eachCheckout/:file', async (req, res) => {
+  let fileStr = req.params.file.replace('.json', '');
+  let downloadLink = `/stats/eachCheckout/${req.params.file}?format=csv`;
+  try {
+    const data = await fetch(
+      `${baseUrl}/api/stats/eachCheckout/${req.params.file}`,
+      {
+        headers: { Authorization: `Bearer ${config.admin.apiKey}` },
+      }
+    );
+    if (data.status !== 200) {
+      res
+        .status(data.status)
+        .render('error', {
+          message: 'Error fetching data',
+          error: data.statusText,
+          errorNumber: data.status,
+        });
+      return;
+    }
+    const csvData = await data.text();
+    const table = csvToHtmlTable(csvData);
+    if (req.query.format === 'csv') {
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader(
+        'Content-Disposition',
+        `attachment; filename=eachCheckout-${fileStr}.csv`
+      );
+      res.send(table);
+    } else {
+      res.render('statsTable', {
+        table: table,
+        pageTitle: `Each Checkout: ${req.params.file}`,
+        downloadLink,
+      });
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).send('Error fetching data', err);
+  }
+});
+
+router.get('/adobeSavings', async (req, res) => {
+  try {
+    const data = await fetch(`${baseUrl}/api/stats/adobeSavings`, {
+      headers: { Authorization: `Bearer ${config.admin.apiKey}` },
+    });
+    const json = await data.json();
+    res.render('adobeSavings', {
+      data: json,
+      pageTitle: `Estimated Adobe Savings on ${json.conf.dirname}`,
+    });
   } catch (err) {
     console.log(err);
     res.status(500).send('Error fetching data', err);

@@ -1,5 +1,4 @@
 <%- include('partials/header') %>
-<h1><%= pageTitle %></h1>
 <style>
     .container {
       overflow-y: auto;
@@ -19,5 +18,28 @@
       text-align: center;
     }
   </style>
-<%- table %>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<div class="mx-5 mt-3">
+  <h1><%= pageTitle %></h1>
+  <% if (typeof showDateLimits!= "undefined" && showDateLimits) { %>
+    <% if (reportStartDate != '' || reportEndDate != '') { %>
+    <h2><%= reportStartDate %> &mdash; <%= reportEndDate %></h2>
+    <% } %>
+    <form action="/stats/summary" method="get">
+      <div class="form-group">
+        <label for="reportStartDate">Start Date:</label>
+        <input type="date" id="reportStartDate" name="reportStartDate" value="<%= reportStartDate %>">
+      </div>
+      <div class="form-group">
+        <label for="reportEndDate">End Date:</label>
+        <input type="date" id="reportEndDate" name="reportEndDate" value="<%= reportEndDate %>">
+      </div>
+      <button type="submit" class="btn btn-primary my-2">Submit</button>
+    </form>
+  <% } %>
+  <% if (typeof downloadLink != 'undefined' && downloadLink) { %>
+    <a href="<%= downloadLink %>" download><button class="btn btn-success mt-4 mb-2"><i class="bi bi-cloud-download"></i> Download as CSV</button></a>
+  <% } %>
+  <%- table %>
+</div>
 <%- include('partials/footer') %>
