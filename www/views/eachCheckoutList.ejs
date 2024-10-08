@@ -5,7 +5,7 @@
 
 <% files.forEach((file)=>  { %>
         <li class="list-group-item">
-            <a href="/stats/eachCheckout/<%= file %>"><%= file %></a>
+            <a href="/stats/eachCheckout/<%= file.filename %>"><%= file.filename %> (<%= file.fileSizeinBytes %>KB)</a>
         </li>
 <% }) %>
     </ul>

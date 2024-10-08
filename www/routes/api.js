@@ -208,20 +208,33 @@ router.get('/stats/summary', async (req, res) => {
 router.get('/stats/eachCheckout', async (req, res) => {
   let folder = 'logs/eachCheckout';
   let files = fs.readdirSync(path.join(__dirname, '../../', folder));
-  res.json(files);
+  let fileInfo = files.map((file) => {
+    let filepath = path.join(__dirname, '../../', folder, file);
+    // let filepath = path.resolve(this.logDir + '/' + file);
+    let stats = fs.statSync(filepath);
+    if (stats.size <= 2) {
+      return; // even an empty file will be 2 bytes: []
+    }
+    return { filename: file, fileSizeinBytes: Math.round(stats.size / 1024) };
+  });
+  fileInfo = fileInfo.filter((i) => i !== undefined);
+  // res.json(files);
+  res.json(fileInfo);
 });
 
 router.get('/stats/eachCheckout/:file', async (req, res) => {
   let folder = 'logs/eachCheckout';
   let file = req.params.file;
-  let filepath = path.join(__dirname, '../../', folder, file);
-  let data = fs.readFileSync(filepath, 'utf8');
-  const json = JSON.parse(data);
-  if (req.query.format === 'json') {
-    res.send(json); // json
-  } else {
-    //csv
-    try {
+  try {
+    let filepath = path.join(__dirname, '../../', folder, file);
+    let data = fs.readFileSync(filepath, 'utf8');
+    const json = JSON.parse(data);
+
+    if (req.query.format === 'json') {
+      res.send(json); // json
+    } else {
+      //csv
+
       res.setHeader('Content-Type', 'text/csv');
       res.setHeader(
         'Content-Disposition',
@@ -230,9 +243,9 @@ router.get('/stats/eachCheckout/:file', async (req, res) => {
       const parser = new Parser({});
       const csv = parser.parse(json);
       res.send(csv);
-    } catch (err) {
-      res.status(500).send({ status: 500, message: err.message });
     }
+  } catch (err) {
+    res.status(500).send({ status: 500, message: err.message });
   }
 });
 

@@ -137,6 +137,16 @@ router.get('/eachCheckout/:file', async (req, res) => {
         headers: { Authorization: `Bearer ${config.admin.apiKey}` },
       }
     );
+    if (data.status !== 200) {
+      res
+        .status(data.status)
+        .render('error', {
+          message: 'Error fetching data',
+          error: data.statusText,
+          errorNumber: data.status,
+        });
+      return;
+    }
     const csvData = await data.text();
     const table = csvToHtmlTable(csvData);
     if (req.query.format === 'csv') {
