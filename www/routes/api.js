@@ -236,4 +236,24 @@ router.get('/stats/eachCheckout/:file', async (req, res) => {
   }
 });
 
+router.get('/stats/adobeSavings', async (req, res) => {
+  let adobeConf = require('../../config/adobe');
+  let savingsConf = adobeConf.savingsCalculator;
+  let AdobeSavingsCalculator = require('../../models/AdobeSavingsCalculator');
+  let calc = new AdobeSavingsCalculator(savingsConf);
+  calc.calculateSavings();
+
+  let firstMonth = calc.monthlySavings[0].month;
+  let lastMonth = calc.monthlySavings[calc.monthlySavings.length - 1].month;
+
+  let output = {
+    conf: calc.conf,
+    firstMonth: firstMonth,
+    lastMonth: lastMonth,
+    users: calc.users.length,
+    monthlySavings: calc.monthlySavings,
+    totalSavings: calc.totalSavings,
+  };
+  res.json(output);
+});
 module.exports = router;
