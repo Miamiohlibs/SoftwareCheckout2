@@ -159,4 +159,20 @@ router.get('/eachCheckout/:file', async (req, res) => {
   }
 });
 
+router.get('/adobeSavings', async (req, res) => {
+  try {
+    const data = await fetch(`${baseUrl}/api/stats/adobeSavings`, {
+      headers: { Authorization: `Bearer ${config.admin.apiKey}` },
+    });
+    const json = await data.json();
+    res.render('adobeSavings', {
+      data: json,
+      pageTitle: `Estimated Adobe Savings on ${json.conf.dirname}`,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send('Error fetching data', err);
+  }
+});
+
 module.exports = router;
