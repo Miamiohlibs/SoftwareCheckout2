@@ -16,6 +16,7 @@ router.get('/', async (req, res) => {
     const json = await data.json();
     res.render('logsList', {
       data: json,
+      user: req.user || false,
     });
   } catch (err) {
     console.log(err);
@@ -36,6 +37,7 @@ router.get('/examine/:file/:uid', async (req, res) => {
       data: json,
       file: req.params.file,
       uid: req.params.uid,
+      user: req.user || false,
     });
     // res.json(json);
   } catch (err) {
@@ -49,7 +51,11 @@ router.get('/uids/:file', async (req, res) => {
       headers: { Authorization: `Bearer ${config.admin.apiKey}` },
     });
     const json = await data.json();
-    res.render('logsUids', { data: json, file: req.params.file });
+    res.render('logsUids', {
+      data: json,
+      file: req.params.file,
+      user: req.user || false,
+    });
     // res.send(json);
   } catch (err) {
     console.log(err);
@@ -57,19 +63,21 @@ router.get('/uids/:file', async (req, res) => {
   }
 });
 
-router.get('/show/:file', async (req, res) => {
-  try {
-    const data = await fetch(`${baseUrl}/api/logs/show/${req.params.file}`, {
-      headers: { Authorization: `Bearer ${config.admin.apiKey}` },
-    });
-    const json = await data.json();
-    res.json(json);
-    // res.render('logsDetail', {
-    //   data: JSON.parse(json),
-    // });
-  } catch (err) {
-    console.log(err);
-    res.status(500).send('Error fetching data', err);
-  }
-});
+// I don't think we're using this:
+//
+// router.get('/show/:file', async (req, res) => {
+//   try {
+//     const data = await fetch(`${baseUrl}/api/logs/show/${req.params.file}`, {
+//       headers: { Authorization: `Bearer ${config.admin.apiKey}` },
+//     });
+//     const json = await data.json();
+//     res.json(json);
+//     // res.render('logsDetail', {
+//     //   data: JSON.parse(json),
+//     // });
+//   } catch (err) {
+//     console.log(err);
+//     res.status(500).send('Error fetching data', err);
+//   }
+// });
 module.exports = router;
