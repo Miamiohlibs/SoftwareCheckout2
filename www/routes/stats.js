@@ -69,6 +69,7 @@ router.get('/daily', async (req, res) => {
       table: table,
       pageTitle: 'Daily Stats: Licenses in Use per Day',
       downloadLink: '/stats/daily?format=csv',
+      user: req.user || false,
     });
   } catch (err) {
     console.log(err);
@@ -107,6 +108,7 @@ router.get('/summary', async (req, res) => {
       reportStartDate,
       reportEndDate,
       downloadLink: `/stats/summary?format=csv&${queryString}`,
+      user: req.user || false,
     });
   } catch (err) {
     console.log(err);
@@ -120,7 +122,7 @@ router.get('/eachCheckout', async (req, res) => {
       headers: { Authorization: `Bearer ${config.admin.apiKey}` },
     });
     const files = await data.json();
-    res.render('eachCheckoutList', { files: files });
+    res.render('eachCheckoutList', { files: files, user: req.user || false });
   } catch (err) {
     console.log(err);
     res.status(500).send('Error fetching data', err);
@@ -138,13 +140,11 @@ router.get('/eachCheckout/:file', async (req, res) => {
       }
     );
     if (data.status !== 200) {
-      res
-        .status(data.status)
-        .render('error', {
-          message: 'Error fetching data',
-          error: data.statusText,
-          errorNumber: data.status,
-        });
+      res.status(data.status).render('error', {
+        message: 'Error fetching data',
+        error: data.statusText,
+        errorNumber: data.status,
+      });
       return;
     }
     const csvData = await data.text();
@@ -161,6 +161,7 @@ router.get('/eachCheckout/:file', async (req, res) => {
         table: table,
         pageTitle: `Each Checkout: ${req.params.file}`,
         downloadLink,
+        user: req.user || false,
       });
     }
   } catch (err) {
@@ -178,6 +179,7 @@ router.get('/adobeSavings', async (req, res) => {
     res.render('adobeSavings', {
       data: json,
       pageTitle: `Estimated Adobe Savings on ${json.conf.dirname}`,
+      user: req.user || false,
     });
   } catch (err) {
     console.log(err);

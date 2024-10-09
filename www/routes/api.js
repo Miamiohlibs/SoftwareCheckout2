@@ -164,11 +164,12 @@ router.get('/logs/uids/:file', async (req, res) => {
   res.json(uids);
 });
 
-router.get('/logs/show/:date', async (req, res) => {
-  const logQuerier = new LogQuerier();
-  let log = logQuerier.readLogFile(req.params.date);
-  res.json(log);
-});
+// Unused?
+// router.get('/logs/show/:date', async (req, res) => {
+//   const logQuerier = new LogQuerier();
+//   let log = logQuerier.readLogFile(req.params.date);
+//   res.json(log);
+// });
 
 router.get('/stats/daily', (req, res) => {
   const dailyStatsService = require('../../services/dailyStatsService');
