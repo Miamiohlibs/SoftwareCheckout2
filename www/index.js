@@ -162,6 +162,7 @@ app.get('/fetch', isLoggedIn, async (req, res) => {
       vendor: req.query.vendor,
       group: req.query.group,
       groupName: req.query.groupName,
+      user: req.user || false,
     });
     // res.render('fetch', { data: json, vendor: req.query.vendor, cid: req.query.cid });
   } catch (err) {
