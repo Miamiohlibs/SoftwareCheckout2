@@ -86,6 +86,15 @@ router.get('/adobe', async (req, res) => {
 router.get('/adobe/compare', async (req, res) => {
   let group = req.query.group;
   let cid = req.query.cid;
+  // check to see that group/cid/vendor are in config
+  let matchingGroup = appConf.software.filter(
+    (i) =>
+      i.vendorGroupId === group && i.libCalCid === cid && i.vendor === 'Adobe'
+  );
+  if (matchingGroup.length != 1) {
+    res.status(404).send({ error: 'Vendor/Group/CID not found in config' });
+    return;
+  }
   const adobeBookings = await getAdobeBookingsByGroup(group);
   const adobeEmails = adobeBookings.map((i) => i.email);
   const libCalBookings = await getLibCalBookingsByCid(cid);
@@ -118,6 +127,16 @@ router.get('/jamf', async (req, res) => {
 });
 
 router.get('/jamf/compare', async (req, res) => {
+  let group = req.query.group;
+  let cid = req.query.cid;
+  let matchingGroup = appConf.software.filter(
+    (i) =>
+      i.vendorGroupId === group && i.libCalCid === cid && i.vendor === 'Adobe'
+  );
+  if (matchingGroup.length != 1) {
+    res.status(404).send({ error: 'Vendor/Group/CID not found in config' });
+    return;
+  }
   let jamfEmails = await getJamfBookingsByGroupId(req.query.group);
   const libCalBookings = await getLibCalBookingsByCid(req.query.cid);
   const libCalEmails = libCalBookings.map((i) => i.email);

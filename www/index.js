@@ -131,20 +131,21 @@ app.get('/systemStatus', isLoggedIn, async (req, res) => {
 });
 
 app.get('/compare', isLoggedIn, async (req, res) => {
+  let url = `${protocol}://${hostname}:${port}/api/${req.query.vendor}/compare?group=${req.query.group}&cid=${req.query.cid}`;
   try {
-    let response = await fetch(
-      `${protocol}://${hostname}:${port}/api/${req.query.vendor}/compare?group=${req.query.group}&cid=${req.query.cid}`,
-      { headers: { Authorization: `Bearer ${config.admin.apiKey}` } }
-    );
+    let response = await fetch(url, {
+      headers: { Authorization: `Bearer ${config.admin.apiKey}` },
+    });
+    let json = await response.json();
     if (!response.ok) {
       res.status(response.status).render('error', {
-        message: 'Error fetching data',
+        message: json.error || 'Error fetching data',
         error: response.statusText,
         errorNumber: response.status,
       });
       return;
     }
-    let json = await response.json();
+
     res.render('compare', {
       data: json,
       vendor: req.query.vendor,
@@ -154,7 +155,11 @@ app.get('/compare', isLoggedIn, async (req, res) => {
       user: req.user || false,
     });
   } catch (err) {
-    res.status(500).send('Error fetching comparison data');
+    res.status(500).render('error', {
+      message: 'Error fetching comparison data',
+      error: 'Unknown error',
+      errorNumber: 500,
+    });
   }
 });
 
@@ -164,15 +169,16 @@ app.get('/fetch', isLoggedIn, async (req, res) => {
       `${protocol}://${hostname}:${port}/api/${req.query.vendor}?group=${req.query.group}`,
       { headers: { Authorization: `Bearer ${config.admin.apiKey}` } }
     );
+    let json = await response.json();
     if (!response.ok) {
       res.status(response.status).render('error', {
-        message: 'Error fetching data',
+        message: json.error || json.message || 'Error fetching data',
         error: response.statusText,
         errorNumber: response.status,
       });
       return;
     }
-    let json = await response.json();
+
     // res.json(json);
     res.render('vendorGroup', {
       data: json,
