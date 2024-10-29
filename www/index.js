@@ -78,6 +78,7 @@ app.use('/api', apiKeyAuth, apiRouter);
 let logsRouter = require('./routes/logs');
 app.use('/logs', isLoggedIn, logsRouter);
 let statsRouter = require('./routes/stats');
+const { error } = require('console');
 app.use('/stats', isLoggedIn, statsRouter);
 
 app.set('json spaces', 2);
@@ -151,11 +152,19 @@ app.get('/compare', isLoggedIn, async (req, res) => {
 
 app.get('/fetch', isLoggedIn, async (req, res) => {
   try {
-    let data = await fetch(
+    let response = await fetch(
       `${protocol}://${hostname}:${port}/api/${req.query.vendor}?group=${req.query.group}`,
       { headers: { Authorization: `Bearer ${config.admin.apiKey}` } }
     );
-    let json = await data.json();
+    if (!response.ok) {
+      res.status(response.status).render('error', {
+        message: 'Error fetching data',
+        error: response.statusText,
+        errorNumber: response.status,
+      });
+      return;
+    }
+    let json = await response.json();
     // res.json(json);
     res.render('vendorGroup', {
       data: json,
@@ -166,7 +175,11 @@ app.get('/fetch', isLoggedIn, async (req, res) => {
     });
     // res.render('fetch', { data: json, vendor: req.query.vendor, cid: req.query.cid });
   } catch (err) {
-    res.status(500).send('Error fetching data');
+    res.status(500).render('error', {
+      message: 'Error fetching data',
+      error: 'Unknown error',
+      errorNumber: 500,
+    });
   }
 });
 
