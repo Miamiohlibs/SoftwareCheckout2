@@ -205,6 +205,14 @@ app.get('/logout', function (req, res, next) {
   });
 });
 
+app.get('*', function (req, res) {
+  res.status(404).render('error', {
+    message: 'Page not found',
+    error: '404',
+    errorNumber: 404,
+  });
+});
+
 // Start server
 if (global.onServer === true) {
   const server = config.admin.server;
