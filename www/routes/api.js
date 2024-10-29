@@ -164,8 +164,12 @@ router.get('/logs/examine/:file/:uid', async (req, res) => {
 router.get('/logs/uids/:file', async (req, res) => {
   const logQuerier = new LogQuerier();
   let logs = logQuerier.readLogFile(req.params.file);
-  let uids = await logQuerier.getFirstEntryByUid(logs);
-  res.json(uids);
+  if (logs === false) {
+    res.status(404).send({ error: 'File not found' });
+  } else {
+    let uids = await logQuerier.getFirstEntryByUid(logs);
+    res.json(uids);
+  }
 });
 
 // Unused?

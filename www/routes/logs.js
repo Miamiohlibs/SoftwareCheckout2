@@ -55,10 +55,21 @@ router.get('/examine/:file/:uid', async (req, res) => {
 });
 router.get('/uids/:file', async (req, res) => {
   try {
-    const data = await fetch(`${baseUrl}/api/logs/uids/${req.params.file}`, {
-      headers: { Authorization: `Bearer ${config.admin.apiKey}` },
-    });
-    const json = await data.json();
+    const response = await fetch(
+      `${baseUrl}/api/logs/uids/${req.params.file}`,
+      {
+        headers: { Authorization: `Bearer ${config.admin.apiKey}` },
+      }
+    );
+    const json = await response.json();
+    if (!response.ok) {
+      res.status(response.status).render('error', {
+        message: 'Error fetching data',
+        error: response.statusText,
+        errorNumber: response.status,
+      });
+      return;
+    }
     res.render('logsUids', {
       data: json,
       file: req.params.file,
