@@ -26,13 +26,21 @@ router.get('/', async (req, res) => {
 
 router.get('/examine/:file/:uid', async (req, res) => {
   try {
-    const data = await fetch(
+    const response = await fetch(
       `${baseUrl}/api/logs/examine/${req.params.file}/${req.params.uid}`,
       {
         headers: { Authorization: `Bearer ${config.admin.apiKey}` },
       }
     );
-    const json = await data.json();
+    if (!response.ok) {
+      res.status(response.status).render('error', {
+        message: 'Error fetching data',
+        error: response.statusText,
+        errorNumber: response.status,
+      });
+      return;
+    }
+    const json = await response.json();
     res.render('logsDetail', {
       data: json,
       file: req.params.file,

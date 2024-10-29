@@ -149,12 +149,16 @@ router.get('/logs', async (req, res) => {
 router.get('/logs/examine/:file/:uid', async (req, res) => {
   const logQuerier = new LogQuerier();
   let logs = logQuerier.readLogFile(req.params.file);
-  let entries = await logQuerier.selectEntriesByField(
-    logs,
-    'uid',
-    req.params.uid
-  );
-  res.json(entries);
+  if (logs === false) {
+    res.status(404).send('File not found');
+  } else {
+    let entries = await logQuerier.selectEntriesByField(
+      logs,
+      'uid',
+      req.params.uid
+    );
+    res.json(entries);
+  }
 });
 
 router.get('/logs/uids/:file', async (req, res) => {
