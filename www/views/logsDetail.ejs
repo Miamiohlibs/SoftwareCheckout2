@@ -5,6 +5,12 @@
 
     <div class="card m-3 p-2 border border-warning">
         <div class="accordion accordion-flush" id="accordionFlushExample">
+            <% if (data.length === 0) { %>
+                <div class="alert alert-warning" role="alert">
+                    <h4 class="alert-heading">No logs found for this UID</h4>
+                    <p class="mb-0">No logs found mathing this UID in this file.</p>
+                </div>
+            <% } %>
             <% for (let i=0; i<data.length; i++) { %>
                 <div class="accordion-item">
                     <% let badgeClass = 'success' %>     
