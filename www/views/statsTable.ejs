@@ -25,6 +25,11 @@
     <% if (reportStartDate != '' || reportEndDate != '') { %>
     <h2><%= reportStartDate %> &mdash; <%= reportEndDate %></h2>
     <% } %>
+    <% if (alert != '') { %>
+      <div class="alert alert-warning" role="alert">
+        <p class="mb-0"><%= alert %></p>
+      </div>
+    <% } %>
     <form action="/stats/summary" method="get">
       <div class="form-group">
         <label for="reportStartDate">Start Date:</label>

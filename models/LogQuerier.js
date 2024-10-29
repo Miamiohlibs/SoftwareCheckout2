@@ -87,6 +87,12 @@ module.exports = class LogQuerier {
   }
 
   readLogFile(filename) {
+    let filepath = path.resolve(this.logDir + '/' + filename);
+    try {
+      fs.accessSync(filepath);
+    } catch (err) {
+      return false;
+    }
     let jsonLog = jsonifyLog(path.resolve(this.logDir + '/' + filename));
     jsonLog = this.redactFields(
       jsonLog,

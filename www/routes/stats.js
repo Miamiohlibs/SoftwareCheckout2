@@ -78,8 +78,14 @@ router.get('/daily', async (req, res) => {
 });
 
 router.get('/summary', async (req, res) => {
-  const reportStartDate = req.query.reportStartDate || '';
-  const reportEndDate = req.query.reportEndDate || '';
+  let alert = '';
+  let reportStartDate = req.query.reportStartDate || '';
+  let reportEndDate = req.query.reportEndDate || '';
+  // if reportStartDate > reportEndDate, swap them
+  if (reportStartDate > reportEndDate) {
+    [reportStartDate, reportEndDate] = [reportEndDate, reportStartDate];
+    alert = 'Requested start date was after end date. Dates have been swapped.';
+  }
   const queryString = new URLSearchParams({
     reportStartDate,
     reportEndDate,
@@ -109,6 +115,7 @@ router.get('/summary', async (req, res) => {
       reportEndDate,
       downloadLink: `/stats/summary?format=csv&${queryString}`,
       user: req.user || false,
+      alert,
     });
   } catch (err) {
     console.log(err);

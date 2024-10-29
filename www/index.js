@@ -78,6 +78,7 @@ app.use('/api', apiKeyAuth, apiRouter);
 let logsRouter = require('./routes/logs');
 app.use('/logs', isLoggedIn, logsRouter);
 let statsRouter = require('./routes/stats');
+const { error } = require('console');
 app.use('/stats', isLoggedIn, statsRouter);
 
 app.set('json spaces', 2);
@@ -130,12 +131,21 @@ app.get('/systemStatus', isLoggedIn, async (req, res) => {
 });
 
 app.get('/compare', isLoggedIn, async (req, res) => {
+  let url = `${protocol}://${hostname}:${port}/api/${req.query.vendor}/compare?group=${req.query.group}&cid=${req.query.cid}`;
   try {
-    let data = await fetch(
-      `${protocol}://${hostname}:${port}/api/${req.query.vendor}/compare?group=${req.query.group}&cid=${req.query.cid}`,
-      { headers: { Authorization: `Bearer ${config.admin.apiKey}` } }
-    );
-    let json = await data.json();
+    let response = await fetch(url, {
+      headers: { Authorization: `Bearer ${config.admin.apiKey}` },
+    });
+    let json = await response.json();
+    if (!response.ok) {
+      res.status(response.status).render('error', {
+        message: json.error || 'Error fetching data',
+        error: response.statusText,
+        errorNumber: response.status,
+      });
+      return;
+    }
+
     res.render('compare', {
       data: json,
       vendor: req.query.vendor,
@@ -145,17 +155,30 @@ app.get('/compare', isLoggedIn, async (req, res) => {
       user: req.user || false,
     });
   } catch (err) {
-    res.status(500).send('Error fetching comparison data');
+    res.status(500).render('error', {
+      message: 'Error fetching comparison data',
+      error: 'Unknown error',
+      errorNumber: 500,
+    });
   }
 });
 
 app.get('/fetch', isLoggedIn, async (req, res) => {
   try {
-    let data = await fetch(
+    let response = await fetch(
       `${protocol}://${hostname}:${port}/api/${req.query.vendor}?group=${req.query.group}`,
       { headers: { Authorization: `Bearer ${config.admin.apiKey}` } }
     );
-    let json = await data.json();
+    let json = await response.json();
+    if (!response.ok) {
+      res.status(response.status).render('error', {
+        message: json.error || json.message || 'Error fetching data',
+        error: response.statusText,
+        errorNumber: response.status,
+      });
+      return;
+    }
+
     // res.json(json);
     res.render('vendorGroup', {
       data: json,
@@ -166,7 +189,11 @@ app.get('/fetch', isLoggedIn, async (req, res) => {
     });
     // res.render('fetch', { data: json, vendor: req.query.vendor, cid: req.query.cid });
   } catch (err) {
-    res.status(500).send('Error fetching data');
+    res.status(500).render('error', {
+      message: 'Error fetching data',
+      error: 'Unknown error',
+      errorNumber: 500,
+    });
   }
 });
 
@@ -181,6 +208,14 @@ app.get('/logout', function (req, res, next) {
       }
       res.redirect('/');
     });
+  });
+});
+
+app.get('*', function (req, res) {
+  res.status(404).render('error', {
+    message: 'Page not found',
+    error: '404',
+    errorNumber: 404,
   });
 });
 

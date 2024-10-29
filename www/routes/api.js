@@ -86,6 +86,15 @@ router.get('/adobe', async (req, res) => {
 router.get('/adobe/compare', async (req, res) => {
   let group = req.query.group;
   let cid = req.query.cid;
+  // check to see that group/cid/vendor are in config
+  let matchingGroup = appConf.software.filter(
+    (i) =>
+      i.vendorGroupId === group && i.libCalCid === cid && i.vendor === 'Adobe'
+  );
+  if (matchingGroup.length != 1) {
+    res.status(404).send({ error: 'Vendor/Group/CID not found in config' });
+    return;
+  }
   const adobeBookings = await getAdobeBookingsByGroup(group);
   const adobeEmails = adobeBookings.map((i) => i.email);
   const libCalBookings = await getLibCalBookingsByCid(cid);
@@ -118,6 +127,16 @@ router.get('/jamf', async (req, res) => {
 });
 
 router.get('/jamf/compare', async (req, res) => {
+  let group = req.query.group;
+  let cid = req.query.cid;
+  let matchingGroup = appConf.software.filter(
+    (i) =>
+      i.vendorGroupId === group && i.libCalCid === cid && i.vendor === 'Adobe'
+  );
+  if (matchingGroup.length != 1) {
+    res.status(404).send({ error: 'Vendor/Group/CID not found in config' });
+    return;
+  }
   let jamfEmails = await getJamfBookingsByGroupId(req.query.group);
   const libCalBookings = await getLibCalBookingsByCid(req.query.cid);
   const libCalEmails = libCalBookings.map((i) => i.email);
@@ -149,19 +168,27 @@ router.get('/logs', async (req, res) => {
 router.get('/logs/examine/:file/:uid', async (req, res) => {
   const logQuerier = new LogQuerier();
   let logs = logQuerier.readLogFile(req.params.file);
-  let entries = await logQuerier.selectEntriesByField(
-    logs,
-    'uid',
-    req.params.uid
-  );
-  res.json(entries);
+  if (logs === false) {
+    res.status(404).send('File not found');
+  } else {
+    let entries = await logQuerier.selectEntriesByField(
+      logs,
+      'uid',
+      req.params.uid
+    );
+    res.json(entries);
+  }
 });
 
 router.get('/logs/uids/:file', async (req, res) => {
   const logQuerier = new LogQuerier();
   let logs = logQuerier.readLogFile(req.params.file);
-  let uids = await logQuerier.getFirstEntryByUid(logs);
-  res.json(uids);
+  if (logs === false) {
+    res.status(404).send({ error: 'File not found' });
+  } else {
+    let uids = await logQuerier.getFirstEntryByUid(logs);
+    res.json(uids);
+  }
 });
 
 // Unused?
