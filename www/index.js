@@ -132,11 +132,19 @@ app.get('/systemStatus', isLoggedIn, async (req, res) => {
 
 app.get('/compare', isLoggedIn, async (req, res) => {
   try {
-    let data = await fetch(
+    let response = await fetch(
       `${protocol}://${hostname}:${port}/api/${req.query.vendor}/compare?group=${req.query.group}&cid=${req.query.cid}`,
       { headers: { Authorization: `Bearer ${config.admin.apiKey}` } }
     );
-    let json = await data.json();
+    if (!response.ok) {
+      res.status(response.status).render('error', {
+        message: 'Error fetching data',
+        error: response.statusText,
+        errorNumber: response.status,
+      });
+      return;
+    }
+    let json = await response.json();
     res.render('compare', {
       data: json,
       vendor: req.query.vendor,
