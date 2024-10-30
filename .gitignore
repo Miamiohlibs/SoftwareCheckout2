@@ -12,3 +12,4 @@ config/appConf.js
 config/campusConf.js
 config/jamf.js
 
+www/.next/*

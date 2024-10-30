@@ -1,0 +1,30 @@
+<%- include ('./partials/header.ejs') %>
+    <div class="cards">
+        <% data.forEach(function(item) { %>
+            <div class="card m-3">
+                <div class="card-header">
+                    <h2><%= item.vendor %></h2>
+                </div>
+                <div class="card-body">
+                    <% item.groups.forEach(function(group) { %>
+                        <div class="row">
+                            <div class="cell col-3"><%= group.libCalName %></div>
+                            <div class="cell col-3"><a href="/compare?vendor=<%= item.vendor.toLowerCase() %>&group=<%= group.vendorGroupId %>&cid=<%= group.libCalCid %>&groupName=<%= group.libCalName%> (<%= group.vendorGroupName%>)">Compare</a> 
+                            </div>
+                            <div class="cell col-2">
+                            <a href="/fetch?vendor=<%= item.vendor.toLowerCase() %>&group=<%= group.vendorGroupId %>&groupName=<%= group.vendorGroupName %>">Vendor</a>
+                            </div>
+                            <div class="cell col-2">
+                                <a href="/fetch?vendor=libcal&&groupName=<%= group.libCalName%>&groupName=<%= group.vendorGroupName%>&group=<%= group.libCalCid %>">LibCal</a>
+                            </div>
+                            <div class="cell col-2">
+                                <a href="/future?vendor=libcal&&groupName=<%= group.libCalName%>&groupName=<%= group.vendorGroupName%>&group=<%= group.libCalCid %>">Future</a>
+                            </div>
+                        </div>
+
+                    <% }); %>
+                </div>
+            </div>
+        <% }); %>
+    </div>
+<%- include ('./partials/footer.ejs') %>

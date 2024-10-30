@@ -21,10 +21,27 @@ module.exports = class LibCalService {
     return valid;
   }
 
+  async getValidFutureBookings(cid) {
+    let res = await this.api.getBookings(cid, null, 365); // 365 days in the future
+    logger.debug(`LibCalRepository: received from getBookings ${cid}`, {
+      content: axiosLogPrep(res),
+    });
+    let future = this.filterToFutureBookings(res);
+    let validFutureBookings = this.filterToValidBookings(future);
+    logger.debug(`LibCalRepository: getValidFutureBookings returns ${cid}:`, {
+      content: validFutureBookings,
+    });
+    return validFutureBookings;
+  }
+
   filterToCurrentBookings(bookings) {
     return bookings.filter(
       (i) => dayjs(i.fromDate) < dayjs() && dayjs(i.toDate) > dayjs()
     );
+  }
+
+  filterToFutureBookings(bookings) {
+    return bookings.filter((i) => dayjs(i.fromDate) > dayjs());
   }
 
   filterToValidBookings(bookings) {

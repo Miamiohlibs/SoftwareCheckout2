@@ -27,7 +27,7 @@ module.exports = class AdobeUserMgmtService {
     this.queryConf = {};
   }
 
-  async getPaginatedResults(container) {
+  async getPaginatedResults(container, group) {
     logger.debug('AdobeRepo: starting getPaginatedResults...');
     let allResults = [];
     let lastPage = false;
@@ -35,7 +35,17 @@ module.exports = class AdobeUserMgmtService {
       await this.userThrottle.pauseIfNeeded();
       let res = await this.api.getQueryResults(this.queryConf);
       this.userThrottle.increment();
-      allResults = allResults.concat(res[container]);
+      try {
+        allResults = allResults.concat(res[container]);
+      } catch (err) {
+        logger.error(
+          `AdobeRepo: Error in getPaginatedResults for ${container} in group ${group}`,
+          {
+            content: err,
+          }
+        );
+        return [];
+      }
       lastPage = res.lastPage;
       if (!lastPage) {
         this.queryConf.url = this.getNextUrl(this.queryConf.url);
@@ -61,7 +71,7 @@ module.exports = class AdobeUserMgmtService {
     logger.debug('AdobeRepo: getGroupMembers query conf', {
       content: this.queryConf,
     });
-    let res = await this.getPaginatedResults('users');
+    let res = await this.getPaginatedResults('users', group);
     return res;
   }
 

@@ -1,0 +1,11 @@
+<% let user %>
+<% locals.user ? user = locals.user :user = false %>
+<%- include('./partials/header', {user: user} ) %>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3 mt-3">
+            <%- error ? `<div class="alert alert-danger caps">${error}</div>` : '' %>
+            <p class="d-flex justify-content-center"><a href="/auth/google" class="btn btn-primary btn-lg">Login with Google</a></p>
+        </div>
+    </div>
+<%- include('./partials/footer') %>
