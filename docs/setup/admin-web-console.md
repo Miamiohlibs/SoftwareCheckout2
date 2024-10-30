@@ -16,7 +16,11 @@ To set up authentication, log into the [Google Cloud Developer Console](https://
 
 This will generate a Client ID and Client Secret -- use those values in the `appConf.js` file in the "admin" setup. The "Authorized redirect URI" value will be used as the "authCallback" value in the config file. &#x20;
 
-With the Google setup complete, the values added to the `appConf.js` file, and the "requireLogin" value set to "true" in `appConf.js`, you should be able to (and required to) log in to the app once it's started. (You can start it using `node www/index` from the command line of the main Software Checkout directory.)&#x20;
+If you are running the service on localhost, it will run over http; but if you're using a server, it will run on https and will require a key/certificate pair for your server. Add the paths to the key and certificate in the admin.server property of the `appConf.js` file.&#x20;
+
+With the Google setup complete, the values added to the `appConf.js` file, and the "requireLogin" value set to "true" in `appConf.js.` There is an "allowed users" array; add each permitted user's email address to this array. You should be able to (and required to) log in to the app once it's started.  (You can start it using `node www/index` from the command line of the main Software Checkout directory.)&#x20;
+
+You can customize the color of the admin panel's navbar in the admin.navbarTheme property. Set the backgroundColor to a [Bootstrap 5 background color class](https://getbootstrap.com/docs/5.0/utilities/background/). For dark backgrounds, set the textColor to "navbar-dark"; for lighter backgrounds set the textColor to 'navbar-light'.
 
 ## Express Server Setup
 
