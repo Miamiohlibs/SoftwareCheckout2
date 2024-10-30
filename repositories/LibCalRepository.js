@@ -27,6 +27,10 @@ module.exports = class LibCalService {
     );
   }
 
+  filterToFutureBookings(bookings) {
+    return bookings.filter((i) => dayjs(i.fromDate) > dayjs());
+  }
+
   filterToValidBookings(bookings) {
     return bookings.filter(
       (i) => i.status === 'Confirmed' || i.status === 'Mediated Approved'
