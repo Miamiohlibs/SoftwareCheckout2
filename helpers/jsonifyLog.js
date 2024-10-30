@@ -1,5 +1,4 @@
 const fs = require('fs');
-const logger = require('../services/logger');
 
 const jsonifyLog = (filePath) => {
   const data = fs.readFileSync(filePath, 'utf8');
