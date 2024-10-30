@@ -10,7 +10,11 @@
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="flush-heading<%= i %>">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse<%= i %>" aria-expanded="false" aria-controls="flush-collapse<%= i %>">
-                            <%= data[i].email %>
+                            <% if (typeof data[i] == 'string') { %>
+                                <%= data[i] %>
+                            <% } else { %>
+                                <%= data[i].email %>
+                            <% } %>
                         </button>
                     </h2>
                     <div id="flush-collapse<%= i %>" class="accordion-collapse collapse multi-collapse" aria-labelledby="flush-heading<%= i %>" data-bs-parent="#accordionFlushExample">

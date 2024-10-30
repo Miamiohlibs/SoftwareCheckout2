@@ -14,6 +14,17 @@ Request API keys from LibCal and Adobe. You will enter these values in the confi
 
 * `config/appConf.js`:
   * `cryptoConfig`: The value defined here will be used as an encryption key to keep any anonymized data encrypted, while keeping values consistent so you can identify the number of distinct users of the system over time. Change the `cryptoConfig.secret` value to any random long string when you set up the app. You should not change it afterwards.&#x20;
+  * `admin:` setup of the admin web console, including authentication details, port number, and server information.
+    * `onServer:` use `false` for running over http://localhost, `true` for https:// on a server
+    * `server:` https key/cert pair
+    * `port:` port on which Express will listen for web calls; default is 3010
+    * `requireLogin:` whether or not to require Google login for users to access the admin web console. Only set this to `false` when running on localhost and/or for debugging purposes. Should be set to `true` in production.
+    * `allowedUsers:` array of permitted users; if `requiredLogin: true`, user email must be included in this array to access the web admin console.
+    * `apiKey:` This is the API key required to access the API that powers the admin web console. Make this value up for yourself, the app uses it to authenticate to its own API. You will only need it if you want to connect to the web admin console API externally.&#x20;
+    * `hostname:` set to 'localhost' or the server address without protocol (e.g. 'sc.lib.myorg.edu')
+    * googleClientId: create a googleClientId from the Google Develop Console: [https://console.developers.google.com/apis/credentials](https://console.developers.google.com/apis/credentials)
+    * googleClientSecret: this will be generate when you generate the googleClientId
+    * authCallback: you will set this value in the Google Developer Console. Set it to a value like 'http://localhost:3010/google/callback' or 'https://sc.lib.yourorg.edu:3010/google/callback' -- use the server and port you've specified above + '/google/callback'.
   * `db_connection`: mongodb connection string (optional; used for caching converted email aliases)
   * `logLevels`: for each level, set one of: false, 'daily', 'monthly'; false for no logs at that level; 'daily' for logs that start a new logfile each day; 'monthly' for a new logfile per year. Use daily logs for levels that output obnoxiously large amounts of data like 'debug'. Currently, only 'info','error', and 'debug' are used by the app.
   * `emailConverter`: LibCal may accept users' aliased email addresss (e.g. my.full.name@fake.org) even though license providers may only use the uniqueId version of a user Id (e.g. namemf@fake.org). If your organization has an API that will convert email aliases to the uniqueId/authoritative email address, use these settings to configure the use of the API.&#x20;

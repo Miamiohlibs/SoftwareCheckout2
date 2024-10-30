@@ -4,6 +4,18 @@
 
 The system logs a log of information, including "error", "info", and "debug" levels, all in the `logs/` directory. The most comprehensive logs are the debug logs, which include all logged events; the "info" logs include all error and info level events; the "error" logs only include information logged at the "error" level.&#x20;
 
+### Viewing the Logs
+
+Logs may be browsed/viewed through the [Admin Web Console](../setup/admin-web-console.md) through the "`/logs`" route, or on the command line by browsing the file structure.&#x20;
+
+#### Admin Web Console
+
+In the admin web console, you can view log files for each day or month (depending on how the log files are set up in [App Configuration](../setup/app-configuration.md#loglevels-required).) There are separate links for Error, Info, and Debug logs. The Debug logs are the most detailed.&#x20;
+
+When you click on an individual log (e.g. debug-2024-10-01.log) you'll see a list of each time the main app process ran -- each run will be assigned a separate UID. Each UID will list the time it started, the number of entries in the log, and the first message in the log. Clicking on a UID entry will reveal all the events logged for that UID. The report for each UID will list the time, entry type, and message for that log entry; clicking on the entry will reveal any additional information recorded in the log entry.
+
+#### Command-line analysis
+
 The files log information in JSON format, but the whole file isn't actually JSON -- it's mutliple individual lines of JSON. In order to parse a logfile (e.g. `logs/info-2024-06.log`), use  the`parselog/jsonifylogs.js` script:
 
 `node parselog/jsonifylogs logs/info-2024-06.log`

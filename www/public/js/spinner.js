@@ -6,7 +6,13 @@ window.addEventListener('pageshow', function () {
 });
 
 $(document).ready(function () {
-  $('a').click(function () {
+  $('a').click(function (event) {
+    // event.preventDefault();
+    let downloading = $(this).attr('download');
+    if (typeof downloading == 'string') {
+      return;
+    }
+    console.log('clicked');
     if ($(this).attr('href').startsWith('#')) {
       return;
     }

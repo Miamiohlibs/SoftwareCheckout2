@@ -8,6 +8,9 @@ const LogQuerier = require('../../models/LogQuerier');
 const {
   filterToEntriesMissingFromSecondArray,
 } = require('../../helpers/utils');
+const path = require('path');
+const fs = require('fs');
+const { Parser } = require('json2csv');
 
 async function getAdobeBookingsByGroup(group) {
   const adobeConf = require('../../config/adobe');
@@ -83,6 +86,15 @@ router.get('/adobe', async (req, res) => {
 router.get('/adobe/compare', async (req, res) => {
   let group = req.query.group;
   let cid = req.query.cid;
+  // check to see that group/cid/vendor are in config
+  let matchingGroup = appConf.software.filter(
+    (i) =>
+      i.vendorGroupId === group && i.libCalCid === cid && i.vendor === 'Adobe'
+  );
+  if (matchingGroup.length != 1) {
+    res.status(404).send({ error: 'Vendor/Group/CID not found in config' });
+    return;
+  }
   const adobeBookings = await getAdobeBookingsByGroup(group);
   const adobeEmails = adobeBookings.map((i) => i.email);
   const libCalBookings = await getLibCalBookingsByCid(cid);
@@ -115,6 +127,16 @@ router.get('/jamf', async (req, res) => {
 });
 
 router.get('/jamf/compare', async (req, res) => {
+  let group = req.query.group;
+  let cid = req.query.cid;
+  let matchingGroup = appConf.software.filter(
+    (i) =>
+      i.vendorGroupId === group && i.libCalCid === cid && i.vendor === 'Adobe'
+  );
+  if (matchingGroup.length != 1) {
+    res.status(404).send({ error: 'Vendor/Group/CID not found in config' });
+    return;
+  }
   let jamfEmails = await getJamfBookingsByGroupId(req.query.group);
   const libCalBookings = await getLibCalBookingsByCid(req.query.cid);
   const libCalEmails = libCalBookings.map((i) => i.email);
@@ -146,26 +168,35 @@ router.get('/logs', async (req, res) => {
 router.get('/logs/examine/:file/:uid', async (req, res) => {
   const logQuerier = new LogQuerier();
   let logs = logQuerier.readLogFile(req.params.file);
-  let entries = await logQuerier.selectEntriesByField(
-    logs,
-    'uid',
-    req.params.uid
-  );
-  res.json(entries);
+  if (logs === false) {
+    res.status(404).send('File not found');
+  } else {
+    let entries = await logQuerier.selectEntriesByField(
+      logs,
+      'uid',
+      req.params.uid
+    );
+    res.json(entries);
+  }
 });
 
 router.get('/logs/uids/:file', async (req, res) => {
   const logQuerier = new LogQuerier();
   let logs = logQuerier.readLogFile(req.params.file);
-  let uids = await logQuerier.getFirstEntryByUid(logs);
-  res.json(uids);
+  if (logs === false) {
+    res.status(404).send({ error: 'File not found' });
+  } else {
+    let uids = await logQuerier.getFirstEntryByUid(logs);
+    res.json(uids);
+  }
 });
 
-router.get('/logs/show/:date', async (req, res) => {
-  const logQuerier = new LogQuerier();
-  let log = logQuerier.readLogFile(req.params.date);
-  res.json(log);
-});
+// Unused?
+// router.get('/logs/show/:date', async (req, res) => {
+//   const logQuerier = new LogQuerier();
+//   let log = logQuerier.readLogFile(req.params.date);
+//   res.json(log);
+// });
 
 router.get('/stats/daily', (req, res) => {
   const dailyStatsService = require('../../services/dailyStatsService');
@@ -189,7 +220,9 @@ router.get('/stats/summary', async (req, res) => {
     format = req.query.format;
   }
   const StatsSummary = require('../../services/summaryStatsService');
-  const data = StatsSummary(format);
+  const reportStartDate = req.query.reportStartDate || '';
+  const reportEndDate = req.query.reportEndDate || '';
+  const data = StatsSummary(format, reportStartDate, reportEndDate);
 
   if (format === 'json') {
     res.json(data);
@@ -198,5 +231,70 @@ router.get('/stats/summary', async (req, res) => {
     res.setHeader('Content-Disposition', 'attachment; filename=dailyStats.csv');
     res.send(data);
   }
+});
+
+router.get('/stats/eachCheckout', async (req, res) => {
+  let folder = 'logs/eachCheckout';
+  let files = fs.readdirSync(path.join(__dirname, '../../', folder));
+  let fileInfo = files.map((file) => {
+    let filepath = path.join(__dirname, '../../', folder, file);
+    // let filepath = path.resolve(this.logDir + '/' + file);
+    let stats = fs.statSync(filepath);
+    if (stats.size <= 2) {
+      return; // even an empty file will be 2 bytes: []
+    }
+    return { filename: file, fileSizeinBytes: Math.round(stats.size / 1024) };
+  });
+  fileInfo = fileInfo.filter((i) => i !== undefined);
+  // res.json(files);
+  res.json(fileInfo);
+});
+
+router.get('/stats/eachCheckout/:file', async (req, res) => {
+  let folder = 'logs/eachCheckout';
+  let file = req.params.file;
+  try {
+    let filepath = path.join(__dirname, '../../', folder, file);
+    let data = fs.readFileSync(filepath, 'utf8');
+    const json = JSON.parse(data);
+
+    if (req.query.format === 'json') {
+      res.send(json); // json
+    } else {
+      //csv
+
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader(
+        'Content-Disposition',
+        'attachment; filename=eachCheckout.csv'
+      );
+      const parser = new Parser({});
+      const csv = parser.parse(json);
+      res.send(csv);
+    }
+  } catch (err) {
+    res.status(500).send({ status: 500, message: err.message });
+  }
+});
+
+router.get('/stats/adobeSavings', async (req, res) => {
+  let adobeConf = require('../../config/adobe');
+  let savingsConf = adobeConf.savingsCalculator;
+  let AdobeSavingsCalculator = require('../../models/AdobeSavingsCalculator');
+  let calc = new AdobeSavingsCalculator(savingsConf);
+  calc.calculateSavings();
+
+  let firstMonth = calc.monthlySavings[0].month;
+  let lastMonth = calc.monthlySavings[calc.monthlySavings.length - 1].month;
+
+  let output = {
+    conf: calc.conf,
+    firstMonth: firstMonth,
+    lastMonth: lastMonth,
+    users: calc.users.length,
+    monthlySavings: calc.monthlySavings,
+    totalSavings: calc.totalSavings,
+  };
+  res.json(output);
 });
 module.exports = router;
