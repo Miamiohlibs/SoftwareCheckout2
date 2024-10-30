@@ -191,7 +191,40 @@ app.get('/fetch', isLoggedIn, async (req, res) => {
   } catch (err) {
     res.status(500).render('error', {
       message: 'Error fetching data',
-      error: 'Unknown error',
+      error: err.message || 'Unknown error',
+      errorNumber: 500,
+    });
+  }
+});
+
+app.get('/future', isLoggedIn, async (req, res) => {
+  try {
+    let response = await fetch(
+      `${protocol}://${hostname}:${port}/api/libcal/future/${req.query.group}`,
+      { headers: { Authorization: `Bearer ${config.admin.apiKey}` } }
+    );
+    let json = await response.json();
+    if (!response.ok) {
+      res.status(response.status).render('error', {
+        message: json.error || 'Error fetching data',
+        error: response.statusText,
+        errorNumber: response.status,
+      });
+      return;
+    }
+
+    res.render('vendorGroup', {
+      data: json,
+      vendor: req.query.vendor,
+      group: req.query.group,
+      groupName: `Future Requests for ${req.query.groupName}`,
+      user: req.user || false,
+    });
+  } catch (err) {
+    console.log('what went wrong', err);
+    res.status(500).render('error', {
+      message: 'Error fetching data',
+      error: err.message || 'Unknown error',
       errorNumber: 500,
     });
   }

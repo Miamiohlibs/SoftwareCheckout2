@@ -28,7 +28,7 @@ module.exports = class LibCalApi {
     return await this.getQueryResults();
   }
 
-  async getBookings(cid, date = null) {
+  async getBookings(cid, date = null, days = null) {
     this.clearQueryConf();
     this.queryConf.url =
       this.baseUrl +
@@ -38,6 +38,9 @@ module.exports = class LibCalApi {
       cid;
     if (date !== null) {
       this.queryConf.url += '&date=' + date;
+    }
+    if (days !== null) {
+      this.queryConf.url += '&days=' + days;
     }
     this.queryConf.method = 'get';
     let res = await this.getQueryResults();
