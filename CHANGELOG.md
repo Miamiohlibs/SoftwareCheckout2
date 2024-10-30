@@ -4,7 +4,7 @@
 
 ### Added
 
-- New feature: Web-based admin console, including System Status, Logs, and Stats. Uses Express.js and EJS. This is an optional feature not required to run the core license management scripts functionality, but should make it easier to monitor and troubleshoot the system.
+- New feature: Web-based admin console, including System Status, Logs, and Stats. Uses Express.js and EJS. This is an optional feature not required to run the core license management scripts functionality, but should make it easier to monitor and troubleshoot the system. Setting up the admin console requires additional configuration steps, added as an "admin" property. See the [documentation](https://miamiohlib.gitbook.io/software-checkout/setup/admin-web-console) for details.
 
 ### Changed
 
