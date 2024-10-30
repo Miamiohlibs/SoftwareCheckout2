@@ -18,7 +18,17 @@ const jsonifyLog = (filePath) => {
     }
 
     // Parse the entry into a JSON object
-    return JSON.parse(entry);
+    try {
+      return JSON.parse(entry);
+    } catch (err) {
+      console.error(
+        `Error parsing JSON object (${filePath}) for web admin console:`,
+        err
+      );
+      return {
+        message: 'Error parsing JSON object: unable to display this log entry',
+      };
+    }
   });
   return { entries };
 };
