@@ -20,6 +20,8 @@ module.exports = {
     googleClientSecret: 'get a google client secret from the same place',
     authCallback: 'http://localhost:3010/google/callback', // listed as "Authorized redirect URIs" in the google console
     navbarTheme: {
+      // see Bootstrap 5 docs for explanation of these color classes:
+      // https://getbootstrap.com/docs/5.0/utilities/background/
       backgroundColor: 'bg-secondary', // opts: bg-primary, bg-secondary, bg-success, bg-danger, bg-warning, bg-info, bg-light, bg-dark
       textColor: 'navbar-dark', // use 'navbar-light' for light backgrounds, 'navbar-dark' for dark backgrounds
     },
