@@ -25,6 +25,7 @@ async function getLibCalBookingsByCid(cid) {
   const LibCalRepository = require('../../repositories/LibCalRepository');
   const libcal = new LibCalRepository(libCalConf);
   let bookings = await libcal.getCurrentValidBookings(cid);
+  // calculate time waiting for license assignment, add it to the object
   bookings = bookings.map((i) => {
     i.timeWaiting = i.created
       ? dayjs().diff(dayjs(i.created), 'minutes') + ' minutes'
@@ -63,6 +64,14 @@ router.get('/libcal', async (req, res) => {
     }
   }
   res.json(bookings);
+});
+
+router.get('/libcal/future/:cid', async (req, res) => {
+  const libCalConf = require('../../config/libCal');
+  const LibCalRepository = require('../../repositories/LibCalRepository');
+  const libcal = new LibCalRepository(libCalConf);
+  let futureBookings = await libcal.getValidFutureBookings(req.params.cid);
+  res.json(futureBookings);
 });
 
 router.get('/groups', async (req, res) => {

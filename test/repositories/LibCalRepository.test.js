@@ -26,6 +26,16 @@ describe('LibCalRepo: filterToCurrentBookings', () => {
   });
 });
 
+describe('LibCalRepo: filterToFutureBookings', () => {
+  it('should get one future booking from the test data', () => {
+    res = repo.filterToFutureBookings(bookingsResponse);
+    expect(Array.isArray(res)).toBe(true);
+    expect(res.length).toBe(1);
+    expect(res[0]).toHaveProperty('eid');
+    expect(res[0].eid).toBe(75542);
+  });
+});
+
 describe('LibCalRepo: filterToValidBookings', () => {
   it('should get four current bookings from the test data', () => {
     res = repo.filterToValidBookings(bookingsResponse);
