@@ -18,7 +18,7 @@ module.exports = {
     googleClientId:
       'get a google client id from https://console.developers.google.com/apis/credentials',
     googleClientSecret: 'get a google client secret from the same place',
-    authCallback: 'http://localhost:3010/google/callback',
+    authCallback: 'http://localhost:3010/google/callback', // listed as "Authorized redirect URIs" in the google console
   },
   emailConverter: {
     active: false, // set to true to use the email converter, values below also need to be configured
