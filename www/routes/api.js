@@ -12,6 +12,7 @@ const {
 const path = require('path');
 const fs = require('fs');
 const { Parser } = require('json2csv');
+const libCal = require('../../config/libCal');
 
 async function getAdobeBookingsByGroup(group) {
   const adobeConf = require('../../config/adobe');
@@ -150,7 +151,8 @@ router.get('/jamf/compare', async (req, res) => {
   }
   let jamfEmails = await getJamfBookingsByGroupId(req.query.group);
   const libCalBookings = await getLibCalBookingsByCid(req.query.cid);
-  const libCalEmails = libCalBookings.map((i) => i.email);
+  let libCalEmails = libCalBookings.map((i) => i.email);
+  libCalEmails = await emailConverterService(libCalEmails);
   let emailsToRemove = filterToEntriesMissingFromSecondArray(
     jamfEmails,
     libCalEmails
