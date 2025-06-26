@@ -5,12 +5,14 @@ const appConf = require('../../config/appConf');
 const LicenseGroup = require('../../helpers/LicenseGroup');
 const lg = new LicenseGroup(appConf);
 const LogQuerier = require('../../models/LogQuerier');
+const emailConverterService = require('../../services/emailConverterService');
 const {
   filterToEntriesMissingFromSecondArray,
 } = require('../../helpers/utils');
 const path = require('path');
 const fs = require('fs');
 const { Parser } = require('json2csv');
+const libCal = require('../../config/libCal');
 
 async function getAdobeBookingsByGroup(group) {
   const adobeConf = require('../../config/adobe');
@@ -110,7 +112,8 @@ router.get('/adobe/compare', async (req, res) => {
   const adobeEmails = adobeBookings.map((i) => i.email);
   const libCalBookings = await getLibCalBookingsByCid(cid);
 
-  const libCalEmails = libCalBookings.map((i) => i.email);
+  let libCalEmails = libCalBookings.map((i) => i.email);
+  libCalEmails = await emailConverterService(libCalEmails);
   let emailsToRemove = filterToEntriesMissingFromSecondArray(
     adobeEmails,
     libCalEmails
@@ -155,7 +158,8 @@ router.get('/jamf/compare', async (req, res) => {
   }
   let jamfEmails = await getJamfBookingsByGroupId(req.query.group);
   const libCalBookings = await getLibCalBookingsByCid(req.query.cid);
-  const libCalEmails = libCalBookings.map((i) => i.email);
+  let libCalEmails = libCalBookings.map((i) => i.email);
+  libCalEmails = await emailConverterService(libCalEmails);
   let emailsToRemove = filterToEntriesMissingFromSecondArray(
     jamfEmails,
     libCalEmails
