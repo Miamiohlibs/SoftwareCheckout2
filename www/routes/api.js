@@ -5,6 +5,7 @@ const appConf = require('../../config/appConf');
 const LicenseGroup = require('../../helpers/LicenseGroup');
 const lg = new LicenseGroup(appConf);
 const LogQuerier = require('../../models/LogQuerier');
+const emailConverterService = require('../../services/emailConverterService');
 const {
   filterToEntriesMissingFromSecondArray,
 } = require('../../helpers/utils');
@@ -108,7 +109,8 @@ router.get('/adobe/compare', async (req, res) => {
   const adobeEmails = adobeBookings.map((i) => i.email);
   const libCalBookings = await getLibCalBookingsByCid(cid);
 
-  const libCalEmails = libCalBookings.map((i) => i.email);
+  let libCalEmails = libCalBookings.map((i) => i.email);
+  libCalEmails = await emailConverterService(libCalEmails);
   let emailsToRemove = filterToEntriesMissingFromSecondArray(
     adobeEmails,
     libCalEmails
