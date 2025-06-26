@@ -98,7 +98,9 @@ router.get('/adobe/compare', async (req, res) => {
   // check to see that group/cid/vendor are in config
   let matchingGroup = appConf.software.filter(
     (i) =>
-      i.vendorGroupId === group && i.libCalCid === cid && i.vendor === 'Adobe'
+      parseInt(i.vendorGroupId) === parseInt(group) &&
+      parseInt(i.libCalCid) === parseInt(cid) &&
+      i.vendor === 'Adobe'
   );
   if (matchingGroup.length != 1) {
     res.status(404).send({ error: 'Vendor/Group/CID not found in config' });
@@ -140,10 +142,15 @@ router.get('/jamf/compare', async (req, res) => {
   let cid = req.query.cid;
   let matchingGroup = appConf.software.filter(
     (i) =>
-      i.vendorGroupId === group && i.libCalCid === cid && i.vendor === 'Adobe'
+      parseInt(i.vendorGroupId) === parseInt(group) &&
+      parseInt(i.libCalCid) === parseInt(cid) &&
+      i.vendor === 'Jamf'
   );
+  console.log(matchingGroup);
   if (matchingGroup.length != 1) {
-    res.status(404).send({ error: 'Vendor/Group/CID not found in config' });
+    res
+      .status(404)
+      .send({ error: 'Vendor, Group, or CID not found in config' });
     return;
   }
   let jamfEmails = await getJamfBookingsByGroupId(req.query.group);
