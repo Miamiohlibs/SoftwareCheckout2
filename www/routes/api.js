@@ -1,4 +1,5 @@
 const dayjs = require('dayjs');
+const humanizeDuration = require('humanize-duration');
 const express = require('express');
 const router = express.Router();
 const appConf = require('../../config/appConf');
@@ -29,8 +30,32 @@ async function getLibCalBookingsByCid(cid) {
   let bookings = await libcal.getCurrentValidBookings(cid);
   // calculate time waiting for license assignment, add it to the object
   bookings = bookings.map((i) => {
-    i.timeWaiting = i.created
-      ? dayjs().diff(dayjs(i.created), 'minutes') + ' minutes'
+    let waitTimeStarted;
+    // calculate wait time started based on when the request was created
+    // unless it was created in advance of the fromDate, in which case
+    // use the fromDate as the start of the wait time (they start waiting
+    // once the reservation starts, not when they request it)
+    if (i.hasOwnProperty('created') && i.hasOwnProperty('fromDate')) {
+      if (i.fromDate > i.created) {
+        waitTimeStarted = i.fromDate;
+      } else {
+        waitTimeStarted = i.created;
+      }
+    } else if (i.hasOwnProperty('created')) {
+      waitTimeStarted = i.created;
+    } else if (i.hasOwnProperty('fromDate')) {
+      waitTimeStarted = i.fromDate;
+    } else {
+      waitTimeStarted = null;
+    }
+
+    i.timeWaiting = waitTimeStarted
+      ? humanizeDuration(
+          dayjs().diff(dayjs(waitTimeStarted), 'seconds') * 1000,
+          {
+            units: ['d', 'h', 'm', 's'],
+          }
+        )
       : null;
     return i;
   });
