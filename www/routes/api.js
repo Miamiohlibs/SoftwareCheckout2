@@ -5,12 +5,14 @@ const appConf = require('../../config/appConf');
 const LicenseGroup = require('../../helpers/LicenseGroup');
 const lg = new LicenseGroup(appConf);
 const LogQuerier = require('../../models/LogQuerier');
+const emailConverterService = require('../../services/emailConverterService');
 const {
   filterToEntriesMissingFromSecondArray,
 } = require('../../helpers/utils');
 const path = require('path');
 const fs = require('fs');
 const { Parser } = require('json2csv');
+const libCal = require('../../config/libCal');
 
 async function getAdobeBookingsByGroup(group) {
   const adobeConf = require('../../config/adobe');
@@ -98,7 +100,9 @@ router.get('/adobe/compare', async (req, res) => {
   // check to see that group/cid/vendor are in config
   let matchingGroup = appConf.software.filter(
     (i) =>
-      i.vendorGroupId === group && i.libCalCid === cid && i.vendor === 'Adobe'
+      parseInt(i.vendorGroupId) === parseInt(group) &&
+      parseInt(i.libCalCid) === parseInt(cid) &&
+      i.vendor === 'Adobe'
   );
   if (matchingGroup.length != 1) {
     res.status(404).send({ error: 'Vendor/Group/CID not found in config' });
@@ -108,7 +112,8 @@ router.get('/adobe/compare', async (req, res) => {
   const adobeEmails = adobeBookings.map((i) => i.email);
   const libCalBookings = await getLibCalBookingsByCid(cid);
 
-  const libCalEmails = libCalBookings.map((i) => i.email);
+  let libCalEmails = libCalBookings.map((i) => i.email);
+  libCalEmails = await emailConverterService(libCalEmails);
   let emailsToRemove = filterToEntriesMissingFromSecondArray(
     adobeEmails,
     libCalEmails
@@ -140,15 +145,21 @@ router.get('/jamf/compare', async (req, res) => {
   let cid = req.query.cid;
   let matchingGroup = appConf.software.filter(
     (i) =>
-      i.vendorGroupId === group && i.libCalCid === cid && i.vendor === 'Adobe'
+      parseInt(i.vendorGroupId) === parseInt(group) &&
+      parseInt(i.libCalCid) === parseInt(cid) &&
+      i.vendor === 'Jamf'
   );
+  console.log(matchingGroup);
   if (matchingGroup.length != 1) {
-    res.status(404).send({ error: 'Vendor/Group/CID not found in config' });
+    res
+      .status(404)
+      .send({ error: 'Vendor, Group, or CID not found in config' });
     return;
   }
   let jamfEmails = await getJamfBookingsByGroupId(req.query.group);
   const libCalBookings = await getLibCalBookingsByCid(req.query.cid);
-  const libCalEmails = libCalBookings.map((i) => i.email);
+  let libCalEmails = libCalBookings.map((i) => i.email);
+  libCalEmails = await emailConverterService(libCalEmails);
   let emailsToRemove = filterToEntriesMissingFromSecondArray(
     jamfEmails,
     libCalEmails
