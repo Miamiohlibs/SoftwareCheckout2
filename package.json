@@ -27,6 +27,7 @@
     "express-session": "^1.18.0",
     "fast-xml-parser": "^4.2.7",
     "https": "^1.0.0",
+    "humanize-duration": "^3.33.0",
     "inquirer": "^8.2.1",
     "jsdom": "^24.1.0",
     "json2csv": "^6.0.0-alpha.2",

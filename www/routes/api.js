@@ -1,4 +1,5 @@
 const dayjs = require('dayjs');
+const humanizeDuration = require('humanize-duration');
 const express = require('express');
 const router = express.Router();
 const appConf = require('../../config/appConf');
@@ -30,7 +31,9 @@ async function getLibCalBookingsByCid(cid) {
   // calculate time waiting for license assignment, add it to the object
   bookings = bookings.map((i) => {
     i.timeWaiting = i.created
-      ? dayjs().diff(dayjs(i.created), 'minutes') + ' minutes'
+      ? humanizeDuration(dayjs().diff(dayjs(i.created), 'seconds') * 1000, {
+          units: ['d', 'h', 'm', 's'],
+        })
       : null;
     return i;
   });
