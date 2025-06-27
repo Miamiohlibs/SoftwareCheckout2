@@ -11,5 +11,5 @@ config/libCal.js
 config/appConf.js
 config/campusConf.js
 config/jamf.js
-
+adobe.testConf.js
 www/.next/*
