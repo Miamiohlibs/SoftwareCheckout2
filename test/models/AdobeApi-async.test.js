@@ -5,6 +5,11 @@ const api = new AdobeUserMgmtApi(realConf);
 const repo = new AdobeRepo(realConf);
 const testConf = require('../../config/test/adobe.testConf');
 
+// require testConf file
+// this file should have been created by running the AdobeUserMgmtApi:setupTestConf script
+// it contains the test group name and ID, and some email addresses to use for testing
+// this file is not checked into git, so it should be created by the user running the setup script
+
 // expect config file to have these properties
 describe('AdobeUserMgmtApi: testConf', () => {
   it('should have testConf', () => {
