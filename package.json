@@ -1,6 +1,6 @@
 {
   "name": "software-checkout",
-  "version": "2.2.0",
+  "version": "2.4.1",
   "description": "Connect LibCal checkouts with Active Directory groups",
   "main": "app.js",
   "scripts": {
