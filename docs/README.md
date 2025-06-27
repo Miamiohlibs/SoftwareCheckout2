@@ -4,6 +4,10 @@
 
 The main Software Checkout app does not have its own web interface, but there is an admin web console to provide an easy way for admins to check on the status of license assignments, usage statistics, and examination of system logs.
 
+Learn more about this project in our open-source journal article:
+
+* Irwin, K., & Bomholt, M. (2024). On-Demand Circulation of Software Licenses: Checking Out Software on Patrons’ Own Devices. Information Technology and Libraries, 43(2). [https://doi.org/10.5860/ital.v43i2.16977](https://doi.org/10.5860/ital.v43i2.16977)
+
 ## Current Supported Vendors
 
 * [Adobe Creative Cloud](https://www.adobe.com/creativecloud.html)
@@ -11,7 +15,7 @@ The main Software Checkout app does not have its own web interface, but there is
 
 ## Requirements
 
-* [Node.js ](https://nodejs.org/en/about)18
+* [Node.js ](https://nodejs.org/en/about)24
 * LibCal subscription
 
 ## GitHub Repo
