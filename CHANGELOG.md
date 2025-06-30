@@ -1,5 +1,17 @@
 # Changelog
 
+## 2.4.1 - 2025-06-30
+
+### Changed
+
+- Eliminated bug in api that sometime prevented the "compare" function from working in the admin web console.
+- Improved the "time waiting" display in the admin web console with a more human-readable output and more accurate wait time when reservation had been made in advance of it starting.
+- Fixed bug that incorrectly displayed reservations as both waiting to start and waiting to be revoked in the admin web console when an aliased email was used to make the reservation.
+- Updated dependencies to address security vulnerabilities.
+- Added comments to documentation and the comments in AdobeApi-async.test.js to clarify the usage of locally-specified config files for testing purposes.
+- removed unused ./index.js file.
+
+=======
 ## 2.4.0 - 2024-10-30
 
 ### Added
