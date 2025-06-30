@@ -15,7 +15,7 @@ Learn more about this project in our open-source journal article:
 
 ## Requirements
 
-* [Node.js ](https://nodejs.org/en/about)18
+* [Node.js ](https://nodejs.org/en/about)24
 * LibCal subscription
 
 ## GitHub Repo

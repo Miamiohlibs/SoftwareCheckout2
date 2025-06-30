@@ -1,16 +1,19 @@
 const dayjs = require('dayjs');
+const humanizeDuration = require('humanize-duration');
 const express = require('express');
 const router = express.Router();
 const appConf = require('../../config/appConf');
 const LicenseGroup = require('../../helpers/LicenseGroup');
 const lg = new LicenseGroup(appConf);
 const LogQuerier = require('../../models/LogQuerier');
+const emailConverterService = require('../../services/emailConverterService');
 const {
   filterToEntriesMissingFromSecondArray,
 } = require('../../helpers/utils');
 const path = require('path');
 const fs = require('fs');
 const { Parser } = require('json2csv');
+const libCal = require('../../config/libCal');
 
 async function getAdobeBookingsByGroup(group) {
   const adobeConf = require('../../config/adobe');
@@ -27,8 +30,32 @@ async function getLibCalBookingsByCid(cid) {
   let bookings = await libcal.getCurrentValidBookings(cid);
   // calculate time waiting for license assignment, add it to the object
   bookings = bookings.map((i) => {
-    i.timeWaiting = i.created
-      ? dayjs().diff(dayjs(i.created), 'minutes') + ' minutes'
+    let waitTimeStarted;
+    // calculate wait time started based on when the request was created
+    // unless it was created in advance of the fromDate, in which case
+    // use the fromDate as the start of the wait time (they start waiting
+    // once the reservation starts, not when they request it)
+    if (i.hasOwnProperty('created') && i.hasOwnProperty('fromDate')) {
+      if (i.fromDate > i.created) {
+        waitTimeStarted = i.fromDate;
+      } else {
+        waitTimeStarted = i.created;
+      }
+    } else if (i.hasOwnProperty('created')) {
+      waitTimeStarted = i.created;
+    } else if (i.hasOwnProperty('fromDate')) {
+      waitTimeStarted = i.fromDate;
+    } else {
+      waitTimeStarted = null;
+    }
+
+    i.timeWaiting = waitTimeStarted
+      ? humanizeDuration(
+          dayjs().diff(dayjs(waitTimeStarted), 'seconds') * 1000,
+          {
+            units: ['d', 'h', 'm', 's'],
+          }
+        )
       : null;
     return i;
   });
@@ -98,7 +125,9 @@ router.get('/adobe/compare', async (req, res) => {
   // check to see that group/cid/vendor are in config
   let matchingGroup = appConf.software.filter(
     (i) =>
-      i.vendorGroupId === group && i.libCalCid === cid && i.vendor === 'Adobe'
+      parseInt(i.vendorGroupId) === parseInt(group) &&
+      parseInt(i.libCalCid) === parseInt(cid) &&
+      i.vendor === 'Adobe'
   );
   if (matchingGroup.length != 1) {
     res.status(404).send({ error: 'Vendor/Group/CID not found in config' });
@@ -108,7 +137,8 @@ router.get('/adobe/compare', async (req, res) => {
   const adobeEmails = adobeBookings.map((i) => i.email);
   const libCalBookings = await getLibCalBookingsByCid(cid);
 
-  const libCalEmails = libCalBookings.map((i) => i.email);
+  let libCalEmails = libCalBookings.map((i) => i.email);
+  libCalEmails = await emailConverterService(libCalEmails);
   let emailsToRemove = filterToEntriesMissingFromSecondArray(
     adobeEmails,
     libCalEmails
@@ -140,15 +170,21 @@ router.get('/jamf/compare', async (req, res) => {
   let cid = req.query.cid;
   let matchingGroup = appConf.software.filter(
     (i) =>
-      i.vendorGroupId === group && i.libCalCid === cid && i.vendor === 'Adobe'
+      parseInt(i.vendorGroupId) === parseInt(group) &&
+      parseInt(i.libCalCid) === parseInt(cid) &&
+      i.vendor === 'Jamf'
   );
+  console.log(matchingGroup);
   if (matchingGroup.length != 1) {
-    res.status(404).send({ error: 'Vendor/Group/CID not found in config' });
+    res
+      .status(404)
+      .send({ error: 'Vendor, Group, or CID not found in config' });
     return;
   }
   let jamfEmails = await getJamfBookingsByGroupId(req.query.group);
   const libCalBookings = await getLibCalBookingsByCid(req.query.cid);
-  const libCalEmails = libCalBookings.map((i) => i.email);
+  let libCalEmails = libCalBookings.map((i) => i.email);
+  libCalEmails = await emailConverterService(libCalEmails);
   let emailsToRemove = filterToEntriesMissingFromSecondArray(
     jamfEmails,
     libCalEmails
