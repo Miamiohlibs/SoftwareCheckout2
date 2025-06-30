@@ -1,8 +1,8 @@
-const debug = require('debug')('AdobeRepository');
 const AdobeApi = require('../models/AdobeApi');
 const Throttle = require('../helpers/Throttle');
 const { asyncForEach } = require('../helpers/utils');
 const _ = require('lodash');
+const logger = require('../services/logger');
 
 module.exports = class AdobeUserMgmtService {
   constructor(conf) {
@@ -27,15 +27,25 @@ module.exports = class AdobeUserMgmtService {
     this.queryConf = {};
   }
 
-  async getPaginatedResults(container) {
-    debug('starting getPaginatedResults...');
+  async getPaginatedResults(container, group) {
+    logger.debug('AdobeRepo: starting getPaginatedResults...');
     let allResults = [];
     let lastPage = false;
     while (lastPage == false) {
       await this.userThrottle.pauseIfNeeded();
       let res = await this.api.getQueryResults(this.queryConf);
       this.userThrottle.increment();
-      allResults = allResults.concat(res[container]);
+      try {
+        allResults = allResults.concat(res[container]);
+      } catch (err) {
+        logger.error(
+          `AdobeRepo: Error in getPaginatedResults for ${container} in group ${group}`,
+          {
+            content: err,
+          }
+        );
+        return [];
+      }
       lastPage = res.lastPage;
       if (!lastPage) {
         this.queryConf.url = this.getNextUrl(this.queryConf.url);
@@ -52,17 +62,21 @@ module.exports = class AdobeUserMgmtService {
   }
 
   async getGroupMembers(group) {
-    debug('starting getGroupMembers())');
+    logger.debug('AdobeRepo: starting getGroupMembers())');
     this.clearQueryConf();
     this.queryConf.url =
       this.baseUrl + 'users' + '/' + this.credentials.orgId + '/0/' + group;
     this.queryConf.method = 'GET';
-    debug('getGroupMembers query conf: ' + this.queryConf);
-    let res = await this.getPaginatedResults('users');
+    // console.log('queryConf: ' + JSON.stringify(this.queryConf));
+    logger.debug('AdobeRepo: getGroupMembers query conf', {
+      content: this.queryConf,
+    });
+    let res = await this.getPaginatedResults('users', group);
     return res;
   }
 
   getEmailsFromGroupMembers(data) {
+    if (!data || data.length == 0) return [];
     return data.map((i) => i.email);
   }
 
@@ -108,14 +122,16 @@ module.exports = class AdobeUserMgmtService {
         this.queryConf.data = data;
         await this.actionThrottle.pauseIfNeeded();
         this.queryConf.timeout = 10000; // 10 seconds
-        debug('submitting action with queryConf: ' + this.queryConf);
+        logger.debug('AdobeRepo: submitting action with queryConf', {
+          content: this.queryConf,
+        });
         let res = await this.api.getQueryResults(this.queryConf);
         this.actionThrottle.increment();
         this.concatActionResults(res);
       });
-      debug(
-        'action summary results: ' + JSON.stringify(this.actionResultsSummary)
-      );
+      logger.debug('action summary results', {
+        content: this.actionResultsSummary,
+      });
       return true;
     } catch (err) {
       console.log(err);
@@ -124,7 +140,7 @@ module.exports = class AdobeUserMgmtService {
   }
 
   concatActionResults(data) {
-    debug('concatActionResults with: ' + JSON.stringify(data));
+    logger.debug('concatActionResults', { content: data });
     for (const [key, value] of Object.entries(data)) {
       if (!this.actionResultsSummary.hasOwnProperty(key)) {
         this.actionResultsSummary[key] = value;

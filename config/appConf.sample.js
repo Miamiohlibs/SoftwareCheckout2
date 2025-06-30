@@ -3,7 +3,40 @@ module.exports = {
     secret: 'you should replace this with gibberish of your own',
     note: 'this is used to encrypt the user data in the logs',
   },
+  admin: {
+    onServer: false,
+    server: {
+      key: '/path/to/public_key.key',
+      cert: '/path/to/certificate.crt',
+      note: 'if onServer is true, you need to provide the key and cert paths',
+    },
+    port: 3010,
+    requireLogin: true,
+    allowedUsers: [], // list allowed emails here
+    apiKey: 'writeYourOwnKeyHereTheValueIsNotImportant',
+    hostname: 'localhost', // or 'your.hostname.edu'
+    googleClientId:
+      'get a google client id from https://console.developers.google.com/apis/credentials',
+    googleClientSecret: 'get a google client secret from the same place',
+    authCallback: 'http://localhost:3010/google/callback', // listed as "Authorized redirect URIs" in the google console
+    navbarTheme: {
+      // see Bootstrap 5 docs for explanation of these color classes:
+      // https://getbootstrap.com/docs/5.0/utilities/background/
+      backgroundColor: 'bg-secondary', // opts: bg-primary, bg-secondary, bg-success, bg-danger, bg-warning, bg-info, bg-light, bg-dark
+      textColor: 'navbar-dark', // use 'navbar-light' for light backgrounds, 'navbar-dark' for dark backgrounds
+    },
+  },
+  emailConverter: {
+    active: false, // set to true to use the email converter, values below also need to be configured
+    baseUrl: 'https://yourEmailConverterApi/?q=',
+    endOfUrl: '', //any additional URL text to include after
+    objectPropForReturnValue: 'data.uid', // response object property with the desired return value
+    affixSuffixToReturn: true, // if converter returns only a userId and not an email, may need to be true
+    suffix: '@miamioh.edu', // suffix to append to results of API if needed
+  },
   database: {
+    // database is only needed if using emailConverter
+    active: false, // set to false to disable database connection, or true and setup db connection here
     use: 'test', // which of the following configs to use
     test: {
       connection:
@@ -33,35 +66,38 @@ module.exports = {
       info: 'monthly',
       http: false,
       verbose: false,
-      debug: false, // 'daily'
+      debug: 'daily',
       silly: false,
     },
   },
-  server: {
-    // server variables only required if you using https calls to update your software checkouts
-    name: 'server1.yourorg.edu', // REPLACE WITH server name
-    key: '/path/to/your/ssl.key', // REPLACE WITH path to your server's SSL key
-    cert: '/path/to/your/ssl.crt', // REPLACE WITH path to your server's SSL cert
-  },
-  emailConverter: {
-    baseUrl: 'https://yourEmailConverterApi/?q=',
-    endOfUrl: '', //any additional URL text to include after
-    objectPropForReturnValue: 'data.uid', // response object property with the desired return value
-    affixSuffixToReturn: true, // if converter returns only a userId and not an email, may need to be true
-    suffix: '@miamioh.edu', // suffix to append to results of API if needed
-  },
   software: [
     {
-      provider: 'Adobe', // 'Adobe' is currently the only supported value, but that could change in the future
-      name: 'Adobe Photoshop', // REPLACE WITH the LIbCal name for the product
-      shortName: 'photoshop', // Short name for your own convenience
-      adobeGroupName: 'MyLibrary Photoshop Patrons', // REPLACE WITH the Adobe User Mgmt User Group Name
+      vendor: 'Adobe', // 'Adobe' and 'Jamf' are currently the only supported values
+      vendorGroupName: 'MyLibrary Photoshop Patrons', // REPLACE WITH the Adobe User Mgmt User Group Name
+      vendorGroupId: '123456789', // REPLACE WITH the Adobe User Mgmt User Group ID
+      libCalName: 'Adobe Photoshop', // REPLACE WITH the LIbCal name for the product
+      libCalCid: '12345', // REPLACE WITH the LIbCal CID for the product
+      active: true,
+      // you can add other fields here for your own use that don't affect the software checkout process
+      // such as:
+      // reservationUrl:
+      //   'https://yourlib.libcal.com/reserve/LibrarySoftware/photoshop',
     },
     {
-      provider: 'Adobe', // 'Adobe' is currently the only supported value, but that could change in the future
-      name: 'Adobe Illustrator', // REPLACE WITH the LIbCal name for the product
-      shortName: 'illustrator',
-      adobeGroupName: 'MyLibrary Illustrator Patrons', // REPLACE WITH the Adobe User Mgmt User Group Name
+      vendor: 'Adobe', // 'Adobe' and 'Jamf' are currently the only supported values
+      vendorGroupId: 'MyLibrary Illustrator Patrons', // REPLACE WITH the Adobe User Mgmt User Group Name
+      vendorGroupId: '012345678', // REPLACE WITH the Adobe User Mgmt User Group ID
+      libCalName: 'Adobe Illustrator', // REPLACE WITH the LIbCal name for the product
+      libCalCid: '67890', // REPLACE WITH the LIbCal CID for the product
+      active: false,
+    },
+    {
+      vendor: 'Jamf', // 'Adobe' and 'Jamf' are currently the only supported values
+      vendorGroupName: 'Logic Pro', // REPLACE WITH the Jamf User Group Name
+      vendorGroupId: 8,
+      libCalName: 'Logic Pro',
+      libCalCid: '12345',
+      active: true,
     },
   ],
 };

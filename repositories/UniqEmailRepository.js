@@ -7,7 +7,13 @@ const { asyncForEach } = require('../helpers/utils');
 
 module.exports = class UniqEmailRepository {
   async connect() {
-    return await database.connect();
+    try {
+      return await database.connect();
+    } catch (err) {
+      logger.error('UniqEmailRepository: Error connecting to database', {
+        content: err,
+      });
+    }
   }
 
   async disconnect() {
@@ -83,10 +89,22 @@ module.exports = class UniqEmailRepository {
     try {
       return UniqEmail.insertMany(arr);
     } catch (err) {
-      logger.error('Error inserting new emails into database', err, arr);
+      logger.error(
+        'UniqEmailRepository: Error inserting new emails into database',
+        { content: { emailArray: arr, error: err } }
+      );
     }
   }
 
+  async deleteEmailByAlias(email) {
+    try {
+      return UniqEmail.findOneAndDelete({ email: email });
+    } catch (err) {
+      logger.error(`UniqEmailRepository: Error deleting email ${email}:`, {
+        content: err,
+      });
+    }
+  }
   // async disconnect() {
   //   mongoose.connection.close();
   // }

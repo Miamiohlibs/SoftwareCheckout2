@@ -14,7 +14,10 @@ const getDirectories = (source) =>
     .filter((dirent) => dirent.isDirectory())
     .map((dirent) => dirent.name);
 
-let logfolder = path.resolve(__dirname, './logs/dailyStats/');
+// let logfolder = path.resolve(__dirname, './logs/dailyStats/');
+const logfolder = path.join(__dirname, 'logs', 'dailyStats');
+// console.log('logfolder', logfolder);
+
 let pkgs = getDirectories(logfolder);
 let allPkgData = [];
 
@@ -24,21 +27,24 @@ const logCheckoutDates = function (data, filename) {
   bookIds = [...new Set(data.map((item) => item.bookId))];
   bookIds.forEach((currBookId) => {
     // get first entry only for each checkout
-    let { bookId, cid, fromDate, category_name, item_name } = data.find(
+    let { bookId, cid, fromDate, toDate, category_name, item_name } = data.find(
       (item) => item.bookId === currBookId
     );
     // gather relevant data to log
     fromDate = dayjs(fromDate).format('YYYY-MM-DD');
+    toDate = dayjs(toDate).format('YYYY-MM-DD');
+
     allBookings.push({
       bookId,
       cid,
       fromDate,
+      toDate,
       category_name,
       item_name,
     });
   });
   allBookings.sort((a, b) => (a.fromDate > b.fromDate ? 1 : -1));
-  let dir = './logs/eachCheckout/';
+  let dir = path.join(__dirname, 'logs', 'eachCheckout');
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, 0744);
   }
@@ -57,24 +63,31 @@ const logCheckoutDates = function (data, filename) {
 
 pkgs.forEach((pkg) => {
   let thisdata = [];
-  let thisfolder = logfolder + '/' + pkg + '/';
-  let files = readdirSync(thisfolder, { withFileTypes: true })
+  let thisFolder = logfolder + '/' + pkg + '/';
+  let anonFolder = thisFolder + 'anon/';
+  if (!fs.existsSync(anonFolder)) {
+    fs.mkdirSync(anonFolder, 0744);
+  }
+  let files = readdirSync(thisFolder, { withFileTypes: true })
     .filter((dirent) => dirent.isFile())
     .map((dirent) => dirent.name);
-  let anonFiles = readdirSync(thisfolder + '/anon/', { withFileTypes: true })
+  let anonFiles = readdirSync(anonFolder, { withFileTypes: true })
     .filter((dirent) => dirent.isFile())
     .map((dirent) => dirent.name);
   files.push(...anonFiles);
   files.forEach((file) => {
     let data;
     try {
-      data = require(thisfolder + file);
+      data = require(thisFolder + file);
     } catch {
-      data = require(thisfolder + '/anon/' + file);
+      data = require(anonFolder + file);
     }
     thisdata = thisdata.concat(data);
     allPkgData = allPkgData.concat(data);
   });
+  if (files.length === 0) {
+    return;
+  }
   let first = files[0].replace('.json', '');
   let last = files[files.length - 1].replace('.json', '');
   logCheckoutDates(thisdata, pkg);

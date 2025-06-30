@@ -21,85 +21,134 @@ let pid = process.pid;
 // software = software.filter((i) => parseInt(i.libCalCid) > 20000);
 
 module.exports = async () => {
-  logger.info('starting AdobeService');
+  logger.info('adobeService: starting AdobeService');
+  let i = 0;
 
   asyncForEach(software, async (pkg) => {
+    i++;
     logger.info(
-      `Getting libCalCid (pid:${pid}): ${pkg.libCalCid}, vendorGroupName: ${pkg.vendorGroupName}`
+      `adobeService: starting AdobeService for ${pkg.vendorGroupName} (pid:${pid}-${i})`
+    );
+    logger.info(
+      `adobeService: Getting libCalCid (pid:${pid}): ${pkg.libCalCid}, vendorGroupName: ${pkg.vendorGroupName}, vendorGroupId: ${pkg.vendorGroupId}`
     );
 
     // get libCalList based on pkg.libCalCid
     let libCalBookings = await libCal.getCurrentValidBookings(pkg.libCalCid);
     // console.log(pkg.libCalCid, libCalBookings.length);
     let libCalEmails = libCal.getUniqueEmailsFromBookings(libCalBookings);
-    logger.debug(`libCalEmails (Adobe):(pid:${pid}):`, {
-      content: libCalEmails,
-    });
-    // // get adobe list based on pkg.vendorGroupName
-    let currAdobeEntitlements = await adobe.getGroupMembers(
-      pkg.vendorGroupName
+    logger.debug(
+      `adobeService: libCalEmails (Adobe group:${pkg.vendorGroupName}):(pid:${pid}-${i}):`,
+      {
+        content: libCalEmails,
+      }
     );
+    // // get adobe list based on pkg.vendorGroupName
+    let group;
+    if (pkg.hasOwnProperty('vendorGroupId')) {
+      group = pkg.vendorGroupId;
+    } else {
+      group = pkg.vendorGroupName;
+    }
+    let currAdobeEntitlements = await adobe.getGroupMembers(group);
     logger.info(
-      `length of currAdobeEntitlements: ${currAdobeEntitlements.length} (pid:${pid})`
+      `adobeService: length of currAdobeEntitlements: ${currAdobeEntitlements.length} (group:${pkg.vendorGroupName}) (pid:${pid}-${i})`
     );
     // console.log('currAdobeEntitlements:', currAdobeEntitlements.length);
     let currAdobeEmails = adobe.getEmailsFromGroupMembers(
       currAdobeEntitlements
     );
-    logger.debug(`currAdobeEmails:(pid:${pid}):`, { content: currAdobeEmails });
+    logger.debug(
+      `adobeService: currAdobeEmails (group:${pkg.vendorGroupName}):(pid:${pid}-${i}):`,
+      { content: currAdobeEmails }
+    );
     logger.info(
-      `length of currAdobeEmails: ${currAdobeEmails.length} (pid:${pid})`
+      `adobeService: length of currAdobeEmails: ${currAdobeEmails.length} (pid:${pid}-${i})`
     );
     // Fake Data: to use this, comment out the code above and uncomment these two lines
     // let libCalBookings = ['irwinkr@miamioh.edu', 'bomholmm@miamioh.edu'];
     // let currAdobeEmails = ['irwinkr@miamioh.edu', 'qum@miamioh.edu'];
 
     // convert emails if necessary
-    logger.info(`starting emailConverterService (pid:${pid})`);
+    logger.info(
+      `adobeService: Adobe starting emailConverterService (pid:${pid}-${i})`
+    );
     try {
       libCalEmails = await emailConverterService(libCalEmails);
     } catch (err) {
-      logger.error(`failed emailConverterService (pid:${pid})`, { error: err });
+      logger.error(
+        `adobeService: Adobe failed emailConverterService (pid:${pid}-${i})`,
+        {
+          content: err,
+        }
+      );
     }
-    logger.info(`finished emailConverterService (pid:${pid})`);
+    logger.info(
+      `adobeService: Adobe finished emailConverterService (pid:${pid}-${i})`
+    );
 
-    logger.info(`length of libCalEmails: ${libCalEmails.length} (pid:${pid})`);
+    logger.info(
+      `adobeService: length of libCalEmails: ${libCalEmails.length} (pid:${pid}-${i})`
+    );
 
-    logger.info(`starting Adobe emailsToRemove (pid:${pid})`);
+    logger.info(
+      `adobeService: starting Adobe emailsToRemove (group:${pkg.vendorGroupName}) (pid:${pid}-${i})`
+    );
     // compare: get users to remove in Adobe
     let emailsToRemove = filterToEntriesMissingFromSecondArray(
       currAdobeEmails,
       libCalEmails
     );
 
-    logger.info(`starting Adobe emailsToAdd (pid:${pid})`);
+    logger.info(
+      `adobeService: starting Adobe emailsToAdd (group:${pkg.vendorGroupName}) (pid:${pid}-${i})`
+    );
     // compare: get users to add in Adobe
     let emailsToAdd = filterToEntriesMissingFromSecondArray(
       libCalEmails,
       currAdobeEmails
     );
-    logger.info(`finished Adobe emailsToAdd (pid:${pid})`);
+    logger.info(
+      `adobeService: finished Adobe emailsToAdd (group:${pkg.vendorGroupName}) (pid:${pid}-${i})`
+    );
 
     // adobe remove
-    logger.info(`Adobe Remove:(pid:${pid}):${emailsToRemove.length}`, {
-      content: emailsToRemove,
-    });
+    logger.info(
+      `adobeService: Adobe Remove:(group:${pkg.vendorGroupName})(pid:${pid}-${i}):${emailsToRemove.length}`,
+      {
+        content: emailsToRemove,
+      }
+    );
     if (emailsToRemove.length > 0) {
       res = await adobe.removeGroupMembers(emailsToRemove, pkg.vendorGroupName);
-      logger.info(`Response from Adobe remove request(pid:${pid})`, {
-        status: res.status,
-      });
+      logger.info(
+        `adobeService: Response from Adobe remove request (group:${pkg.vendorGroupName})(pid:${pid}-${i})`,
+        {
+          content: res,
+          status: res.status,
+        }
+      );
     }
 
     // adobe add
-    logger.info(`Adobe Add:(pid:${pid}):${emailsToAdd.length}`, {
-      content: emailsToAdd,
-    });
+    logger.info(
+      `adobeService: Adobe Add:(group:${pkg.vendorGroupName})(pid:${pid}-${i}):${emailsToAdd.length}`,
+      {
+        content: emailsToAdd,
+      }
+    );
     if (emailsToAdd.length > 0) {
-      res = await adobe.addGroupMembers(emailsToAdd, pkg.vendorGroupName);
-      logger.info(`Response from Adobe add request (pid:${pid})`, {
-        status: res.status,
-      });
+      res = await adobe.addGroupMembers(emailsToAdd, group);
+      logger.info(
+        `adobeService: Response from Adobe add request (group:${pkg.vendorGroupName})(pid:${pid}-${i})`,
+        {
+          status: res.status,
+          content: res,
+        }
+      );
     }
+    logger.info(
+      `adobeService: AdobeService finished for ${pkg.vendorGroupName} (pid:${pid}-${i})`
+    );
   });
 };

@@ -16,8 +16,9 @@ const { mainMenu } = require('./mainMenu');
 
 const adobeSoftware = software
   .filter((item) => item.vendor == 'Adobe')
-  .map(({ vendorGroupName, active }) => ({
+  .map(({ vendorGroupName, vendorGroupId, active }) => ({
     vendorGroupName,
+    vendorGroupId,
     active,
   }));
 
@@ -30,8 +31,8 @@ const chooseGroup = async (verb) => {
     genList({
       list: adobeSoftware,
       message: `${verb} users in which group?`,
-      itemNameProp: 'vendorGroupName',
-      itemValueProp: 'vendorGroupName',
+      itemNameProp: 'vendorGroupName', // display this
+      itemValueProp: 'vendorGroupId', // return this
       outputLabel: 'groupName',
     })
   );
@@ -68,6 +69,19 @@ const listUsers = async () => {
   );
   console.log(JSON.stringify(users, null, 2));
 };
+const findUser = async () => {
+  const getSoftware = await chooseGroup('Find');
+  const groupName = getSoftware.groupName;
+  const entry = await inquirer.prompt({
+    type: 'input',
+    name: 'email',
+    message: 'Email address?',
+  });
+  let all = await adobeRepo.getGroupMembers(groupName, entry.email);
+  let res = all.filter((item) => item.email == entry.email);
+  console.log(JSON.stringify(res, null, 2));
+};
+
 const main = async () => {
   const action = await mainMenu();
   switch (action.mainMenu) {
@@ -81,6 +95,10 @@ const main = async () => {
       break;
     case 'listUsers':
       await listUsers();
+      main();
+      break;
+    case 'findUser':
+      await findUser();
       main();
       break;
     case 'listGroups':

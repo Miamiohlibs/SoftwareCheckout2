@@ -11,6 +11,7 @@
 - Added comments to documentation and the comments in AdobeApi-async.test.js to clarify the usage of locally-specified config files for testing purposes.
 - removed unused ./index.js file.
 
+=======
 ## 2.4.0 - 2024-10-30
 
 ### Added

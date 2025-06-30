@@ -1,0 +1,25 @@
+<%- include('partials/header') %>
+<div class="mx-5 mt-3">
+    <h1>Log Files</h1>
+    <% data.forEach((log) => { %>
+    <div class="row mb-4">
+        <div class="col-3 col-md-2 col-lg-1 align-middle"><%= log.date.replace('-undefined', '') %></div>
+        <div class="col-3 col-md-2 col-lg-1">
+            <% if (log.levels.hasOwnProperty('error')) { %>
+                <a href="/logs/uids/<%= log.levels.error.filename %>"><button class="btn btn-danger">Error</button></a>
+            <% } %>
+        </div>
+        <div class="col-3 col-md-2 col-lg-1">
+            <% if (log.levels.hasOwnProperty('info')) { %>
+                <a href="/logs/uids/<%= log.levels.info.filename %>"><button class="btn btn-info">Info</button></a>
+            <% } %>
+        </div>
+        <div class="col-3 col-md-2 col-lg-1">
+            <% if (log.levels.hasOwnProperty('debug')) { %>
+                <a href="/logs/uids/<%= log.levels.debug.filename %>"><button class="btn btn-warning">Debug</button></a>
+            <% } %>
+        </div>
+    </div>
+<% }) %>
+</div>
+<%- include('partials/footer') %>

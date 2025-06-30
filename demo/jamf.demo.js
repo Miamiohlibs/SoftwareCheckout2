@@ -30,8 +30,12 @@ const chooseGroup = async (verb) => {
   );
 };
 
-const listGroups = () => {
+const listGroups = async () => {
+  console.log('Jamf Groups in config file:');
   console.log(jamfSoftware);
+  console.log('Jamf Groups in Jamf:');
+  const jamfGroups = await jamfRepo.getGroups();
+  console.log(jamfGroups);
 };
 
 const listUsers = async () => {
@@ -40,6 +44,18 @@ const listUsers = async () => {
   console.log('groupId: ' + groupId);
   const users = await jamfRepo.getGroupMembers(groupId);
   console.log(JSON.stringify(users, null, 2));
+};
+const findUser = async () => {
+  const getSoftware = await chooseGroup('Find');
+  const groupId = getSoftware.groupId;
+  const entry = await inquirer.prompt({
+    type: 'input',
+    name: 'email',
+    message: 'Email address?',
+  });
+  const users = await jamfRepo.getGroupMembers(groupId);
+  let res = users.filter((item) => item == entry.email);
+  console.log(JSON.stringify(res, null, 2));
 };
 
 const addUsers = async () => {
@@ -50,8 +66,7 @@ const addUsers = async () => {
     name: 'email',
     message: 'Email address?',
   });
-  let res = await jamfRepo.addUsersToGroup(groupId, [entry.email]);
-  console.log(getErrorMessage(res.status));
+  await handleUpdate('add', groupId, entry);
 };
 
 const removeUsers = async () => {
@@ -62,8 +77,21 @@ const removeUsers = async () => {
     name: 'email',
     message: 'Email address?',
   });
-  let res = await jamfRepo.deleteUsersFromGroup(groupId, [entry.email]);
-  console.log(getErrorMessage(res.status));
+  await handleUpdate('delete', groupId, entry);
+};
+
+const handleUpdate = async (verb, groupId, entry) => {
+  let method = 'addUsersToGroup';
+  if (verb == 'delete') {
+    method = 'deleteUsersFromGroup';
+  }
+  let res = await jamfRepo[method](groupId, [entry.email]);
+  if (res === undefined) {
+    console.log('Update Failed: see error log for details.');
+    return;
+  } else {
+    console.log(getErrorMessage(res.status));
+  }
 };
 
 const main = async () => {
@@ -79,6 +107,10 @@ const main = async () => {
       break;
     case 'listUsers':
       await listUsers();
+      main();
+      break;
+    case 'findUser':
+      await findUser();
       main();
       break;
     case 'listGroups':

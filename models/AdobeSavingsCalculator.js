@@ -65,6 +65,7 @@ module.exports = class AdobeSavingsCalculator {
   calculateSavings() {
     // foreach file in ./logs/dailyStats/AdobeCreativeCloud/*.json
     let files = this.getFiles(this.conf.dirname);
+    files = files.sort((a, b) => a.name.localeCompare(b.name));
     files.forEach((file) => {
       this.processFile(this.conf.dirname, file.name);
     });

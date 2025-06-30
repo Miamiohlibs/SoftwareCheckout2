@@ -1,0 +1,29 @@
+<%- include('partials/header') %>
+<div class="mx-5 mt-3">
+    <h1><%= pageTitle %></h1>
+    <h2><%= data.firstMonth %> &mdash; <%= data.lastMonth %></h2>
+    <div class="d-inline-flex mb-3 px-4 py-2 fw-semibold text-success-emphasis bg-success-subtle border border-success-subtle rounded-2">
+        Total Savings: $<%= data.totalSavings %>
+    </div>
+    <div class="row">
+    <div class="col-12 col-md-6">
+        <table class="table">
+            <thead>
+                <tr scope="row">
+                    <th>Month</th>
+                    <th>Adobe Savings</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% data.monthlySavings.forEach((info, index) => { %>
+                    <tr scope="row">
+                        <td><%= info.month %></td>
+                        <td>$<%= info.savings %></td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+        </div>
+        </div>
+
+<%- include('partials/footer') %>

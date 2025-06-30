@@ -8,6 +8,8 @@ description: Testing code and configuration
 
 Run unit tests with `npm test`.
 
+Note: `./test/models/AdobeApi-async.test.js` tests the integration of the code with the Adobe User Management API. It requires a locally-created file, `/config/test/adobe.testConf.js` to have been prepared with an Adobe group using a real vendorGroupId; there are also some variables that must be set up with the email addresses of valid, current, local users. Create this file by copying the `/config/test/adobe.testConf.sample.js` file to `/config/test/adobe.testConf.js` and editing it with your local information.
+
 ### Demo parts of the app
 
 The `demo` folder contains a few command-line scripts that can be used to test parts of the app without running the whole thing.

@@ -5,6 +5,7 @@ const today = dayjs().format('YYYY-MM-DD');
 const month = dayjs().format('YYYY-MM');
 const { createLogger, format, transports } = require('winston');
 const { combine, timestamp, label, prettyPrint } = format;
+const { uid } = require('uid');
 
 transportsArr = [];
 for (level in appConf.logLevels) {
@@ -27,9 +28,17 @@ const timezoned = () => {
   });
 };
 
+const addUid = format((info, opts) => {
+  info.uid = opts.uid; // Add the uid field to the log information
+  return info;
+});
+
 const logger = createLogger({
   format: combine(
     timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+    // addUid(),
+    addUid({ uid: uid() }),
+    // addDynamicUid(),
     prettyPrint(),
     format.json()
     // format.json((info) => `${info.timestamp} ${info.level}: ${info.message}`)

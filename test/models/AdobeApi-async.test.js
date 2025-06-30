@@ -3,7 +3,25 @@ const AdobeUserMgmtApi = require('../../models/AdobeApi');
 const AdobeRepo = require('../../repositories/AdobeRepository');
 const api = new AdobeUserMgmtApi(realConf);
 const repo = new AdobeRepo(realConf);
-const testGroupName = 'Library API test';
+const testConf = require('../../config/test/adobe.testConf');
+
+// require testConf file
+// this file should have been created by running the AdobeUserMgmtApi:setupTestConf script
+// it contains the test group name and ID, and some email addresses to use for testing
+// this file is not checked into git, so it should be created by the user running the setup script
+
+// expect config file to have these properties
+describe('AdobeUserMgmtApi: testConf', () => {
+  it('should have testConf', () => {
+    expect(testConf).toHaveProperty('testGroup');
+    expect(testConf.testGroup).toHaveProperty('vendorGroupName');
+    expect(testConf.testGroup).toHaveProperty('vendorGroupId');
+    expect(testConf).toHaveProperty('emailsToAdd1');
+    expect(testConf).toHaveProperty('emailsToAdd2');
+    expect(testConf).toHaveProperty('emailsFake1');
+    expect(testConf).toHaveProperty('emailsBigList');
+  });
+});
 
 describe('AdobeUserMgmtApi: getToken', () => {
   it('should get an accessToken', async () => {
@@ -24,25 +42,14 @@ describe('AdobeUserMgmtApi: getToken', () => {
 // });
 
 describe('AdobeUserMgmtRepository: addMembersToGroup', () => {
-  emailsToAdd1 = ['qum@miamioh.edu'];
-  emailsToAdd2 = ['qum@miamioh.edu', 'brownsj1@miamioh.edu'];
-  emailsFake1 = ['thisissuchafakeemail@miamioh.edu'];
-  emailsBigList = [
-    'qum@miamioh.edu',
-    'yarnete@miamioh.edu',
-    'irwinkr@miamioh.edu',
-    'maderir@miamioh.edu',
-    'kerre2@miamioh.edu',
-    'brownsj1@miamioh.edu',
-    'bomholmm@miamioh.edu',
-    'wisnesr@miamioh.edu',
-    'calabrcm@miamioh.edu',
-    'conleyj@miamioh.edu',
-    'wegnera3@miamioh.edu',
-  ];
+  emailsToAdd1 = testConf.emailsToAdd1;
+  emailsToAdd2 = testConf.emailsToAdd2;
+  emailsFake1 = testConf.emailsFake1;
+  emailsBigList = testConf.emailsBigList;
+  testGroupId = testConf.testGroup.vendorGroupId;
 
-  it('should be able to fake-add Meng to a list', async () => {
-    let res = await repo.addGroupMembers(emailsToAdd1, testGroupName, 'test');
+  it('should be able to fake-add one user to a list', async () => {
+    let res = await repo.addGroupMembers(emailsToAdd1, testGroupId, 'test');
     expect(res).toHaveProperty('status');
     expect(res.status).toBe('success');
     expect(res).toHaveProperty('message');
@@ -50,7 +57,7 @@ describe('AdobeUserMgmtRepository: addMembersToGroup', () => {
     expect(res.message.completedInTestMode).toBe(1);
   });
   it('should be able to fake-add two users to a list', async () => {
-    let res = await repo.addGroupMembers(emailsToAdd2, testGroupName, 'test');
+    let res = await repo.addGroupMembers(emailsToAdd2, testGroupId, 'test');
     expect(res).toHaveProperty('status');
     expect(res.status).toBe('success');
     expect(res).toHaveProperty('message');
@@ -58,7 +65,7 @@ describe('AdobeUserMgmtRepository: addMembersToGroup', () => {
     expect(res.message.completedInTestMode).toBe(2);
   });
   it('should fail to fake-add fakeuser to a list', async () => {
-    let res = await repo.addGroupMembers(emailsFake1, testGroupName, 'test');
+    let res = await repo.addGroupMembers(emailsFake1, testGroupId, 'test');
     expect(res).toHaveProperty('status');
     expect(res.status).toBe('error');
     expect(res).toHaveProperty('message');
@@ -73,7 +80,7 @@ describe('AdobeUserMgmtRepository: addMembersToGroup', () => {
   it('should be able to add more than 10 users at once (chunked into sep calls)', async () => {
     // sleep 3000ms to avoid rate limit
     await new Promise((r) => setTimeout(r, 3000));
-    let res = await repo.addGroupMembers(emailsBigList, testGroupName, 'test');
+    let res = await repo.addGroupMembers(emailsBigList, testGroupId, 'test');
     expect(res).toHaveProperty('status');
     expect(res.status).toBe('success');
     expect(res).toHaveProperty('message');

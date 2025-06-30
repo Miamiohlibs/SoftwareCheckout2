@@ -10,19 +10,38 @@ module.exports = class LibCalService {
 
   async getCurrentValidBookings(cid) {
     let res = await this.api.getBookings(cid);
-    logger.debug(`received from getBookings ${cid}`, axiosLogPrep(res));
+    logger.debug(`LibCalRepository: received from getBookings ${cid}`, {
+      content: axiosLogPrep(res),
+    });
     let current = this.filterToCurrentBookings(res);
     let valid = this.filterToValidBookings(current);
-    logger.debug(`getCurrentValidBookings returns ${cid}:`, {
-      validBookings: valid,
+    logger.debug(`LibCalRepository: getCurrentValidBookings returns ${cid}:`, {
+      content: valid,
     });
     return valid;
+  }
+
+  async getValidFutureBookings(cid) {
+    let res = await this.api.getBookings(cid, null, 365); // 365 days in the future
+    logger.debug(`LibCalRepository: received from getBookings ${cid}`, {
+      content: axiosLogPrep(res),
+    });
+    let future = this.filterToFutureBookings(res);
+    let validFutureBookings = this.filterToValidBookings(future);
+    logger.debug(`LibCalRepository: getValidFutureBookings returns ${cid}:`, {
+      content: validFutureBookings,
+    });
+    return validFutureBookings;
   }
 
   filterToCurrentBookings(bookings) {
     return bookings.filter(
       (i) => dayjs(i.fromDate) < dayjs() && dayjs(i.toDate) > dayjs()
     );
+  }
+
+  filterToFutureBookings(bookings) {
+    return bookings.filter((i) => dayjs(i.fromDate) > dayjs());
   }
 
   filterToValidBookings(bookings) {

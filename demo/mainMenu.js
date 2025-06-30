@@ -1,3 +1,4 @@
+// This file is used by adobe.demo.js and james.demo.js to display the main menu options
 const inquirer = require('inquirer');
 const mainMenu = () => {
   console.log();
@@ -18,6 +19,10 @@ const mainMenu = () => {
         {
           name: 'List users in a group',
           value: 'listUsers',
+        },
+        {
+          name: 'Find user in a group',
+          value: 'findUser',
         },
         {
           name: 'List groups',
