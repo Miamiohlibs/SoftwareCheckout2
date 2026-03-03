@@ -1,0 +1,3 @@
+mongodb://crowdindexadmin:UOR4oziQ%24s%2BV%2acxRzK9%26@docdb-2021-04-13-12-25-58.cillzxjdlxcj.us-east-2.docdb.amazonaws.com:27017/?authSource=admin&readPreference=primary&retryWrites=false&directConnection=true&ssl=true&tlsAllowInvalidCertificates=true&tlsAllowInvalidHostnames=true 
+
+mongodb://crowdindexadmin:UOR4oziQ%24s%2BV%2acxRzK9%26@docdb-2021-04-13-12-25-58.cillzxjdlxcj.us-east-2.docdb.amazonaws.com:27017/?ssl=true&readPreference=secondaryPreferred&retryWrites=false

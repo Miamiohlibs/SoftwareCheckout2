@@ -14,6 +14,7 @@ let logger = require('../services/logger');
 
 logger.info('starting admin web console');
 const app = express();
+app.locals.webPath = config.admin.webPath ? config.admin.webPath : '';
 
 global.onServer =
   config.hasOwnProperty('admin') &&
@@ -32,7 +33,7 @@ app.use(
     secret: 'your-secret-key',
     resave: false,
     saveUninitialized: true,
-  })
+  }),
 );
 
 app.use(passport.initialize());
@@ -108,7 +109,7 @@ app.get('/', (req, res) => {
 
 app.get(
   '/auth/google',
-  passport.authenticate('google', { scope: ['email', 'profile'] })
+  passport.authenticate('google', { scope: ['email', 'profile'] }),
 );
 
 app.get(
@@ -123,7 +124,7 @@ app.get(
       name: req.user.displayName,
     };
     res.redirect('/systemStatus');
-  }
+  },
 );
 
 app.get('/auth/failure', (req, res) => {
@@ -136,7 +137,7 @@ app.get('/systemStatus', isLoggedIn, async (req, res) => {
       `${protocol}://${config.admin.hostname}:${port}/api/groups`,
       {
         headers: { Authorization: `Bearer ${config.admin.apiKey}` },
-      }
+      },
     );
     let json = await data.json();
     res.render('systemStatus', { data: json, user: req.user });
@@ -182,7 +183,7 @@ app.get('/fetch', isLoggedIn, async (req, res) => {
   try {
     let response = await fetch(
       `${protocol}://${hostname}:${port}/api/${req.query.vendor}?group=${req.query.group}`,
-      { headers: { Authorization: `Bearer ${config.admin.apiKey}` } }
+      { headers: { Authorization: `Bearer ${config.admin.apiKey}` } },
     );
     let json = await response.json();
     if (!response.ok) {
@@ -216,7 +217,7 @@ app.get('/future', isLoggedIn, async (req, res) => {
   try {
     let response = await fetch(
       `${protocol}://${hostname}:${port}/api/libcal/future/${req.query.group}`,
-      { headers: { Authorization: `Bearer ${config.admin.apiKey}` } }
+      { headers: { Authorization: `Bearer ${config.admin.apiKey}` } },
     );
     let json = await response.json();
     if (!response.ok) {
@@ -277,11 +278,11 @@ if (global.onServer === true) {
         key: fs.readFileSync(server.key),
         cert: fs.readFileSync(server.cert),
       },
-      app
+      app,
     )
     .listen(port, function () {
       console.log(
-        `Server app listening on port ${port}! Go to https://${hostname}:${port}/`
+        `Server app listening on port ${port}! Go to https://${hostname}:${port}/`,
       );
     });
 } else {
