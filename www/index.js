@@ -45,19 +45,19 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // apply theme color to navbar from config
-app.use((req, res, next) => {
-  if (config.admin.navbarTheme) {
-    res.locals.navbarBackground =
-      config.admin.navbarTheme.backgroundColor || 'bg-primary';
-    res.locals.navbarTextColor =
-      config.admin.navbarTheme.textColor || 'navbar-dark';
-    next();
-  } else {
-    res.locals.navbarBackground = 'bg-primary';
-    res.locals.navbarTextColor = 'navbar-dark';
-    next();
-  }
-});
+// app.use((req, res, next) => {
+//   if (config.admin.navbarTheme) {
+//     res.locals.navbarBackground =
+//       config.admin.navbarTheme.backgroundColor || 'bg-primary';
+//     res.locals.navbarTextColor =
+//       config.admin.navbarTheme.textColor || 'navbar-dark';
+//     next();
+//   } else {
+//     res.locals.navbarBackground = 'bg-primary';
+//     res.locals.navbarTextColor = 'navbar-dark';
+//     next();
+//   }
+// });
 
 // function isPermittedUser(req) {
 //   if (!req.user) {
