@@ -6,17 +6,17 @@
         <div class="col-3 col-md-2 col-lg-1 align-middle"><%= log.date.replace('-undefined', '') %></div>
         <div class="col-3 col-md-2 col-lg-1">
             <% if (log.levels.hasOwnProperty('error')) { %>
-                <a href="/logs/uids/<%= log.levels.error.filename %>"><button class="btn btn-danger">Error</button></a>
+                <a href="<%= app.locals.webAbsolutePath %>/logs/uids/<%= log.levels.error.filename %>"><button class="btn btn-danger">Error</button></a>
             <% } %>
         </div>
         <div class="col-3 col-md-2 col-lg-1">
             <% if (log.levels.hasOwnProperty('info')) { %>
-                <a href="/logs/uids/<%= log.levels.info.filename %>"><button class="btn btn-info">Info</button></a>
+                <a href="<%= app.locals.webAbsolutePath %>/logs/uids/<%= log.levels.info.filename %>"><button class="btn btn-info">Info</button></a>
             <% } %>
         </div>
         <div class="col-3 col-md-2 col-lg-1">
             <% if (log.levels.hasOwnProperty('debug')) { %>
-                <a href="/logs/uids/<%= log.levels.debug.filename %>"><button class="btn btn-warning">Debug</button></a>
+                <a href="<%= app.locals.webAbsolutePath %>/logs/uids/<%= log.levels.debug.filename %>"><button class="btn btn-warning">Debug</button></a>
             <% } %>
         </div>
     </div>
