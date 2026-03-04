@@ -138,13 +138,15 @@ app.get(`${app.locals.webPath}/auth/failure`, (req, res) => {
 
 app.get(`${app.locals.webPath}/systemStatus`, isLoggedIn, async (req, res) => {
   try {
-    let data = await fetch(`${webPath}/api/groups`, {
+    let data = await fetch(`${app.locals.webPath}/api/groups`, {
       headers: { Authorization: `Bearer ${config.admin.apiKey}` },
     });
     let json = await data.json();
     res.render('systemStatus', { data: json, user: req.user });
   } catch (err) {
-    res.status(500).send('Error fetching data: ' + JSON.stringify(err));
+    res
+      .status(500)
+      .send('Error fetching data: ' + JSON.stringify(err) + { json });
   }
 });
 
@@ -218,7 +220,7 @@ app.get('/fetch', isLoggedIn, async (req, res) => {
 app.get('/future', isLoggedIn, async (req, res) => {
   try {
     let response = await fetch(
-      `${protocol}://${hostname}:${port}/api/libcal/future/${req.query.group}`,
+      `${app.locals.webPath}/api/libcal/future/${req.query.group}`,
       { headers: { Authorization: `Bearer ${config.admin.apiKey}` } },
     );
     let json = await response.json();
