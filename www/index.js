@@ -269,7 +269,7 @@ app.get('/logout', function (req, res, next) {
       if (err) {
         return next(err);
       }
-      res.redirect('/');
+      res.redirect(`${app.locals.webAbsolutePath}`);
     });
   });
 });
