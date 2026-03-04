@@ -108,13 +108,13 @@ app.get(`/`, (req, res) => {
 
 // app.set('json spaces', 2);
 
-app.get(`/`, (req, res) => {
-  if (config.admin.requireLogin & !isPermittedUser(req)) {
-    res.render('landing', { error: req.query.error });
-  } else {
-    res.redirect(`${app.locals.webPath}/systemStatus`);
-  }
-});
+// app.get(`/`, (req, res) => {
+//   if (config.admin.requireLogin & !isPermittedUser(req)) {
+//     res.render('landing', { error: req.query.error });
+//   } else {
+//     res.redirect(`${app.locals.webPath}/systemStatus`);
+//   }
+// });
 
 app.get(
   `/auth/google`,
