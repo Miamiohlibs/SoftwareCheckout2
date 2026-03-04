@@ -44,36 +44,36 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-// apply theme color to navbar from config
-app.use((req, res, next) => {
-  if (config.admin.navbarTheme) {
-    res.locals.navbarBackground =
-      config.admin.navbarTheme.backgroundColor || 'bg-primary';
-    res.locals.navbarTextColor =
-      config.admin.navbarTheme.textColor || 'navbar-dark';
-    next();
-  } else {
-    res.locals.navbarBackground = 'bg-primary';
-    res.locals.navbarTextColor = 'navbar-dark';
-    next();
-  }
-});
+// // apply theme color to navbar from config
+// app.use((req, res, next) => {
+//   if (config.admin.navbarTheme) {
+//     res.locals.navbarBackground =
+//       config.admin.navbarTheme.backgroundColor || 'bg-primary';
+//     res.locals.navbarTextColor =
+//       config.admin.navbarTheme.textColor || 'navbar-dark';
+//     next();
+//   } else {
+//     res.locals.navbarBackground = 'bg-primary';
+//     res.locals.navbarTextColor = 'navbar-dark';
+//     next();
+//   }
+// });
 
-function isPermittedUser(req) {
-  if (!req.user) {
-    return false;
-  }
-  return config.admin.allowedUsers.includes(req.user.email);
-}
-function isLoggedIn(req, res, next) {
-  if (config.admin.requireLogin) {
-    return req.isAuthenticated() && isPermittedUser(req)
-      ? next()
-      : res.redirect('/?error=unauthorized');
-  }
-  return next();
-  // req.user ? next() : res.sendStatus(401);
-}
+// function isPermittedUser(req) {
+//   if (!req.user) {
+//     return false;
+//   }
+//   return config.admin.allowedUsers.includes(req.user.email);
+// }
+// function isLoggedIn(req, res, next) {
+//   if (config.admin.requireLogin) {
+//     return req.isAuthenticated() && isPermittedUser(req)
+//       ? next()
+//       : res.redirect('/?error=unauthorized');
+//   }
+//   return next();
+//   // req.user ? next() : res.sendStatus(401);
+// }
 
 function apiKeyAuth(req, res, next) {
   const apiKey = req.headers['authorization'];
@@ -93,176 +93,180 @@ app.set('views', path.resolve(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use(express.static(__dirname + '/public'));
 
-// Routes
-let apiRouter = require('./routes/api');
-app.use(`/api`, apiKeyAuth, apiRouter);
-let logsRouter = require('./routes/logs');
-app.use('/logs', isLoggedIn, logsRouter);
-let statsRouter = require('./routes/stats');
-const { error } = require('console');
-app.use('/stats', isLoggedIn, statsRouter);
-
-app.set('json spaces', 2);
-
-app.get(`${app.locals.webPath}/`, (req, res) => {
-  if (config.admin.requireLogin & !isPermittedUser(req)) {
-    res.render('landing', { error: req.query.error });
-  } else {
-    res.redirect(`${app.locals.webPath}/systemStatus`);
-  }
+app.get('/', (req, res) => {
+  res.send('<h1>This is a test</h1>');
 });
 
-app.get(
-  `${app.locals.webPath}/auth/google`,
-  passport.authenticate('google', { scope: ['email', 'profile'] }),
-);
+// // Routes
+// let apiRouter = require('./routes/api');
+// app.use(`/api`, apiKeyAuth, apiRouter);
+// let logsRouter = require('./routes/logs');
+// app.use('/logs', isLoggedIn, logsRouter);
+// let statsRouter = require('./routes/stats');
+// const { error } = require('console');
+// app.use('/stats', isLoggedIn, statsRouter);
 
-app.get(
-  `${app.locals.webPath}/google/callback`,
-  passport.authenticate('google', {
-    failureRedirect: '/auth/failure',
-  }),
-  (req, res) => {
-    req.session.user = {
-      id: req.user.id,
-      email: req.user.email,
-      name: req.user.displayName,
-    };
-    res.redirect(`${app.locals.webPath}/systemStatus`);
-  },
-);
+// app.set('json spaces', 2);
 
-app.get(`${app.locals.webPath}/auth/failure`, (req, res) => {
-  res.send('Failed to authenticate');
-});
+// app.get(`${app.locals.webPath}/`, (req, res) => {
+//   if (config.admin.requireLogin & !isPermittedUser(req)) {
+//     res.render('landing', { error: req.query.error });
+//   } else {
+//     res.redirect(`${app.locals.webPath}/systemStatus`);
+//   }
+// });
 
-app.get(`${app.locals.webPath}/systemStatus`, isLoggedIn, async (req, res) => {
-  try {
-    let data = await fetch(`${app.locals.webPath}/api/groups`, {
-      headers: { Authorization: `Bearer ${config.admin.apiKey}` },
-    });
-    let json = await data.json();
-    res.render('systemStatus', { data: json, user: req.user });
-  } catch (err) {
-    res
-      .status(500)
-      .send('Error fetching data: ' + JSON.stringify(err) + { json });
-  }
-});
+// app.get(
+//   `${app.locals.webPath}/auth/google`,
+//   passport.authenticate('google', { scope: ['email', 'profile'] }),
+// );
 
-app.get('/compare', isLoggedIn, async (req, res) => {
-  let url = `${protocol}://${hostname}:${port}/api/${req.query.vendor}/compare?group=${req.query.group}&cid=${req.query.cid}`;
-  try {
-    let response = await fetch(url, {
-      headers: { Authorization: `Bearer ${config.admin.apiKey}` },
-    });
-    let json = await response.json();
-    if (!response.ok) {
-      res.status(response.status).render('error', {
-        message: json.error || 'Error fetching data',
-        error: response.statusText,
-        errorNumber: response.status,
-      });
-      return;
-    }
+// app.get(
+//   `${app.locals.webPath}/google/callback`,
+//   passport.authenticate('google', {
+//     failureRedirect: '/auth/failure',
+//   }),
+//   (req, res) => {
+//     req.session.user = {
+//       id: req.user.id,
+//       email: req.user.email,
+//       name: req.user.displayName,
+//     };
+//     res.redirect(`${app.locals.webPath}/systemStatus`);
+//   },
+// );
 
-    res.render('compare', {
-      data: json,
-      vendor: req.query.vendor,
-      group: req.query.group,
-      groupName: req.query.groupName,
-      cid: req.query.cid,
-      user: req.user || false,
-    });
-  } catch (err) {
-    res.status(500).render('error', {
-      message: 'Error fetching comparison data',
-      error: 'Unknown error',
-      errorNumber: 500,
-    });
-  }
-});
+// app.get(`${app.locals.webPath}/auth/failure`, (req, res) => {
+//   res.send('Failed to authenticate');
+// });
 
-app.get('/fetch', isLoggedIn, async (req, res) => {
-  try {
-    let response = await fetch(
-      `${protocol}://${hostname}:${port}/api/${req.query.vendor}?group=${req.query.group}`,
-      { headers: { Authorization: `Bearer ${config.admin.apiKey}` } },
-    );
-    let json = await response.json();
-    if (!response.ok) {
-      res.status(response.status).render('error', {
-        message: json.error || json.message || 'Error fetching data',
-        error: response.statusText,
-        errorNumber: response.status,
-      });
-      return;
-    }
+// app.get(`${app.locals.webPath}/systemStatus`, isLoggedIn, async (req, res) => {
+//   try {
+//     let data = await fetch(`${app.locals.webPath}/api/groups`, {
+//       headers: { Authorization: `Bearer ${config.admin.apiKey}` },
+//     });
+//     let json = await data.json();
+//     res.render('systemStatus', { data: json, user: req.user });
+//   } catch (err) {
+//     res
+//       .status(500)
+//       .send('Error fetching data: ' + JSON.stringify(err) + { json });
+//   }
+// });
 
-    // res.json(json);
-    res.render('vendorGroup', {
-      data: json,
-      vendor: req.query.vendor,
-      group: req.query.group,
-      groupName: req.query.groupName,
-      user: req.user || false,
-    });
-    // res.render('fetch', { data: json, vendor: req.query.vendor, cid: req.query.cid });
-  } catch (err) {
-    res.status(500).render('error', {
-      message: 'Error fetching data',
-      error: err.message || 'Unknown error',
-      errorNumber: 500,
-    });
-  }
-});
+// app.get('/compare', isLoggedIn, async (req, res) => {
+//   let url = `${protocol}://${hostname}:${port}/api/${req.query.vendor}/compare?group=${req.query.group}&cid=${req.query.cid}`;
+//   try {
+//     let response = await fetch(url, {
+//       headers: { Authorization: `Bearer ${config.admin.apiKey}` },
+//     });
+//     let json = await response.json();
+//     if (!response.ok) {
+//       res.status(response.status).render('error', {
+//         message: json.error || 'Error fetching data',
+//         error: response.statusText,
+//         errorNumber: response.status,
+//       });
+//       return;
+//     }
 
-app.get('/future', isLoggedIn, async (req, res) => {
-  try {
-    let response = await fetch(
-      `${app.locals.webPath}/api/libcal/future/${req.query.group}`,
-      { headers: { Authorization: `Bearer ${config.admin.apiKey}` } },
-    );
-    let json = await response.json();
-    if (!response.ok) {
-      res.status(response.status).render('error', {
-        message: json.error || 'Error fetching data',
-        error: response.statusText,
-        errorNumber: response.status,
-      });
-      return;
-    }
+//     res.render('compare', {
+//       data: json,
+//       vendor: req.query.vendor,
+//       group: req.query.group,
+//       groupName: req.query.groupName,
+//       cid: req.query.cid,
+//       user: req.user || false,
+//     });
+//   } catch (err) {
+//     res.status(500).render('error', {
+//       message: 'Error fetching comparison data',
+//       error: 'Unknown error',
+//       errorNumber: 500,
+//     });
+//   }
+// });
 
-    res.render('vendorGroup', {
-      data: json,
-      vendor: req.query.vendor,
-      group: req.query.group,
-      groupName: `Future Requests for ${req.query.groupName}`,
-      user: req.user || false,
-    });
-  } catch (err) {
-    console.log('what went wrong', err);
-    res.status(500).render('error', {
-      message: 'Error fetching data',
-      error: err.message || 'Unknown error',
-      errorNumber: 500,
-    });
-  }
-});
+// app.get('/fetch', isLoggedIn, async (req, res) => {
+//   try {
+//     let response = await fetch(
+//       `${protocol}://${hostname}:${port}/api/${req.query.vendor}?group=${req.query.group}`,
+//       { headers: { Authorization: `Bearer ${config.admin.apiKey}` } },
+//     );
+//     let json = await response.json();
+//     if (!response.ok) {
+//       res.status(response.status).render('error', {
+//         message: json.error || json.message || 'Error fetching data',
+//         error: response.statusText,
+//         errorNumber: response.status,
+//       });
+//       return;
+//     }
 
-app.get('/logout', function (req, res, next) {
-  req.logout(function (err) {
-    if (err) {
-      return next(err);
-    }
-    req.session.destroy(function (err) {
-      if (err) {
-        return next(err);
-      }
-      res.redirect('/');
-    });
-  });
-});
+//     // res.json(json);
+//     res.render('vendorGroup', {
+//       data: json,
+//       vendor: req.query.vendor,
+//       group: req.query.group,
+//       groupName: req.query.groupName,
+//       user: req.user || false,
+//     });
+//     // res.render('fetch', { data: json, vendor: req.query.vendor, cid: req.query.cid });
+//   } catch (err) {
+//     res.status(500).render('error', {
+//       message: 'Error fetching data',
+//       error: err.message || 'Unknown error',
+//       errorNumber: 500,
+//     });
+//   }
+// });
+
+// app.get('/future', isLoggedIn, async (req, res) => {
+//   try {
+//     let response = await fetch(
+//       `${app.locals.webPath}/api/libcal/future/${req.query.group}`,
+//       { headers: { Authorization: `Bearer ${config.admin.apiKey}` } },
+//     );
+//     let json = await response.json();
+//     if (!response.ok) {
+//       res.status(response.status).render('error', {
+//         message: json.error || 'Error fetching data',
+//         error: response.statusText,
+//         errorNumber: response.status,
+//       });
+//       return;
+//     }
+
+//     res.render('vendorGroup', {
+//       data: json,
+//       vendor: req.query.vendor,
+//       group: req.query.group,
+//       groupName: `Future Requests for ${req.query.groupName}`,
+//       user: req.user || false,
+//     });
+//   } catch (err) {
+//     console.log('what went wrong', err);
+//     res.status(500).render('error', {
+//       message: 'Error fetching data',
+//       error: err.message || 'Unknown error',
+//       errorNumber: 500,
+//     });
+//   }
+// });
+
+// app.get('/logout', function (req, res, next) {
+//   req.logout(function (err) {
+//     if (err) {
+//       return next(err);
+//     }
+//     req.session.destroy(function (err) {
+//       if (err) {
+//         return next(err);
+//       }
+//       res.redirect('/');
+//     });
+//   });
+// });
 
 app.get('*', function (req, res) {
   res.status(404).render('error', {
