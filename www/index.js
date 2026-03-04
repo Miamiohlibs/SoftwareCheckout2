@@ -44,20 +44,20 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-// // apply theme color to navbar from config
-// app.use((req, res, next) => {
-//   if (config.admin.navbarTheme) {
-//     res.locals.navbarBackground =
-//       config.admin.navbarTheme.backgroundColor || 'bg-primary';
-//     res.locals.navbarTextColor =
-//       config.admin.navbarTheme.textColor || 'navbar-dark';
-//     next();
-//   } else {
-//     res.locals.navbarBackground = 'bg-primary';
-//     res.locals.navbarTextColor = 'navbar-dark';
-//     next();
-//   }
-// });
+// apply theme color to navbar from config
+app.use((req, res, next) => {
+  if (config.admin.navbarTheme) {
+    res.locals.navbarBackground =
+      config.admin.navbarTheme.backgroundColor || 'bg-primary';
+    res.locals.navbarTextColor =
+      config.admin.navbarTheme.textColor || 'navbar-dark';
+    next();
+  } else {
+    res.locals.navbarBackground = 'bg-primary';
+    res.locals.navbarTextColor = 'navbar-dark';
+    next();
+  }
+});
 
 // function isPermittedUser(req) {
 //   if (!req.user) {
@@ -89,9 +89,9 @@ function apiKeyAuth(req, res, next) {
 }
 
 // View and static files setup
-// app.set('views', path.resolve(__dirname, 'views'));
-// app.set('view engine', 'ejs');
-// app.use(express.static(__dirname + '/public'));
+app.set('views', path.resolve(__dirname, 'views'));
+app.set('view engine', 'ejs');
+app.use(express.static(__dirname + '/public'));
 
 app.get('/', (req, res) => {
   res.send('<h1>This is a test</h1>');
