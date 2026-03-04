@@ -13,7 +13,7 @@ const port = config.admin.port || 3010;
 let logger = require('../services/logger');
 
 logger.info('starting admin web console');
-const baseApp = express(); // outer app
+// const baseApp = express(); // outer app
 const app = express();
 app.locals.webPath = config.admin.webPath || '';
 
@@ -100,7 +100,7 @@ app.use('/stats', isLoggedIn, statsRouter);
 
 app.set('json spaces', 2);
 
-app.get('/', (req, res) => {
+app.get(`${webPath}/`, (req, res) => {
   if (config.admin.requireLogin & !isPermittedUser(req)) {
     res.render('landing', { error: req.query.error });
   } else {
@@ -269,8 +269,6 @@ app.get('*', function (req, res) {
   });
 });
 
-baseApp.use(webPath, app);
-
 // Start server
 if (global.onServer === true) {
   const server = config.admin.server;
@@ -281,7 +279,7 @@ if (global.onServer === true) {
         key: fs.readFileSync(server.key),
         cert: fs.readFileSync(server.cert),
       },
-      baseApp,
+      app,
     )
     .listen(port, function () {
       console.log(
@@ -289,7 +287,7 @@ if (global.onServer === true) {
       );
     });
 } else {
-  baseApp.listen(port, () => {
+  app.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
   });
 }
