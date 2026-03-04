@@ -117,12 +117,12 @@ app.get(`/`, (req, res) => {
 });
 
 app.get(
-  `${app.locals.webPath}/auth/google`,
+  `/auth/google`,
   passport.authenticate('google', { scope: ['email', 'profile'] }),
 );
 
 app.get(
-  `${app.locals.webPath}/google/callback`,
+  `/google/callback`,
   passport.authenticate('google', {
     failureRedirect: '/auth/failure',
   }),
@@ -136,7 +136,7 @@ app.get(
   },
 );
 
-app.get(`${app.locals.webPath}/auth/failure`, (req, res) => {
+app.get(`/auth/failure`, (req, res) => {
   res.send('Failed to authenticate');
 });
 
