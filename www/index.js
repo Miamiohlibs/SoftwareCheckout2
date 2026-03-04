@@ -93,7 +93,7 @@ app.set('views', path.resolve(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use(express.static(__dirname + '/public'));
 
-app.get(`${app.locals.webPath}/`, (req, res) => {
+app.get(`/`, (req, res) => {
   res.send('<h1>This is a test</h1>');
 });
 
