@@ -93,20 +93,20 @@ app.set('views', path.resolve(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use(express.static(__dirname + '/public'));
 
-// app.get(`/`, (req, res) => {
-//   res.send('<h1>This is a test</h1>');
-// });
+app.get(`/`, (req, res) => {
+  res.send('<h1>This is a test</h1>');
+});
 
-// Routes
-let apiRouter = require('./routes/api');
-app.use(`/api`, apiKeyAuth, apiRouter);
-let logsRouter = require('./routes/logs');
-app.use('/logs', isLoggedIn, logsRouter);
-let statsRouter = require('./routes/stats');
-const { error } = require('console');
-app.use('/stats', isLoggedIn, statsRouter);
+// // Routes
+// let apiRouter = require('./routes/api');
+// app.use(`/api`, apiKeyAuth, apiRouter);
+// let logsRouter = require('./routes/logs');
+// app.use('/logs', isLoggedIn, logsRouter);
+// let statsRouter = require('./routes/stats');
+// const { error } = require('console');
+// app.use('/stats', isLoggedIn, statsRouter);
 
-app.set('json spaces', 2);
+// app.set('json spaces', 2);
 
 app.get(`/`, (req, res) => {
   if (config.admin.requireLogin & !isPermittedUser(req)) {
