@@ -100,11 +100,11 @@ app.use('/stats', isLoggedIn, statsRouter);
 
 app.set('json spaces', 2);
 
-app.get(`${webPath}/`, (req, res) => {
+app.get(`${app.locals.webPath}/`, (req, res) => {
   if (config.admin.requireLogin & !isPermittedUser(req)) {
     res.render('landing', { error: req.query.error });
   } else {
-    res.redirect(`${webPath}/systemStatus`);
+    res.redirect(`${app.locals.webPath}/systemStatus`);
   }
 });
 
