@@ -13,7 +13,7 @@ const port = config.admin.port || 3010;
 let logger = require('../services/logger');
 
 logger.info('starting admin web console');
-// const baseApp = express(); // outer app
+const baseApp = express(); // outer app
 const app = express();
 
 global.onServer =
@@ -276,6 +276,8 @@ app.get('*', function (req, res) {
   });
 });
 
+baseApp.use(app.locals.webPath, app);
+
 // Start server
 if (global.onServer === true) {
   const server = config.admin.server;
@@ -286,7 +288,7 @@ if (global.onServer === true) {
         key: fs.readFileSync(server.key),
         cert: fs.readFileSync(server.cert),
       },
-      app,
+      baseApp,
     )
     .listen(port, function () {
       console.log(
@@ -294,7 +296,7 @@ if (global.onServer === true) {
       );
     });
 } else {
-  app.listen(port, () => {
+  baseApp.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
   });
 }
