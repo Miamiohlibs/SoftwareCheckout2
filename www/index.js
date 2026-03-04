@@ -141,7 +141,14 @@ app.get(`/auth/failure`, (req, res) => {
 });
 
 app.get(`/systemStatus`, isLoggedIn, async (req, res) => {
-  res.send('<h1>This is it</h1>');
+  //   res.send('<h1>This is it</h1>');
+  try {
+    let data = await fetch('https://jsonplaceholder.typicode.com/users');
+    let json = await data.json();
+    res.render('fake', { data: json });
+  } catch (err) {
+    res.status(500).send('Error fetching data: ' + JSON.stringify(err));
+  }
   //   try {
   //     let data = await fetch(`/api/groups`, {
   //       headers: { Authorization: `Bearer ${config.admin.apiKey}` },
