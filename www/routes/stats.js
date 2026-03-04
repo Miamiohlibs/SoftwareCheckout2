@@ -5,7 +5,9 @@ let protocol = 'https';
 if (!config.admin.onServer) {
   protocol = 'http';
 }
-const baseUrl = `${protocol}://${config.admin.hostname}:${config.admin.port}`;
+const baseUrl =
+  config.admin.webAbsolutePath ||
+  `${protocol}://${config.admin.hostname}:${config.admin.port}`;
 
 function stripQuotes(str) {
   return str.replace(/^"(.*)"$/, '$1');
@@ -59,7 +61,7 @@ router.get('/daily', async (req, res) => {
       res.setHeader('Content-Type', 'text/csv');
       res.setHeader(
         'Content-Disposition',
-        'attachment; filename=dailyStats.csv'
+        'attachment; filename=dailyStats.csv',
       );
       res.send(csvData);
       return;
@@ -101,7 +103,7 @@ router.get('/summary', async (req, res) => {
       res.setHeader('Content-Type', 'text/csv');
       res.setHeader(
         'Content-Disposition',
-        'attachment; filename=summaryStats.csv'
+        'attachment; filename=summaryStats.csv',
       );
       res.send(csvData);
       return;
@@ -144,7 +146,7 @@ router.get('/eachCheckout/:file', async (req, res) => {
       `${baseUrl}/api/stats/eachCheckout/${req.params.file}`,
       {
         headers: { Authorization: `Bearer ${config.admin.apiKey}` },
-      }
+      },
     );
     if (data.status !== 200) {
       res.status(data.status).render('error', {
@@ -160,7 +162,7 @@ router.get('/eachCheckout/:file', async (req, res) => {
       res.setHeader('Content-Type', 'text/csv');
       res.setHeader(
         'Content-Disposition',
-        `attachment; filename=eachCheckout-${fileStr}.csv`
+        `attachment; filename=eachCheckout-${fileStr}.csv`,
       );
       res.send(table);
     } else {
