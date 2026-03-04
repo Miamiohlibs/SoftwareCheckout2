@@ -104,8 +104,8 @@ app.use(express.static(__dirname + '/public'));
 // // Routes
 let fakeRouter = require('./routes/fakeApi');
 app.use(`/fakeApi`, fakeAuth, fakeRouter);
-// let apiRouter = require('./routes/api');
-// app.use(`/api`, apiKeyAuth, apiRouter);
+let apiRouter = require('./routes/api');
+app.use(`/api`, apiKeyAuth, apiRouter);
 // let logsRouter = require('./routes/logs');
 // app.use('/logs', isLoggedIn, logsRouter);
 // let statsRouter = require('./routes/stats');
