@@ -15,7 +15,6 @@ let logger = require('../services/logger');
 logger.info('starting admin web console');
 // const baseApp = express(); // outer app
 const app = express();
-app.locals.webPath = config.admin.webPath || '';
 
 global.onServer =
   config.hasOwnProperty('admin') &&
@@ -27,6 +26,11 @@ const hostname = config.admin.hostname;
 if (global.onServer) {
   protocol = 'https';
 }
+
+app.locals.webPath = config.admin.webPath || '';
+app.locals.webAbsolutePath =
+  config.admin.webAbsolutePath ||
+  `${protocol}//${config.admin.hostname}:${port}`;
 
 // Session configuration
 app.use(
