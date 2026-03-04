@@ -147,24 +147,24 @@ app.get(`/auth/failure`, (req, res) => {
 });
 
 app.get(`/systemStatus`, isLoggedIn, async (req, res) => {
-  try {
-    let data = await fetch(`${app.locals.webAbsolutePath}/fakeApi/test`);
-    let json = await data.json();
-    res.render('fake', { data: json, user: req.user });
-  } catch (err) {
-    res.status(500).send('Error fetching data: ' + JSON.stringify(err));
-  }
   //   try {
-  //     let data = await fetch(`/api/groups`, {
-  //       headers: { Authorization: `Bearer ${config.admin.apiKey}` },
-  //     });
+  //     let data = await fetch(`${app.locals.webAbsolutePath}/fakeApi/test`);
   //     let json = await data.json();
-  //     res.render('systemStatus', { data: json, user: req.user });
+  //     res.render('fake', { data: json, user: req.user });
   //   } catch (err) {
-  //     res
-  //       .status(500)
-  //       .send('Error fetching data: ' + JSON.stringify(err) + { json });
+  //     res.status(500).send('Error fetching data: ' + JSON.stringify(err));
   //   }
+  try {
+    let data = await fetch(`${app.locals.webAbsolutePath}/api/groups`, {
+      headers: { Authorization: `Bearer ${config.admin.apiKey}` },
+    });
+    let json = await data.json();
+    res.render('systemStatus', { data: json, user: req.user });
+  } catch (err) {
+    res
+      .status(500)
+      .send('Error fetching data: ' + JSON.stringify(err) + { json });
+  }
 });
 
 // app.get('/compare', isLoggedIn, async (req, res) => {
