@@ -138,12 +138,9 @@ app.get(`${app.locals.webPath}/auth/failure`, (req, res) => {
 
 app.get(`${app.locals.webPath}/systemStatus`, isLoggedIn, async (req, res) => {
   try {
-    let data = await fetch(
-      `${protocol}://${config.admin.hostname}:${port}/api/groups`,
-      {
-        headers: { Authorization: `Bearer ${config.admin.apiKey}` },
-      },
-    );
+    let data = await fetch(`${webAbsolutePath}/api/groups`, {
+      headers: { Authorization: `Bearer ${config.admin.apiKey}` },
+    });
     let json = await data.json();
     res.render('systemStatus', { data: json, user: req.user });
   } catch (err) {
