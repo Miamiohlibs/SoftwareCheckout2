@@ -145,7 +145,7 @@ app.get(`/systemStatus`, isLoggedIn, async (req, res) => {
   try {
     let data = await fetch('https://jsonplaceholder.typicode.com/users');
     let json = await data.json();
-    res.render('fake', { data: json });
+    res.render('fake', { data: json, user: req.user });
   } catch (err) {
     res.status(500).send('Error fetching data: ' + JSON.stringify(err));
   }
