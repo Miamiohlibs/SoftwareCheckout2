@@ -109,12 +109,12 @@ app.get(`${app.locals.webPath}/`, (req, res) => {
 });
 
 app.get(
-  '/auth/google',
+  `${app.locals.webPath}/auth/google`,
   passport.authenticate('google', { scope: ['email', 'profile'] }),
 );
 
 app.get(
-  '/google/callback',
+  `${app.locals.webPath}/google/callback`,
   passport.authenticate('google', {
     failureRedirect: '/auth/failure',
   }),
@@ -124,15 +124,15 @@ app.get(
       email: req.user.email,
       name: req.user.displayName,
     };
-    res.redirect('/systemStatus');
+    res.redirect(`${app.locals.webPath}/systemStatus`);
   },
 );
 
-app.get('/auth/failure', (req, res) => {
+app.get(`${app.locals.webPath}/auth/failure`, (req, res) => {
   res.send('Failed to authenticate');
 });
 
-app.get('/systemStatus', isLoggedIn, async (req, res) => {
+app.get(`${app.locals.webPath}/systemStatus`, isLoggedIn, async (req, res) => {
   try {
     let data = await fetch(
       `${protocol}://${config.admin.hostname}:${port}/api/groups`,
