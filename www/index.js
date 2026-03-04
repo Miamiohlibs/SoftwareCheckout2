@@ -75,10 +75,6 @@ function isLoggedIn(req, res, next) {
   // req.user ? next() : res.sendStatus(401);
 }
 
-function fakeAuth(req, res, next) {
-  return next();
-}
-
 function apiKeyAuth(req, res, next) {
   const apiKey = req.headers['authorization'];
   if (apiKey && apiKey === `Bearer ${config.admin.apiKey}`) {
@@ -102,8 +98,6 @@ app.use(express.static(__dirname + '/public'));
 // });
 
 // // Routes
-let fakeRouter = require('./routes/fakeApi');
-app.use(`/fakeApi`, fakeAuth, fakeRouter);
 let apiRouter = require('./routes/api');
 app.use(`/api`, apiKeyAuth, apiRouter);
 let logsRouter = require('./routes/logs');
