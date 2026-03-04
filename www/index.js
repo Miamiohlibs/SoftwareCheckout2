@@ -193,39 +193,39 @@ app.get('/compare', isLoggedIn, async (req, res) => {
   }
 });
 
-// app.get('/fetch', isLoggedIn, async (req, res) => {
-//   try {
-//     let response = await fetch(
-//       `${protocol}://${hostname}:${port}/api/${req.query.vendor}?group=${req.query.group}`,
-//       { headers: { Authorization: `Bearer ${config.admin.apiKey}` } },
-//     );
-//     let json = await response.json();
-//     if (!response.ok) {
-//       res.status(response.status).render('error', {
-//         message: json.error || json.message || 'Error fetching data',
-//         error: response.statusText,
-//         errorNumber: response.status,
-//       });
-//       return;
-//     }
+app.get('/fetch', isLoggedIn, async (req, res) => {
+  try {
+    let response = await fetch(
+      `${app.locals.webAbsolutePath}/api/${req.query.vendor}?group=${req.query.group}`,
+      { headers: { Authorization: `Bearer ${config.admin.apiKey}` } },
+    );
+    let json = await response.json();
+    if (!response.ok) {
+      res.status(response.status).render('error', {
+        message: json.error || json.message || 'Error fetching data',
+        error: response.statusText,
+        errorNumber: response.status,
+      });
+      return;
+    }
 
-//     // res.json(json);
-//     res.render('vendorGroup', {
-//       data: json,
-//       vendor: req.query.vendor,
-//       group: req.query.group,
-//       groupName: req.query.groupName,
-//       user: req.user || false,
-//     });
-//     // res.render('fetch', { data: json, vendor: req.query.vendor, cid: req.query.cid });
-//   } catch (err) {
-//     res.status(500).render('error', {
-//       message: 'Error fetching data',
-//       error: err.message || 'Unknown error',
-//       errorNumber: 500,
-//     });
-//   }
-// });
+    // res.json(json);
+    res.render('vendorGroup', {
+      data: json,
+      vendor: req.query.vendor,
+      group: req.query.group,
+      groupName: req.query.groupName,
+      user: req.user || false,
+    });
+    // res.render('fetch', { data: json, vendor: req.query.vendor, cid: req.query.cid });
+  } catch (err) {
+    res.status(500).render('error', {
+      message: 'Error fetching data',
+      error: err.message || 'Unknown error',
+      errorNumber: 500,
+    });
+  }
+});
 
 // app.get('/future', isLoggedIn, async (req, res) => {
 //   try {
