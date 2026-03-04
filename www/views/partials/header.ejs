@@ -30,17 +30,17 @@
                   Stats
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                  <li><a class="dropdown-item" href="<%= webPath %>/stats/daily">Daily Usage Stats</a></li>
-                  <li><a class="dropdown-item" href="<%= webPath %>/stats/summary">Usage Stats Summary</a></li>
-                  <li><a class="dropdown-item" href="<%= webPath %>/stats/eachCheckout">Each Checkout</a></li>
-                  <li><a class="dropdown-item" href="<%= webPath %>/stats/adobeSavings">Estimated Adobe Savings</a></li>
+                  <li><a class="dropdown-item" href="<%= webAbsolutePath %>/stats/daily">Daily Usage Stats</a></li>
+                  <li><a class="dropdown-item" href="<%= webAbsolutePath %>/stats/summary">Usage Stats Summary</a></li>
+                  <li><a class="dropdown-item" href="<%= webAbsolutePath %>/stats/eachCheckout">Each Checkout</a></li>
+                  <li><a class="dropdown-item" href="<%= webAbsolutePath %>/stats/adobeSavings">Estimated Adobe Savings</a></li>
                 </ul>
               </li>
             </ul>
           </div>
           <% if (typeof user != 'undefined' && user) { %>
             <div class="d-flex">
-              <a href="<%= webPath %>/logout" class="btn btn-warning">Logout</a>
+              <a href="<%= webAbsolutePath %>/logout" class="btn btn-warning">Logout</a>
             </div>
           <% } %> 
         </div>
