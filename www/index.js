@@ -106,13 +106,13 @@ let fakeRouter = require('./routes/fakeApi');
 app.use(`/fakeApi`, fakeAuth, fakeRouter);
 let apiRouter = require('./routes/api');
 app.use(`/api`, apiKeyAuth, apiRouter);
-// let logsRouter = require('./routes/logs');
-// app.use('/logs', isLoggedIn, logsRouter);
-// let statsRouter = require('./routes/stats');
-// const { error } = require('console');
-// app.use('/stats', isLoggedIn, statsRouter);
+let logsRouter = require('./routes/logs');
+app.use('/logs', isLoggedIn, logsRouter);
+let statsRouter = require('./routes/stats');
+const { error } = require('console');
+app.use('/stats', isLoggedIn, statsRouter);
 
-// app.set('json spaces', 2);
+app.set('json spaces', 2);
 
 app.get(`/`, (req, res) => {
   if (config.admin.requireLogin & !isPermittedUser(req)) {
@@ -147,13 +147,6 @@ app.get(`/auth/failure`, (req, res) => {
 });
 
 app.get(`/systemStatus`, isLoggedIn, async (req, res) => {
-  //   try {
-  //     let data = await fetch(`${app.locals.webAbsolutePath}/fakeApi/test`);
-  //     let json = await data.json();
-  //     res.render('fake', { data: json, user: req.user });
-  //   } catch (err) {
-  //     res.status(500).send('Error fetching data: ' + JSON.stringify(err));
-  //   }
   try {
     let data = await fetch(`${app.locals.webAbsolutePath}/api/groups`, {
       headers: { Authorization: `Bearer ${config.admin.apiKey}` },
