@@ -98,13 +98,13 @@ app.use(express.static(__dirname + '/public'));
 // });
 
 // // Routes
-let apiRouter = require('./routes/api');
-app.use(`/api`, apiKeyAuth, apiRouter);
-let logsRouter = require('./routes/logs');
-app.use('/logs', isLoggedIn, logsRouter);
-let statsRouter = require('./routes/stats');
-const { error } = require('console');
-app.use('/stats', isLoggedIn, statsRouter);
+// let apiRouter = require('./routes/api');
+// app.use(`/api`, apiKeyAuth, apiRouter);
+// let logsRouter = require('./routes/logs');
+// app.use('/logs', isLoggedIn, logsRouter);
+// let statsRouter = require('./routes/stats');
+// const { error } = require('console');
+// app.use('/stats', isLoggedIn, statsRouter);
 
 // app.set('json spaces', 2);
 
@@ -140,19 +140,19 @@ app.get(`/auth/failure`, (req, res) => {
   res.send('Failed to authenticate');
 });
 
-// app.get(`${app.locals.webPath}/systemStatus`, isLoggedIn, async (req, res) => {
-//   try {
-//     let data = await fetch(`${app.locals.webPath}/api/groups`, {
-//       headers: { Authorization: `Bearer ${config.admin.apiKey}` },
-//     });
-//     let json = await data.json();
-//     res.render('systemStatus', { data: json, user: req.user });
-//   } catch (err) {
-//     res
-//       .status(500)
-//       .send('Error fetching data: ' + JSON.stringify(err) + { json });
-//   }
-// });
+app.get(`${app.locals.webPath}/systemStatus`, isLoggedIn, async (req, res) => {
+  try {
+    let data = await fetch(`${app.locals.webPath}/api/groups`, {
+      headers: { Authorization: `Bearer ${config.admin.apiKey}` },
+    });
+    let json = await data.json();
+    res.render('systemStatus', { data: json, user: req.user });
+  } catch (err) {
+    res
+      .status(500)
+      .send('Error fetching data: ' + JSON.stringify(err) + { json });
+  }
+});
 
 // app.get('/compare', isLoggedIn, async (req, res) => {
 //   let url = `${protocol}://${hostname}:${port}/api/${req.query.vendor}/compare?group=${req.query.group}&cid=${req.query.cid}`;
