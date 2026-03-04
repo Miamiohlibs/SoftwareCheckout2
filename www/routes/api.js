@@ -54,7 +54,7 @@ async function getLibCalBookingsByCid(cid) {
           dayjs().diff(dayjs(waitTimeStarted), 'seconds') * 1000,
           {
             units: ['d', 'h', 'm', 's'],
-          }
+          },
         )
       : null;
     return i;
@@ -127,7 +127,7 @@ router.get('/adobe/compare', async (req, res) => {
     (i) =>
       parseInt(i.vendorGroupId) === parseInt(group) &&
       parseInt(i.libCalCid) === parseInt(cid) &&
-      i.vendor === 'Adobe'
+      i.vendor === 'Adobe',
   );
   if (matchingGroup.length != 1) {
     res.status(404).send({ error: 'Vendor/Group/CID not found in config' });
@@ -141,11 +141,11 @@ router.get('/adobe/compare', async (req, res) => {
   libCalEmails = await emailConverterService(libCalEmails);
   let emailsToRemove = filterToEntriesMissingFromSecondArray(
     adobeEmails,
-    libCalEmails
+    libCalEmails,
   );
   let emailsToAdd = filterToEntriesMissingFromSecondArray(
     libCalEmails,
-    adobeEmails
+    adobeEmails,
   );
   adobeEmails.sort();
   libCalEmails.sort();
@@ -172,7 +172,7 @@ router.get('/jamf/compare', async (req, res) => {
     (i) =>
       parseInt(i.vendorGroupId) === parseInt(group) &&
       parseInt(i.libCalCid) === parseInt(cid) &&
-      i.vendor === 'Jamf'
+      i.vendor === 'Jamf',
   );
   console.log(matchingGroup);
   if (matchingGroup.length != 1) {
@@ -187,11 +187,11 @@ router.get('/jamf/compare', async (req, res) => {
   libCalEmails = await emailConverterService(libCalEmails);
   let emailsToRemove = filterToEntriesMissingFromSecondArray(
     jamfEmails,
-    libCalEmails
+    libCalEmails,
   );
   let emailsToAdd = filterToEntriesMissingFromSecondArray(
     libCalEmails,
-    jamfEmails
+    jamfEmails,
   );
   libCalEmails.sort();
   jamfEmails.sort();
@@ -210,7 +210,7 @@ router.get('/logs', async (req, res) => {
   res.json(logs);
 });
 
-router.get('/logs/examine/:file/:uid', async (req, res) => {
+router.get(`/logs/examine/:file/:uid`, async (req, res) => {
   const logQuerier = new LogQuerier();
   let logs = logQuerier.readLogFile(req.params.file);
   if (logs === false) {
@@ -219,7 +219,7 @@ router.get('/logs/examine/:file/:uid', async (req, res) => {
     let entries = await logQuerier.selectEntriesByField(
       logs,
       'uid',
-      req.params.uid
+      req.params.uid,
     );
     res.json(entries);
   }
@@ -311,7 +311,7 @@ router.get('/stats/eachCheckout/:file', async (req, res) => {
       res.setHeader('Content-Type', 'text/csv');
       res.setHeader(
         'Content-Disposition',
-        'attachment; filename=eachCheckout.csv'
+        'attachment; filename=eachCheckout.csv',
       );
       const parser = new Parser({});
       const csv = parser.parse(json);

@@ -6,7 +6,7 @@ if (!config.admin.onServer) {
   protocol = 'http';
 }
 
-const baseUrl = `${protocol}://${config.admin.hostname}:${config.admin.port}`;
+const baseUrl = `${config.admin.webAbsolutePath}`;
 
 router.get('/', async (req, res) => {
   try {
@@ -30,7 +30,7 @@ router.get('/examine/:file/:uid', async (req, res) => {
       `${baseUrl}/api/logs/examine/${req.params.file}/${req.params.uid}`,
       {
         headers: { Authorization: `Bearer ${config.admin.apiKey}` },
-      }
+      },
     );
     if (!response.ok) {
       res.status(response.status).render('error', {
@@ -59,7 +59,7 @@ router.get('/uids/:file', async (req, res) => {
       `${baseUrl}/api/logs/uids/${req.params.file}`,
       {
         headers: { Authorization: `Bearer ${config.admin.apiKey}` },
-      }
+      },
     );
     const json = await response.json();
     if (!response.ok) {

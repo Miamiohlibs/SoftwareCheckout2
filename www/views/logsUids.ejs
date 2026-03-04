@@ -15,7 +15,7 @@
     <ul class="list-group m-3 p-2" id="uid-list">
             <% for (let i=0; i<data.length; i++) { %>
                 <li class="list-group-item">
-                    <a href="/logs/examine/<%= file %>/<%= data[i].uid %>">
+                    <a href="<%= webAbsolutePath %>/logs/examine/<%= file %>/<%= data[i].uid %>">
                     <div class="row">
                         <span class="col-md-2 col-4">
                                 UID:<%= data[i].uid %>
