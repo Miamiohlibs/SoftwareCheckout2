@@ -75,6 +75,10 @@ function isLoggedIn(req, res, next) {
   // req.user ? next() : res.sendStatus(401);
 }
 
+function fakeAuth(req, res, next) {
+  return next();
+}
+
 function apiKeyAuth(req, res, next) {
   const apiKey = req.headers['authorization'];
   if (apiKey && apiKey === `Bearer ${config.admin.apiKey}`) {
@@ -98,6 +102,8 @@ app.use(express.static(__dirname + '/public'));
 // });
 
 // // Routes
+let fakeRouter = require('./routes/fakeApi');
+app.use(`/fakeApi`, fakeAuth, fakeRouter);
 // let apiRouter = require('./routes/api');
 // app.use(`/api`, apiKeyAuth, apiRouter);
 // let logsRouter = require('./routes/logs');
@@ -141,9 +147,8 @@ app.get(`/auth/failure`, (req, res) => {
 });
 
 app.get(`/systemStatus`, isLoggedIn, async (req, res) => {
-  //   res.send('<h1>This is it</h1>');
   try {
-    let data = await fetch('https://jsonplaceholder.typicode.com/users');
+    let data = await fetch(`${app.locals.webAbsolutePath}/fakeApi/test`);
     let json = await data.json();
     res.render('fake', { data: json, user: req.user });
   } catch (err) {
