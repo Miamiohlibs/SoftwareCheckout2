@@ -141,17 +141,18 @@ app.get(`/auth/failure`, (req, res) => {
 });
 
 app.get(`/systemStatus`, isLoggedIn, async (req, res) => {
-  try {
-    let data = await fetch(`${app.locals.webPath}/api/groups`, {
-      headers: { Authorization: `Bearer ${config.admin.apiKey}` },
-    });
-    let json = await data.json();
-    res.render('systemStatus', { data: json, user: req.user });
-  } catch (err) {
-    res
-      .status(500)
-      .send('Error fetching data: ' + JSON.stringify(err) + { json });
-  }
+  res.send('<h1>This is it</h1>');
+  //   try {
+  //     let data = await fetch(`${app.locals.webPath}/api/groups`, {
+  //       headers: { Authorization: `Bearer ${config.admin.apiKey}` },
+  //     });
+  //     let json = await data.json();
+  //     res.render('systemStatus', { data: json, user: req.user });
+  //   } catch (err) {
+  //     res
+  //       .status(500)
+  //       .send('Error fetching data: ' + JSON.stringify(err) + { json });
+  //   }
 });
 
 // app.get('/compare', isLoggedIn, async (req, res) => {
