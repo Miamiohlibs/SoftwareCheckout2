@@ -93,9 +93,9 @@ app.set('views', path.resolve(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use(express.static(__dirname + '/public'));
 
-app.get(`/`, (req, res) => {
-  res.send('<h1>This is a test</h1>');
-});
+// app.get(`/`, (req, res) => {
+//   res.send('<h1>This is a test</h1>');
+// });
 
 // // Routes
 // let apiRouter = require('./routes/api');
@@ -108,13 +108,13 @@ app.get(`/`, (req, res) => {
 
 // app.set('json spaces', 2);
 
-// app.get(`${app.locals.webPath}/`, (req, res) => {
-//   if (config.admin.requireLogin & !isPermittedUser(req)) {
-//     res.render('landing', { error: req.query.error });
-//   } else {
-//     res.redirect(`${app.locals.webPath}/systemStatus`);
-//   }
-// });
+app.get(`/`, (req, res) => {
+  //   if (config.admin.requireLogin & !isPermittedUser(req)) {
+  //     res.render('landing', { error: req.query.error });
+  //   } else {
+  res.redirect(`${app.locals.webPath}/systemStatus`);
+  //   }
+});
 
 // app.get(
 //   `${app.locals.webPath}/auth/google`,
