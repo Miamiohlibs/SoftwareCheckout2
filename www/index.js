@@ -103,7 +103,7 @@ app.get('/', (req, res) => {
   if (config.admin.requireLogin & !isPermittedUser(req)) {
     res.render('landing', { error: req.query.error });
   } else {
-    res.redirect('/systemStatus');
+    res.redirect(`${webPath}/systemStatus`);
   }
 });
 
