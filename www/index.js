@@ -140,7 +140,7 @@ app.get(`/auth/failure`, (req, res) => {
   res.send('Failed to authenticate');
 });
 
-app.get(`${app.locals.webPath}/systemStatus`, isLoggedIn, async (req, res) => {
+app.get(`/systemStatus`, isLoggedIn, async (req, res) => {
   try {
     let data = await fetch(`${app.locals.webPath}/api/groups`, {
       headers: { Authorization: `Bearer ${config.admin.apiKey}` },
