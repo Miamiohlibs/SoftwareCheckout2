@@ -93,66 +93,66 @@ app.set('views', path.resolve(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use(express.static(__dirname + '/public'));
 
+// app.get(`/`, (req, res) => {
+//   res.send('<h1>This is a test</h1>');
+// });
+
+// Routes
+let apiRouter = require('./routes/api');
+app.use(`/api`, apiKeyAuth, apiRouter);
+let logsRouter = require('./routes/logs');
+app.use('/logs', isLoggedIn, logsRouter);
+let statsRouter = require('./routes/stats');
+const { error } = require('console');
+app.use('/stats', isLoggedIn, statsRouter);
+
+app.set('json spaces', 2);
+
 app.get(`/`, (req, res) => {
-  res.send('<h1>This is a test</h1>');
+  if (config.admin.requireLogin & !isPermittedUser(req)) {
+    res.render('landing', { error: req.query.error });
+  } else {
+    res.redirect(`${app.locals.webPath}/systemStatus`);
+  }
 });
 
-// // Routes
-// let apiRouter = require('./routes/api');
-// app.use(`/api`, apiKeyAuth, apiRouter);
-// let logsRouter = require('./routes/logs');
-// app.use('/logs', isLoggedIn, logsRouter);
-// let statsRouter = require('./routes/stats');
-// const { error } = require('console');
-// app.use('/stats', isLoggedIn, statsRouter);
+app.get(
+  `/auth/google`,
+  passport.authenticate('google', { scope: ['email', 'profile'] }),
+);
 
-// app.set('json spaces', 2);
+app.get(
+  `/google/callback`,
+  passport.authenticate('google', {
+    failureRedirect: '/auth/failure',
+  }),
+  (req, res) => {
+    req.session.user = {
+      id: req.user.id,
+      email: req.user.email,
+      name: req.user.displayName,
+    };
+    res.redirect(`${app.locals.webPath}/systemStatus`);
+  },
+);
 
-// app.get(`${app.locals.webPath}/`, (req, res) => {
-//   if (config.admin.requireLogin & !isPermittedUser(req)) {
-//     res.render('landing', { error: req.query.error });
-//   } else {
-//     res.redirect(`${app.locals.webPath}/systemStatus`);
-//   }
-// });
+app.get(`/auth/failure`, (req, res) => {
+  res.send('Failed to authenticate');
+});
 
-// app.get(
-//   `${app.locals.webPath}/auth/google`,
-//   passport.authenticate('google', { scope: ['email', 'profile'] }),
-// );
-
-// app.get(
-//   `${app.locals.webPath}/google/callback`,
-//   passport.authenticate('google', {
-//     failureRedirect: '/auth/failure',
-//   }),
-//   (req, res) => {
-//     req.session.user = {
-//       id: req.user.id,
-//       email: req.user.email,
-//       name: req.user.displayName,
-//     };
-//     res.redirect(`${app.locals.webPath}/systemStatus`);
-//   },
-// );
-
-// app.get(`${app.locals.webPath}/auth/failure`, (req, res) => {
-//   res.send('Failed to authenticate');
-// });
-
-// app.get(`${app.locals.webPath}/systemStatus`, isLoggedIn, async (req, res) => {
-//   try {
-//     let data = await fetch(`${app.locals.webPath}/api/groups`, {
-//       headers: { Authorization: `Bearer ${config.admin.apiKey}` },
-//     });
-//     let json = await data.json();
-//     res.render('systemStatus', { data: json, user: req.user });
-//   } catch (err) {
-//     res
-//       .status(500)
-//       .send('Error fetching data: ' + JSON.stringify(err) + { json });
-//   }
-// });
+app.get(`/systemStatus`, isLoggedIn, async (req, res) => {
+  try {
+    let data = await fetch(`/api/groups`, {
+      headers: { Authorization: `Bearer ${config.admin.apiKey}` },
+    });
+    let json = await data.json();
+    res.render('systemStatus', { data: json, user: req.user });
+  } catch (err) {
+    res
+      .status(500)
+      .send('Error fetching data: ' + JSON.stringify(err) + { json });
+  }
+});
 
 // app.get('/compare', isLoggedIn, async (req, res) => {
 //   let url = `${protocol}://${hostname}:${port}/api/${req.query.vendor}/compare?group=${req.query.group}&cid=${req.query.cid}`;
