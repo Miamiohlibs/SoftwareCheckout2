@@ -59,21 +59,21 @@ app.use((req, res, next) => {
   }
 });
 
-// function isPermittedUser(req) {
-//   if (!req.user) {
-//     return false;
-//   }
-//   return config.admin.allowedUsers.includes(req.user.email);
-// }
-// function isLoggedIn(req, res, next) {
-//   if (config.admin.requireLogin) {
-//     return req.isAuthenticated() && isPermittedUser(req)
-//       ? next()
-//       : res.redirect('/?error=unauthorized');
-//   }
-//   return next();
-//   // req.user ? next() : res.sendStatus(401);
-// }
+function isPermittedUser(req) {
+  if (!req.user) {
+    return false;
+  }
+  return config.admin.allowedUsers.includes(req.user.email);
+}
+function isLoggedIn(req, res, next) {
+  if (config.admin.requireLogin) {
+    return req.isAuthenticated() && isPermittedUser(req)
+      ? next()
+      : res.redirect('/?error=unauthorized');
+  }
+  return next();
+  // req.user ? next() : res.sendStatus(401);
+}
 
 function apiKeyAuth(req, res, next) {
   const apiKey = req.headers['authorization'];
@@ -109,11 +109,11 @@ app.use(express.static(__dirname + '/public'));
 // app.set('json spaces', 2);
 
 app.get(`/`, (req, res) => {
-  //   if (config.admin.requireLogin & !isPermittedUser(req)) {
-  //     res.render('landing', { error: req.query.error });
-  //   } else {
-  res.redirect(`${app.locals.webPath}/systemStatus`);
-  //   }
+  if (config.admin.requireLogin & !isPermittedUser(req)) {
+    res.render('landing', { error: req.query.error });
+  } else {
+    res.redirect(`${app.locals.webPath}/systemStatus`);
+  }
 });
 
 // app.get(
