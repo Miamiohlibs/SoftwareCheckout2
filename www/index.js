@@ -160,38 +160,38 @@ app.get(`/systemStatus`, isLoggedIn, async (req, res) => {
   }
 });
 
-// app.get('/compare', isLoggedIn, async (req, res) => {
-//   let url = `${protocol}://${hostname}:${port}/api/${req.query.vendor}/compare?group=${req.query.group}&cid=${req.query.cid}`;
-//   try {
-//     let response = await fetch(url, {
-//       headers: { Authorization: `Bearer ${config.admin.apiKey}` },
-//     });
-//     let json = await response.json();
-//     if (!response.ok) {
-//       res.status(response.status).render('error', {
-//         message: json.error || 'Error fetching data',
-//         error: response.statusText,
-//         errorNumber: response.status,
-//       });
-//       return;
-//     }
+app.get('/compare', isLoggedIn, async (req, res) => {
+  let url = `${app.locals.webAbsolutePath}/api/${req.query.vendor}/compare?group=${req.query.group}&cid=${req.query.cid}`;
+  try {
+    let response = await fetch(url, {
+      headers: { Authorization: `Bearer ${config.admin.apiKey}` },
+    });
+    let json = await response.json();
+    if (!response.ok) {
+      res.status(response.status).render('error', {
+        message: json.error || 'Error fetching data',
+        error: response.statusText,
+        errorNumber: response.status,
+      });
+      return;
+    }
 
-//     res.render('compare', {
-//       data: json,
-//       vendor: req.query.vendor,
-//       group: req.query.group,
-//       groupName: req.query.groupName,
-//       cid: req.query.cid,
-//       user: req.user || false,
-//     });
-//   } catch (err) {
-//     res.status(500).render('error', {
-//       message: 'Error fetching comparison data',
-//       error: 'Unknown error',
-//       errorNumber: 500,
-//     });
-//   }
-// });
+    res.render('compare', {
+      data: json,
+      vendor: req.query.vendor,
+      group: req.query.group,
+      groupName: req.query.groupName,
+      cid: req.query.cid,
+      user: req.user || false,
+    });
+  } catch (err) {
+    res.status(500).render('error', {
+      message: 'Error fetching comparison data',
+      error: 'Unknown error',
+      errorNumber: 500,
+    });
+  }
+});
 
 // app.get('/fetch', isLoggedIn, async (req, res) => {
 //   try {
