@@ -262,11 +262,11 @@ router.get('/stats/daily', (req, res) => {
       res.send(data);
     }
   } catch (error) {
-    res.status(500).json({
-      status: 'error',
-      message:
+    res
+      .status(500)
+      .json(
         'No data found -- this can occur when no usage data has been collected yet. This function looks for daily files in the logs/dailyStats folder, with stats for each service. If no stats are present it may be because the service has not yet started or the cronjob that collects daily stats has not yet started.',
-    });
+      );
   }
 });
 
