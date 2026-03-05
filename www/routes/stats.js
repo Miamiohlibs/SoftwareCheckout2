@@ -51,28 +51,38 @@ function csvToHtmlTable(csvData) {
 
 router.get('/daily', async (req, res) => {
   try {
-    const data = await fetch(`${baseUrl}/api/stats/daily`, {
+    const response = await fetch(`${baseUrl}/api/stats/daily`, {
       headers: { Authorization: `Bearer ${config.admin.apiKey}` },
     });
-    const csvData = await data.text();
-    const table = csvToHtmlTable(csvData);
-
-    if (req.query.format === 'csv') {
-      res.setHeader('Content-Type', 'text/csv');
-      res.setHeader(
-        'Content-Disposition',
-        'attachment; filename=dailyStats.csv',
-      );
-      res.send(csvData);
+    if (!response.ok) {
+      const errorText = await response.text();
+      res.render('error', {
+        error: 'Error retrieving data',
+        message: errorText,
+        errorNumber: response.status,
+      });
       return;
-    }
+    } else {
+      const csvData = await response.text();
+      const table = csvToHtmlTable(csvData);
 
-    res.render('statsTable', {
-      table: table,
-      pageTitle: 'Daily Stats: Licenses in Use per Day',
-      downloadLink: '/stats/daily?format=csv',
-      user: req.user || false,
-    });
+      if (req.query.format === 'csv') {
+        res.setHeader('Content-Type', 'text/csv');
+        res.setHeader(
+          'Content-Disposition',
+          'attachment; filename=dailyStats.csv',
+        );
+        res.send(csvData);
+        return;
+      }
+
+      res.render('statsTable', {
+        table: table,
+        pageTitle: 'Daily Stats: Licenses in Use per Day',
+        downloadLink: '/stats/daily?format=csv',
+        user: req.user || false,
+      });
+    }
   } catch (err) {
     console.log(err);
     res.status(500).send('Error fetching data', err);

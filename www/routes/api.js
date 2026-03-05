@@ -249,13 +249,24 @@ router.get('/stats/daily', (req, res) => {
   if (req.query.format) {
     format = req.query.format;
   }
-  const data = dailyStatsService(format);
-  if (format === 'json') {
-    res.json(data);
-  } else if (format === 'csv') {
-    res.setHeader('Content-Type', 'text/csv');
-    res.setHeader('Content-Disposition', 'attachment; filename=dailyStats.csv');
-    res.send(data);
+  try {
+    const data = dailyStatsService(format);
+    if (format === 'json') {
+      res.json(data);
+    } else if (format === 'csv') {
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader(
+        'Content-Disposition',
+        'attachment; filename=dailyStats.csv',
+      );
+      res.send(data);
+    }
+  } catch (error) {
+    res.status(500).json({
+      status: 'error',
+      message:
+        'No data found -- this can occur when no usage data has been collected yet. This function looks for daily files in the logs/dailyStats folder, with stats for each service. If no stats are present it may be because the service has not yet started or the cronjob that collects daily stats has not yet started.',
+    });
   }
 });
 
