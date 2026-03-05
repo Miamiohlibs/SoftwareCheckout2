@@ -60,10 +60,17 @@ module.exports = class AdobeSavingsCalculator {
     this.users = [];
     this.totalSavings = 0;
     this.monthlySavings = [];
+    this.error = false;
+    this.errorMessage = '';
   }
 
   calculateSavings() {
     // foreach file in ./logs/dailyStats/AdobeCreativeCloud/*.json
+    if (!existsSync(path.resolve(`./logs/dailyStats/${this.conf.dirname}`))) {
+      this.error = true;
+      this.errorMessage = 'Failed to retrive data.';
+      return;
+    }
     let files = this.getFiles(this.conf.dirname);
     files = files.sort((a, b) => a.name.localeCompare(b.name));
     files.forEach((file) => {
@@ -75,11 +82,16 @@ module.exports = class AdobeSavingsCalculator {
     // get list of files in a directory
     let thisfolder = path.resolve(
       __dirname,
-      '../logs/dailyStats/' + dirname + '/'
+      '../logs/dailyStats/' + dirname + '/',
     );
+    if (!existsSync(thisfolder)) {
+      this.error = true;
+      this.errorMessage = `File not found: ../logs/dailyStats/${dirname}`;
+      return;
+    }
     let thisfolderAnon = path.resolve(
       __dirname,
-      '../logs/dailyStats/' + dirname + '/anon/'
+      '../logs/dailyStats/' + dirname + '/anon/',
     );
     // return files with datestamp in filename + .json
     let files = readdirSync(thisfolder, { withFileTypes: true })
@@ -122,7 +134,7 @@ module.exports = class AdobeSavingsCalculator {
       this.incrementSavings(user, item);
     } else {
       let daysSinceSavings = Math.abs(
-        dayjs(date).diff(user.lastSavingsDate, 'day')
+        dayjs(date).diff(user.lastSavingsDate, 'day'),
       );
       // if it's been long enough since last savings, credit savings
       if (daysSinceSavings > this.conf.chargeAfterDays) {
@@ -130,7 +142,7 @@ module.exports = class AdobeSavingsCalculator {
           this.incrementSavings(user, item);
         } else {
           let daysSincePreviousSavings = Math.abs(
-            dayjs(date).diff(user.previousSavingsDate, 'day')
+            dayjs(date).diff(user.previousSavingsDate, 'day'),
           );
           // but don't credit savings for the third time in 2 months
           if (daysSincePreviousSavings > this.conf.thirdCheckoutFreeWithin) {

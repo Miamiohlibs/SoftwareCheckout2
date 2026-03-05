@@ -356,6 +356,11 @@ router.get('/stats/adobeSavings', async (req, res) => {
   let calc = new AdobeSavingsCalculator(savingsConf);
   calc.calculateSavings();
 
+  if (calc.error) {
+    res.status(500).send('Unable to access data');
+    return;
+  }
+
   let firstMonth = calc.monthlySavings[0].month;
   let lastMonth = calc.monthlySavings[calc.monthlySavings.length - 1].month;
 

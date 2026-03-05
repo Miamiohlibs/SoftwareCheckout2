@@ -200,10 +200,18 @@ router.get('/eachCheckout/:file', async (req, res) => {
 
 router.get('/adobeSavings', async (req, res) => {
   try {
-    const data = await fetch(`${baseUrl}/api/stats/adobeSavings`, {
+    const response = await fetch(`${baseUrl}/api/stats/adobeSavings`, {
       headers: { Authorization: `Bearer ${config.admin.apiKey}` },
     });
-    const json = await data.json();
+    if (!response.ok) {
+      res.status(response.status).render('error', {
+        message: 'Error fetching data',
+        error: response.statusText,
+        errorNumber: response.status,
+      });
+      return;
+    }
+    const json = await response.json();
     res.render('adobeSavings', {
       data: json,
       pageTitle: `Estimated Adobe Savings on ${json.conf.dirname}`,
