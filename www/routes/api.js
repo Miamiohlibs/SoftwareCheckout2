@@ -291,7 +291,23 @@ router.get('/stats/summary', async (req, res) => {
 
 router.get('/stats/eachCheckout', async (req, res) => {
   let folder = 'logs/eachCheckout';
+  if (!fs.existsSync(path.join(__dirname, '../../', folder))) {
+    res
+      .status(500)
+      .send(
+        'No data found. Directory logs/eachCheckout does not exist. Run the logEachCheckout.js script to populate the data.',
+      );
+    return;
+  }
   let files = fs.readdirSync(path.join(__dirname, '../../', folder));
+  if (files.length == 0) {
+    res
+      .status(500)
+      .send(
+        'No data found in directory logs/eachCheckout. Run the logEachCheckout.js script to populate the data.',
+      );
+    return;
+  }
   let fileInfo = files.map((file) => {
     let filepath = path.join(__dirname, '../../', folder, file);
     // let filepath = path.resolve(this.logDir + '/' + file);

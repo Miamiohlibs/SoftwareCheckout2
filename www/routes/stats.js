@@ -57,8 +57,8 @@ router.get('/daily', async (req, res) => {
     if (!response.ok) {
       const errorText = await response.text();
       res.render('error', {
-        error: 'Error retrieving data',
-        message: errorText,
+        message: 'Error retrieving data',
+        error: errorText,
         errorNumber: response.status,
       });
       return;
@@ -137,10 +137,19 @@ router.get('/summary', async (req, res) => {
 
 router.get('/eachCheckout', async (req, res) => {
   try {
-    const data = await fetch(`${baseUrl}/api/stats/eachCheckout`, {
+    const response = await fetch(`${baseUrl}/api/stats/eachCheckout`, {
       headers: { Authorization: `Bearer ${config.admin.apiKey}` },
     });
-    const files = await data.json();
+    if (!response.ok) {
+      const errorText = await response.text();
+      res.render('error', {
+        message: 'Error retrieving data',
+        error: errorText,
+        errorNumber: response.status,
+      });
+      return;
+    }
+    const files = await response.json();
     res.render('eachCheckoutList', { files: files, user: req.user || false });
   } catch (err) {
     console.log(err);
