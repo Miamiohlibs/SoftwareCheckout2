@@ -7,6 +7,9 @@ const StatsSummary = require('../models/DailyStatsSummary');
 module.exports = (format = 'csv') => {
   const summary = new StatsSummary();
   let json = summary.summarizeStats(softwareTitles);
+  if (json.length == 0) {
+    throw new Error('No data found');
+  }
   if (format == 'json') {
     return json;
   }
