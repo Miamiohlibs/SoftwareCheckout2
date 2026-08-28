@@ -27,7 +27,7 @@ function help() {
   console.log('Usage: node getUsageData.js');
   console.log('Options:');
   console.log(
-    '  --startDate=YYYY-MM-DD (also supports dates like "two weeks ago" or "yesterday")'
+    '  --startDate=YYYY-MM-DD (also supports dates like "two weeks ago" or "yesterday")',
   );
   console.log('  --endDate=YYYY-MM-DD (or other date format)');
   console.log('  --libCalCid=libCalCid or "all"');
@@ -49,7 +49,7 @@ async function runQuery(date, cid, folder) {
         return;
       }
       //file written successfully
-    }
+    },
   );
 }
 
@@ -101,7 +101,7 @@ async function main() {
         itemNameProp: 'libCalName',
         itemValueProp: 'libCalCid',
         outputLabel: 'softwareOption',
-      })
+      }),
     );
     console.log('cid: ', getSoftware.softwareOption);
     cid = getSoftware.softwareOption;
@@ -123,6 +123,7 @@ async function main() {
     const softwareName = software.filter((item) => item.libCalCid === cid)[0]
       .libCalName;
     await getStats(startDate, endDate, cid, softwareName);
+    console.log(`finished running ${softwareName}: ${startDate} - ${endDate}`);
   }
 }
 
