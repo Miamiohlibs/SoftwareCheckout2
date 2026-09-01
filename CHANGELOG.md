@@ -1,5 +1,19 @@
 # Changelog
 
+## 2.5.0 - 2026-09-01
+
+### Fixed
+
+- fixed bug that crashed the web app if expected data (e.g. stats, logs, etc.) is missing. The app now displays an error message instead of crashing.
+
+### Added
+
+- two configs in config/appConf: `admin.webPath` (root-relative) and `admin.webAbsolutePath` (fully qualified) to support installing the web app in a place other than the root path of a domain/port.
+
+### Changed
+
+- append a final line to the command-line output of getUsageData.js, showing which dates and package the report covered.
+
 ## 2.4.1 - 2025-06-30
 
 ### Changed
@@ -12,6 +26,7 @@
 - removed unused ./index.js file.
 
 =======
+
 ## 2.4.0 - 2024-10-30
 
 ### Added
