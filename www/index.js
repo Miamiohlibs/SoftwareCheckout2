@@ -142,6 +142,10 @@ app.get(`/auth/failure`, (req, res) => {
   res.send('Failed to authenticate');
 });
 
+app.get(`/test`, (req, res) => {
+  res.send(JSON.stringify(app.locals));
+});
+
 app.get(`/systemStatus`, isLoggedIn, async (req, res) => {
   try {
     let data = await fetch(`${app.locals.webAbsolutePath}/api/groups`, {
