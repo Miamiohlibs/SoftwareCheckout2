@@ -9,8 +9,9 @@ const activeDb = appConf.database.use;
 const connectionString = appConf.database[activeDb].connection;
 let config = appConf.database[activeDb].config;
 if (config.sslCA && typeof config.sslCA == 'string') {
+  const certsPath = path.join(__dirname, '..', 'certs', config.sslCA);
+
   try {
-    const certsPath = path.join(__dirname, '..', 'certs', config.sslCA);
     config.sslCA = [fs.readFileSync(certsPath)];
   } catch (err) {
     logger.error(
