@@ -13,6 +13,8 @@ if (config.sslCA && typeof config.sslCA == 'string') {
 
   try {
     config.sslCA = [fs.readFileSync(certsPath)];
+    config.tlsCAFile = sslCA;
+    delete config.sslCA;
   } catch (err) {
     logger.error(
       'Could not find file ' +
@@ -33,7 +35,7 @@ const conf = (module.exports = {
       return true;
     } catch (err) {
       console.log('could not connect to database');
-      console.log('Error inspect: ', util.inspect(err, { depth: null }));
+      // console.log('Error inspect: ', util.inspect(err, { depth: null }));
       logger.error('database.js: could not connect to database: ', {
         message: err.message,
         name: err.name,

@@ -49,7 +49,8 @@ module.exports = {
     prod: {
       connection: '',
       config: {
-        sslValidate: true,
+        // sslValidate: true,
+        tlsAllowInvalidCertificates: false,
         sslCA: 'ssl-cert.pem', // in certs folder
         useNewUrlParser: true,
         useUnifiedTopology: true,
