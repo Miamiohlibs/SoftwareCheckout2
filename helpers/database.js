@@ -14,7 +14,7 @@ if (config.sslCA && typeof config.sslCA == 'string') {
     ];
   } catch (err) {
     logger.error(
-      'Could not find file ' + config.sslCA + ' in the certs/ directory'
+      'Could not find file ' + config.sslCA + ' in the certs/ directory',
     );
   }
 }
@@ -28,8 +28,13 @@ const conf = (module.exports = {
       return true;
     } catch (err) {
       console.log('could not connect to database');
+      console.log('Error inspect: ', util.inspect(err, { depth: null }));
       logger.error('database.js: could not connect to database: ', {
-        content: err,
+        message: err.message,
+        name: err.name,
+        code: err.code,
+        errors: err.errors, // AggregateError sub-errors, if present
+        cause: err.cause, // sometimes holds the AggregateError
       });
       throw new Error(err);
     }
