@@ -8,17 +8,15 @@ const util = require('util');
 const activeDb = appConf.database.use;
 const connectionString = appConf.database[activeDb].connection;
 let config = appConf.database[activeDb].config;
-if (config.sslCA && typeof config.sslCA == 'string') {
-  const certsPath = path.join(__dirname, '..', 'certs', config.sslCA);
+if (config.tlsCAFile && typeof config.tlsCAFile == 'string') {
+  const certsPath = path.join(__dirname, '..', 'certs', config.tlsCAFile);
 
   try {
-    config.sslCA = [fs.readFileSync(certsPath)];
-    config.tlsCAFile = sslCA;
-    delete config.sslCA;
+    config.tlsCAFile = [fs.readFileSync(certsPath)];
   } catch (err) {
     logger.error(
       'Could not find file ' +
-        config.sslCA +
+        config.tlsCAFile +
         ' in the ' +
         certsPath +
         ' directory',

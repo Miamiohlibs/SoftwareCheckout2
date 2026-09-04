@@ -51,7 +51,7 @@ module.exports = {
       config: {
         // sslValidate: true,
         tlsAllowInvalidCertificates: false,
-        sslCA: 'ssl-cert.pem', // in certs folder
+        tlsCAFile: 'ssl-cert.pem', // in certs folder
         useNewUrlParser: true,
         useUnifiedTopology: true,
       },
