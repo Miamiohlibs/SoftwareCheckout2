@@ -10,12 +10,15 @@ const connectionString = appConf.database[activeDb].connection;
 let config = appConf.database[activeDb].config;
 if (config.sslCA && typeof config.sslCA == 'string') {
   try {
-    config.sslCA = [
-      fs.readFileSync(path.join(__dirname, '..', 'certs', config.sslCA)),
-    ];
+    const certsPath = path.join(__dirname, '..', 'certs', config.sslCA);
+    config.sslCA = [fs.readFileSync(certsPath)];
   } catch (err) {
     logger.error(
-      'Could not find file ' + config.sslCA + ' in the certs/ directory',
+      'Could not find file ' +
+        config.sslCA +
+        ' in the ' +
+        certsPath +
+        ' directory',
     );
   }
 }
