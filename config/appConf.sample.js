@@ -42,8 +42,8 @@ module.exports = {
       connection:
         'mongodb://localhost:27017/softwareCheckout?appname=SoftwareCheckoutTest&ssl=false',
       config: {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
+        // useNewUrlParser: true,
+        // useUnifiedTopology: true,
       },
     },
     prod: {
@@ -52,8 +52,8 @@ module.exports = {
         // sslValidate: true,
         tlsAllowInvalidCertificates: false,
         tlsCAFile: 'ssl-cert.pem', // in certs folder
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
+        // useNewUrlParser: true,
+        // useUnifiedTopology: true,
       },
     },
   },
