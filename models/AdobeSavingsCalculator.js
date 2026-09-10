@@ -37,6 +37,7 @@
         checkout (14 days) will extend a bit past 2 months and still be counted as free.
 */
 
+const appConf = require('../config/appConf');
 const { readdirSync, existsSync } = require('fs');
 const path = require('path');
 const dayjs = require('dayjs');
@@ -65,33 +66,41 @@ module.exports = class AdobeSavingsCalculator {
   }
 
   calculateSavings() {
-    // foreach file in ./logs/dailyStats/AdobeCreativeCloud/*.json
-    if (!existsSync(path.resolve(`./logs/dailyStats/${this.conf.dirname}`))) {
+    // foreach file in ${appConf.statsLogLocation}/dailyStats/AdobeCreativeCloud/*.json
+    if (
+      !existsSync(
+        path.resolve(
+          `${appConf.statsLogLocation}/dailyStats/${this.conf.dirname}`,
+        ),
+      )
+    ) {
       this.error = true;
       this.errorMessage = 'Failed to retrive data.';
       return;
     }
-    let files = this.getFiles(this.conf.dirname);
-    files = files.sort((a, b) => a.name.localeCompare(b.name));
-    files.forEach((file) => {
-      this.processFile(this.conf.dirname, file.name);
-    });
+    let files = this.getFiles(this.conf.dirname) || [];
+    if (files.length > 0) {
+      files = files.sort((a, b) => a.name.localeCompare(b.name));
+      files.forEach((file) => {
+        this.processFile(this.conf.dirname, file.name);
+      });
+    }
   }
 
   getFiles(dirname) {
     // get list of files in a directory
     let thisfolder = path.resolve(
-      __dirname,
-      '../logs/dailyStats/' + dirname + '/',
+      appConf.statsLogLocation,
+      '/dailyStats/' + dirname + '/',
     );
     if (!existsSync(thisfolder)) {
       this.error = true;
-      this.errorMessage = `File not found: ../logs/dailyStats/${dirname}`;
+      this.errorMessage = `File not found: ${appConf.statsLogLocation}/dailyStats/${dirname}`;
       return;
     }
     let thisfolderAnon = path.resolve(
-      __dirname,
-      '../logs/dailyStats/' + dirname + '/anon/',
+      appConf.statsLogLocation,
+      '/dailyStats/' + dirname + '/anon/',
     );
     // return files with datestamp in filename + .json
     let files = readdirSync(thisfolder, { withFileTypes: true })
@@ -120,9 +129,13 @@ module.exports = class AdobeSavingsCalculator {
     // handle both anon and non-anon files
     let data;
     try {
-      data = require(`../logs/dailyStats/${dirname}/${filename}`);
+      data = require(
+        `${appConf.statsLogLocation}/dailyStats/${dirname}/${filename}`,
+      );
     } catch {
-      data = require(`../logs/dailyStats/${dirname}/anon/${filename}`);
+      data = require(
+        `${appConf.statsLogLocation}/dailyStats/${dirname}/anon/${filename}`,
+      );
     }
     return data;
   }

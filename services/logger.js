@@ -11,17 +11,9 @@ transportsArr = [];
 for (level in appConf.logLevels) {
   filename = '';
   if (appConf.logLevels[level] == 'daily') {
-    filename = path.join(
-      appConf.logLocation,
-      'logs',
-      level + '-' + today + '.log',
-    );
+    filename = path.join(appConf.logLocation, level + '-' + today + '.log');
   } else if (appConf.logLevels[level] == 'monthly') {
-    filename = path.join(
-      appConf.logLocation,
-      'logs',
-      level + '-' + month + '.log',
-    );
+    filename = path.join(appConf.logLocation, level + '-' + month + '.log');
   }
   if (filename != '') {
     transportsArr.push(

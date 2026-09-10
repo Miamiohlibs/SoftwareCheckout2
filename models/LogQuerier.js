@@ -2,10 +2,11 @@ const fs = require('fs');
 const path = require('path');
 const jq = require('node-jq');
 const jsonifyLog = require('../helpers/jsonifyLog');
+const appConf = require('../config/appConf');
 
 module.exports = class LogQuerier {
   constructor() {
-    this.logDir = path.resolve(__dirname + '/../logs/');
+    this.logDir = path.resolve(appConf.statsLogLocation);
   }
 
   getLogDates() {
@@ -26,7 +27,8 @@ module.exports = class LogQuerier {
       if (year != undefined) {
         if (knownDates.includes(`${year}-${month}-${day}`)) {
           let thisLog = logsByDate.find(
-            (log) => log.year === year && log.month === month && log.day === day
+            (log) =>
+              log.year === year && log.month === month && log.day === day,
           );
           thisLog.logType.push(prefix);
           thisLog.levels[`${prefix}`] = {
@@ -101,7 +103,7 @@ module.exports = class LogQuerier {
         'LibCalApi Token:',
         'Bearer ',
         'https://usermanagement.adobe.io/v2/usermanagement/users/',
-      ]
+      ],
     );
     return jsonLog;
   }

@@ -15,6 +15,6 @@ module.exports = {
     costPerUse: 20, // cost per license per month
     chargeAfterDays: 21,
     thirdCheckoutFreeWithin: 50,
-    dirname: 'AdobeCreativeCloud', // maps to ./logs/dailyStats/AdobeCreativeCloud
+    dirname: 'AdobeCreativeCloud', // maps to ${appConfig.statsLogLocation}/dailyStats/AdobeCreativeCloud
   },
 };
