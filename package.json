@@ -6,10 +6,10 @@
   "scripts": {
     "test": "jest --watch",
     "start": "node app",
-    "server": "node app --listen --name=software-checkout >> logs/app.log 2>&1 &",
+    "server": "node app --listen --name=software-checkout >> \"$(node helpers/getLogLocation.js)/app.log\" 2>&1 &",
     "dev": "nodemon app",
-    "web": "node www/index --name=software-checkout-webconsole >> logs/web.log 2>&1 &",
-    "webdev": "nodemon www/index --name=software-checkout-webconsole >> logs/web.log 2>&1 &"
+    "web": "node www/index --name=software-checkout-webconsole >> \"$(node helpers/getLogLocation.js)/web.log\" 2>&1 &",
+    "webdev": "nodemon www/index --name=software-checkout-webconsole >> \"$(node helpers/getLogLocation.js)/web.log\" 2>&1 &"
   },
   "author": "Ken Irwin",
   "license": "MIT",
