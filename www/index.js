@@ -11,6 +11,7 @@ require('./auth');
 const config = require('../config/appConf');
 const port = config.admin.port || 3010;
 let logger = require('../services/logger');
+const { version } = require('../package.json');
 
 logger.info('starting admin web console');
 const baseApp = express(); // outer app
@@ -27,6 +28,7 @@ if (global.onServer) {
   protocol = 'https';
 }
 
+app.locals.version = version;
 app.locals.webPath = config.admin.webPath || '';
 app.locals.webAbsolutePath =
   config.admin.webAbsolutePath ||

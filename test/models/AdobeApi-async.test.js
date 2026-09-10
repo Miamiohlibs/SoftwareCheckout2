@@ -77,7 +77,7 @@ describe('AdobeUserMgmtRepository: addMembersToGroup', () => {
   // if this test is failing, it may be because this test suite is running too fast
   // and hitting the rate limit on the Adobe API
   // if that happens, comment out the preceding tests (but the sleep command ought to prevent this problem)
-  it('should be able to add more than 10 users at once (chunked into sep calls)', async () => {
+  it('should be able to add more than 10 users at once (chunked into sep calls) - note: if this test fails, check to see that all of the emailsBiglist members are current employees. This test will fail when a member of that list is not a member of the organization.', async () => {
     // sleep 3000ms to avoid rate limit
     await new Promise((r) => setTimeout(r, 3000));
     let res = await repo.addGroupMembers(emailsBigList, testGroupId, 'test');
