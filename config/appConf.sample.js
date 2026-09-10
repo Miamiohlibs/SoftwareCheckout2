@@ -41,19 +41,13 @@ module.exports = {
     test: {
       connection:
         'mongodb://localhost:27017/softwareCheckout?appname=SoftwareCheckoutTest&ssl=false',
-      config: {
-        // useNewUrlParser: true,
-        // useUnifiedTopology: true,
-      },
+      config: {},
     },
     prod: {
       connection: '',
       config: {
-        // sslValidate: true,
         tlsAllowInvalidCertificates: false,
         tlsCAFile: 'ssl-cert.pem', // in certs folder
-        // useNewUrlParser: true,
-        // useUnifiedTopology: true,
       },
     },
   },
