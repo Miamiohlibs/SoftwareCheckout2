@@ -14,6 +14,7 @@ const path = require('path');
 const fs = require('fs');
 const { Parser } = require('json2csv');
 const libCal = require('../../config/libCal');
+const logger = require('../../services/logger');
 
 async function getAdobeBookingsByGroup(group) {
   const adobeConf = require('../../config/adobe');
@@ -357,12 +358,14 @@ router.get('/stats/adobeSavings', async (req, res) => {
   calc.calculateSavings();
 
   if (calc.error) {
-    res.status(500).send('Unable to access data');
+    let message = `Unable to access data: ${calc.errorMessage}`;
+    res.status(500).send(message);
+    logger.error(message);
     return;
   }
 
-  let firstMonth = calc.monthlySavings[0].month;
-  let lastMonth = calc.monthlySavings[calc.monthlySavings.length - 1].month;
+  let firstMonth = calc.monthlySavings[0]?.month;
+  let lastMonth = calc.monthlySavings[calc.monthlySavings.length - 1]?.month;
 
   let output = {
     conf: calc.conf,
