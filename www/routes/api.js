@@ -14,6 +14,7 @@ const path = require('path');
 const fs = require('fs');
 const { Parser } = require('json2csv');
 const libCal = require('../../config/libCal');
+const logger = require('../../services/logger');
 
 async function getAdobeBookingsByGroup(group) {
   const adobeConf = require('../../config/adobe');
@@ -290,16 +291,17 @@ router.get('/stats/summary', async (req, res) => {
 });
 
 router.get('/stats/eachCheckout', async (req, res) => {
-  let folder = 'logs/eachCheckout';
-  if (!fs.existsSync(path.join(__dirname, '../../', folder))) {
+  let folder = 'eachCheckout';
+  const statsPath = path.join(appConf.statsLogLocation, folder);
+  if (!fs.existsSync(statsPath)) {
     res
       .status(500)
       .send(
-        'No data found. Directory logs/eachCheckout does not exist. Run the logEachCheckout.js script to populate the data.',
+        `No data found. Directory ${statsPath} not found. Run the logEachCheckout.js script to populate the data.`,
       );
     return;
   }
-  let files = fs.readdirSync(path.join(__dirname, '../../', folder));
+  let files = fs.readdirSync(statsPath);
   if (files.length == 0) {
     res
       .status(500)
@@ -309,7 +311,7 @@ router.get('/stats/eachCheckout', async (req, res) => {
     return;
   }
   let fileInfo = files.map((file) => {
-    let filepath = path.join(__dirname, '../../', folder, file);
+    let filepath = path.join(statsPath, file);
     // let filepath = path.resolve(this.logDir + '/' + file);
     let stats = fs.statSync(filepath);
     if (stats.size <= 2) {
@@ -323,10 +325,10 @@ router.get('/stats/eachCheckout', async (req, res) => {
 });
 
 router.get('/stats/eachCheckout/:file', async (req, res) => {
-  let folder = 'logs/eachCheckout';
-  let file = req.params.file;
+  let folder = 'eachCheckout';
+  let file = req.params.file + '.json';
   try {
-    let filepath = path.join(__dirname, '../../', folder, file);
+    let filepath = path.join(appConf.statsLogLocation, folder, file);
     let data = fs.readFileSync(filepath, 'utf8');
     const json = JSON.parse(data);
 
@@ -357,12 +359,14 @@ router.get('/stats/adobeSavings', async (req, res) => {
   calc.calculateSavings();
 
   if (calc.error) {
-    res.status(500).send('Unable to access data');
+    let message = `Unable to access data: ${calc.errorMessage}`;
+    res.status(500).send(message);
+    logger.error(message);
     return;
   }
 
-  let firstMonth = calc.monthlySavings[0].month;
-  let lastMonth = calc.monthlySavings[calc.monthlySavings.length - 1].month;
+  let firstMonth = calc.monthlySavings[0]?.month;
+  let lastMonth = calc.monthlySavings[calc.monthlySavings.length - 1]?.month;
 
   let output = {
     conf: calc.conf,

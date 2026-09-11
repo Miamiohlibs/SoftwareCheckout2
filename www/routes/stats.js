@@ -158,15 +158,12 @@ router.get('/eachCheckout', async (req, res) => {
 });
 
 router.get('/eachCheckout/:file', async (req, res) => {
-  let fileStr = req.params.file.replace('.json', '');
-  let downloadLink = `/stats/eachCheckout/${req.params.file}?format=csv`;
+  let fileStr = req.params.file;
+  let downloadLink = `/stats/eachCheckout/${fileStr}?format=csv`;
   try {
-    const data = await fetch(
-      `${baseUrl}/api/stats/eachCheckout/${req.params.file}`,
-      {
-        headers: { Authorization: `Bearer ${config.admin.apiKey}` },
-      },
-    );
+    const data = await fetch(`${baseUrl}/api/stats/eachCheckout/${fileStr}`, {
+      headers: { Authorization: `Bearer ${config.admin.apiKey}` },
+    });
     if (data.status !== 200) {
       res.status(data.status).render('error', {
         message: 'Error fetching data',
@@ -187,7 +184,7 @@ router.get('/eachCheckout/:file', async (req, res) => {
     } else {
       res.render('statsTable', {
         table: table,
-        pageTitle: `Each Checkout: ${req.params.file}`,
+        pageTitle: `Each Checkout: ${fileStr}`,
         downloadLink,
         user: req.user || false,
       });

@@ -3,6 +3,7 @@ const { readdirSync } = require('fs');
 const path = require('path');
 const logger = require('../services/logger');
 const { all } = require('../www/routes/api');
+const appConf = require('../config/appConf');
 
 module.exports = class StatsSummary {
   constructor() {
@@ -10,8 +11,8 @@ module.exports = class StatsSummary {
     this.summaries = [];
     this.overallFirst = '';
     this.overallLast = '';
-    let thisDir = path.dirname(__filename);
-    this.statsPath = path.join(thisDir, '../logs/dailyStats');
+    // let thisDir = path.dirname(__filename);
+    this.statsPath = path.join(appConf.statsLogLocation, 'dailyStats');
     this.pkgs = this.getDirectories(this.statsPath);
   }
 
@@ -119,7 +120,7 @@ module.exports = class StatsSummary {
           return file >= this.reportStartDate + '.json';
         });
         anonFiles = anonFiles.filter(
-          (file) => file >= this.reportStartDate + '.json'
+          (file) => file >= this.reportStartDate + '.json',
         );
         thisdata = thisdata.filter((item) => {
           return item.toDate >= this.reportStartDate;
@@ -131,7 +132,7 @@ module.exports = class StatsSummary {
       if (reportEndDate != '') {
         files = files.filter((file) => file <= this.reportEndDate + '.json');
         anonFiles = anonFiles.filter(
-          (file) => file <= this.reportEndDate + '.json'
+          (file) => file <= this.reportEndDate + '.json',
         );
         thisdata = thisdata.filter((item) => {
           return item.fromDate <= this.reportEndDate;
@@ -168,8 +169,8 @@ module.exports = class StatsSummary {
         'All',
         this.allPkgData,
         this.overallFirst,
-        this.overallLast
-      )
+        this.overallLast,
+      ),
     );
   }
 };

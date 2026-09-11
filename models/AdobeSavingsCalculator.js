@@ -37,6 +37,7 @@
         checkout (14 days) will extend a bit past 2 months and still be counted as free.
 */
 
+const appConf = require('../config/appConf');
 const { readdirSync, existsSync } = require('fs');
 const path = require('path');
 const dayjs = require('dayjs');
@@ -65,42 +66,57 @@ module.exports = class AdobeSavingsCalculator {
   }
 
   calculateSavings() {
-    // foreach file in ./logs/dailyStats/AdobeCreativeCloud/*.json
-    if (!existsSync(path.resolve(`./logs/dailyStats/${this.conf.dirname}`))) {
+    // foreach file in ${appConf.statsLogLocation}/dailyStats/AdobeCreativeCloud/*.json
+    let dirAbsolutePath = path.resolve(
+      `${appConf.statsLogLocation}/dailyStats/${this.conf.dirname}`,
+    );
+    console.log(`Looking for files at: ${dirAbsolutePath}`);
+    if (!existsSync(dirAbsolutePath)) {
       this.error = true;
-      this.errorMessage = 'Failed to retrive data.';
+      this.errorMessage = `Folder doesn't exist: ${filePath}.`;
       return;
     }
-    let files = this.getFiles(this.conf.dirname);
-    files = files.sort((a, b) => a.name.localeCompare(b.name));
-    files.forEach((file) => {
-      this.processFile(this.conf.dirname, file.name);
-    });
+    let files = this.getFiles(this.conf.dirname) || [];
+    console.log(`Files: ${JSON.stringify(files)}`);
+    if (files.length > 0) {
+      files = files.sort((a, b) => a.name.localeCompare(b.name));
+      files.forEach((file) => {
+        console.log(`process file: ${this.conf.dirname} ${file.name}`);
+        this.processFile(this.conf.dirname, file.name);
+      });
+    }
   }
 
   getFiles(dirname) {
     // get list of files in a directory
     let thisfolder = path.resolve(
-      __dirname,
-      '../logs/dailyStats/' + dirname + '/',
+      `${appConf.statsLogLocation}/dailyStats/${dirname}/`,
     );
     if (!existsSync(thisfolder)) {
       this.error = true;
-      this.errorMessage = `File not found: ../logs/dailyStats/${dirname}`;
+      this.errorMessage = `Folder not found: ${thisfolder}`;
       return;
     }
     let thisfolderAnon = path.resolve(
-      __dirname,
-      '../logs/dailyStats/' + dirname + '/anon/',
+      `${appConf.statsLogLocation}/dailyStats/${dirname}/anon/`,
     );
     // return files with datestamp in filename + .json
+    // console.log(`First checking for non-anon files: ${thisfolder}`);
     let files = readdirSync(thisfolder, { withFileTypes: true })
       .filter((dirent) => dirent.isFile())
       .filter((dirent) => dirent.name.match(/\d\d\d\d-\d\d-\d\d\.json$/));
-    let anonFiles = readdirSync(thisfolderAnon, { withFileTypes: true })
-      .filter((dirent) => dirent.isFile())
-      .filter((dirent) => dirent.name.match(/\d\d\d\d-\d\d-\d\d\.json$/));
-    files.push(...anonFiles);
+    try {
+      // console.log(`Now checking for anon files: ${thisfolderAnon}`);
+      let anonFiles = readdirSync(thisfolderAnon, { withFileTypes: true })
+        .filter((dirent) => dirent.isFile())
+        .filter((dirent) => dirent.name.match(/\d\d\d\d-\d\d-\d\d\.json$/));
+      files.push(...anonFiles);
+    } catch (err) {
+      console.info(
+        `No anonymous stats file at: ${thisfolderAnon} -- run the anonymizeStats script for more secure data`,
+      );
+    }
+
     return files;
   }
 
@@ -120,9 +136,13 @@ module.exports = class AdobeSavingsCalculator {
     // handle both anon and non-anon files
     let data;
     try {
-      data = require(`../logs/dailyStats/${dirname}/${filename}`);
+      data = require(
+        `${appConf.statsLogLocation}/dailyStats/${dirname}/${filename}`,
+      );
     } catch {
-      data = require(`../logs/dailyStats/${dirname}/anon/${filename}`);
+      data = require(
+        `${appConf.statsLogLocation}/dailyStats/${dirname}/anon/${filename}`,
+      );
     }
     return data;
   }

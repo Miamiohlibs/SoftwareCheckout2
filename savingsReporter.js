@@ -3,8 +3,8 @@ let savingsConf = adobeConf.savingsCalculator;
 let AdobeSavingsCalculator = require('./models/AdobeSavingsCalculator');
 let calc = new AdobeSavingsCalculator(savingsConf);
 calc.calculateSavings();
-let firstMonth = calc.monthlySavings[0].month;
-let lastMonth = calc.monthlySavings[calc.monthlySavings.length - 1].month;
+let firstMonth = calc.monthlySavings[0]?.month;
+let lastMonth = calc.monthlySavings[calc.monthlySavings.length - 1]?.month;
 
 let output = {
   conf: calc.conf,
