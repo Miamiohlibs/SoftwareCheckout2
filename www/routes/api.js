@@ -291,16 +291,17 @@ router.get('/stats/summary', async (req, res) => {
 });
 
 router.get('/stats/eachCheckout', async (req, res) => {
-  let folder = 'logs/eachCheckout';
-  if (!fs.existsSync(path.join(appConf.statsLogLocation, folder))) {
+  let folder = 'eachCheckout';
+  const statsPath = path.join(appConf.statsLogLocation, folder);
+  if (!fs.existsSync(statsPath)) {
     res
       .status(500)
       .send(
-        `No data found. Directory ${appConf.statsLogLocation} not found. Run the logEachCheckout.js script to populate the data.`,
+        `No data found. Directory ${statsPath} not found. Run the logEachCheckout.js script to populate the data.`,
       );
     return;
   }
-  let files = fs.readdirSync(appConf.statsLogLocation, folder);
+  let files = fs.readdirSync(statsPath);
   if (files.length == 0) {
     res
       .status(500)
