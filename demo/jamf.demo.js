@@ -8,7 +8,6 @@ const jamfRepo = new JamfRepository(jamfConf);
 const { mainMenu } = require('./mainMenu');
 const jamf = require('../config/jamf');
 const { getErrorMessage } = require('../helpers/httpResponses');
-const { get } = require('lodash');
 
 const jamfSoftware = software
   .filter((item) => item.vendor == 'Jamf')
@@ -26,7 +25,7 @@ const chooseGroup = async (verb) => {
       itemNameProp: 'vendorGroupName',
       itemValueProp: 'vendorGroupId',
       outputLabel: 'groupId',
-    })
+    }),
   );
 };
 
