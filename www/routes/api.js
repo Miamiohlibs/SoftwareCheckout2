@@ -326,7 +326,7 @@ router.get('/stats/eachCheckout', async (req, res) => {
 
 router.get('/stats/eachCheckout/:file', async (req, res) => {
   let folder = 'eachCheckout';
-  let file = req.params.file;
+  let file = req.params.file + '.json';
   try {
     let filepath = path.join(appConf.statsLogLocation, folder, file);
     let data = fs.readFileSync(filepath, 'utf8');
