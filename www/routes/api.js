@@ -292,7 +292,7 @@ router.get('/stats/summary', async (req, res) => {
 
 router.get('/stats/eachCheckout', async (req, res) => {
   let folder = 'logs/eachCheckout';
-  if (!fs.existsSync(path.join(__dirname, '../../', folder))) {
+  if (!fs.existsSync(path.join(appConf.statsLogLocation, folder))) {
     res
       .status(500)
       .send(
@@ -300,7 +300,7 @@ router.get('/stats/eachCheckout', async (req, res) => {
       );
     return;
   }
-  let files = fs.readdirSync(path.join(__dirname, '../../', folder));
+  let files = fs.readdirSync(appConf.statsLogLocation, folder);
   if (files.length == 0) {
     res
       .status(500)
@@ -310,7 +310,7 @@ router.get('/stats/eachCheckout', async (req, res) => {
     return;
   }
   let fileInfo = files.map((file) => {
-    let filepath = path.join(__dirname, '../../', folder, file);
+    let filepath = path.join(appConf.statsLogLocation, folder, file);
     // let filepath = path.resolve(this.logDir + '/' + file);
     let stats = fs.statSync(filepath);
     if (stats.size <= 2) {
@@ -327,7 +327,7 @@ router.get('/stats/eachCheckout/:file', async (req, res) => {
   let folder = 'logs/eachCheckout';
   let file = req.params.file;
   try {
-    let filepath = path.join(__dirname, '../../', folder, file);
+    let filepath = path.join(appConf.statsLogLocation, folder, file);
     let data = fs.readFileSync(filepath, 'utf8');
     const json = JSON.parse(data);
 
