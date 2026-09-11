@@ -1,7 +1,7 @@
 const { create } = require('lodash');
 const { cryptoConfig } = require('../config/appConf');
 // console.log(cryptoConfig.secret);
-const crypto = require('crypto');
+const crypto = require('node:crypto');
 
 module.exports = class StatsAnonymizer {
   constructor(secret = null) {
