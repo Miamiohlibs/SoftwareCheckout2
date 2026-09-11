@@ -311,7 +311,7 @@ router.get('/stats/eachCheckout', async (req, res) => {
     return;
   }
   let fileInfo = files.map((file) => {
-    let filepath = path.join(appConf.statsLogLocation, folder, file);
+    let filepath = path.join(statsPath, file);
     // let filepath = path.resolve(this.logDir + '/' + file);
     let stats = fs.statSync(filepath);
     if (stats.size <= 2) {
@@ -325,7 +325,7 @@ router.get('/stats/eachCheckout', async (req, res) => {
 });
 
 router.get('/stats/eachCheckout/:file', async (req, res) => {
-  let folder = 'logs/eachCheckout';
+  let folder = 'eachCheckout';
   let file = req.params.file;
   try {
     let filepath = path.join(appConf.statsLogLocation, folder, file);
