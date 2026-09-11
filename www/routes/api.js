@@ -296,7 +296,7 @@ router.get('/stats/eachCheckout', async (req, res) => {
     res
       .status(500)
       .send(
-        'No data found. Directory logs/eachCheckout does not exist. Run the logEachCheckout.js script to populate the data.',
+        `No data found. Directory ${appConf.statsLogLocation} not found. Run the logEachCheckout.js script to populate the data.`,
       );
     return;
   }
