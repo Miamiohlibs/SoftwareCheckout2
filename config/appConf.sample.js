@@ -3,6 +3,8 @@ module.exports = {
     secret: 'you should replace this with gibberish of your own',
     note: 'this is used to encrypt the user data in the logs',
   },
+  logLocation: '/absolute/path/to/logs',
+  statsLogLocation: '/absolute/path/to/statslogs',
   admin: {
     onServer: false,
     server: {

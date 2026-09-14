@@ -12,7 +12,7 @@ const StatsAnonymizer = require('./models/StatsAnonymizer');
 const anon = new StatsAnonymizer(secret);
 
 // foreach folder in logs/dailyStats
-const dailyStatsDir = path.join(__dirname, 'logs', 'dailyStats');
+const dailyStatsDir = path.join(appConf.statsLogLocation, 'dailyStats');
 const dailyStatsFolders = fs
   .readdirSync(dailyStatsDir, { withFileTypes: true })
   .filter((dirent) => dirent.isDirectory())

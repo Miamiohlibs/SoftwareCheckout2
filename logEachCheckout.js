@@ -7,6 +7,8 @@ const { readdirSync } = require('fs');
 const path = require('path');
 const fs = require('fs');
 const dayjs = require('dayjs');
+const appConf = require('./config/appConf');
+const { all } = require('axios');
 
 // get list of folders in logs/dailyStats - each is one set of stats
 const getDirectories = (source) =>
@@ -14,8 +16,8 @@ const getDirectories = (source) =>
     .filter((dirent) => dirent.isDirectory())
     .map((dirent) => dirent.name);
 
-// let logfolder = path.resolve(__dirname, './logs/dailyStats/');
-const logfolder = path.join(__dirname, 'logs', 'dailyStats');
+// let logfolder = path.resolve(config.statsLogLocation, './dailyStats/');
+const logfolder = path.join(appConf.statsLogLocation, 'dailyStats');
 // console.log('logfolder', logfolder);
 
 let pkgs = getDirectories(logfolder);
@@ -28,7 +30,7 @@ const logCheckoutDates = function (data, filename) {
   bookIds.forEach((currBookId) => {
     // get first entry only for each checkout
     let { bookId, cid, fromDate, toDate, category_name, item_name } = data.find(
-      (item) => item.bookId === currBookId
+      (item) => item.bookId === currBookId,
     );
     // gather relevant data to log
     fromDate = dayjs(fromDate).format('YYYY-MM-DD');
@@ -44,9 +46,9 @@ const logCheckoutDates = function (data, filename) {
     });
   });
   allBookings.sort((a, b) => (a.fromDate > b.fromDate ? 1 : -1));
-  let dir = path.join(__dirname, 'logs', 'eachCheckout');
+  let dir = path.join(appConf.statsLogLocation, 'eachCheckout');
   if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, 0744);
+    fs.mkdirSync(dir, 0o744);
   }
   fs.writeFile(
     dir + '/' + filename + '.json',
@@ -57,7 +59,7 @@ const logCheckoutDates = function (data, filename) {
         return;
       }
       //file written successfully
-    }
+    },
   );
 };
 
@@ -66,7 +68,7 @@ pkgs.forEach((pkg) => {
   let thisFolder = logfolder + '/' + pkg + '/';
   let anonFolder = thisFolder + 'anon/';
   if (!fs.existsSync(anonFolder)) {
-    fs.mkdirSync(anonFolder, 0744);
+    fs.mkdirSync(anonFolder, 0o744);
   }
   let files = readdirSync(thisFolder, { withFileTypes: true })
     .filter((dirent) => dirent.isFile())

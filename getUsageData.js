@@ -36,7 +36,7 @@ function help() {
 
 async function runQuery(date, cid, folder) {
   let res = await lcapi.getBookings(cid, date);
-  let dir = path.resolve(__dirname + '/logs/dailyStats/' + folder);
+  let dir = path.resolve(config.statsLogLocation + '/dailyStats/' + folder);
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, 0o744);
   }
