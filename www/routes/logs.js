@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const config = require('../../config/appConf');
 let protocol = 'https';
-if (!config.admin.onServer) {
+if (!config.admin.useHttps) {
   protocol = 'http';
 }
 

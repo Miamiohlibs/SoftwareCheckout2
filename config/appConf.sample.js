@@ -6,11 +6,13 @@ module.exports = {
   logLocation: '/absolute/path/to/logs',
   statsLogLocation: '/absolute/path/to/statslogs',
   admin: {
-    onServer: false,
-    server: {
+    useHttps: false,
+    useHttpsNote:
+      'if serving behind a reverse proxy (e.g. nginx), set to false',
+    httpsCerts: {
       key: '/path/to/public_key.key',
       cert: '/path/to/certificate.crt',
-      note: 'if onServer is true, you need to provide the key and cert paths',
+      note: 'if useHttps is true, you need to provide the key and cert paths; otherwise, comment out this block',
     },
     port: 3010,
     requireLogin: true,

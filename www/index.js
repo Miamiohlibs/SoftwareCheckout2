@@ -17,14 +17,14 @@ logger.info('starting admin web console');
 const baseApp = express(); // outer app
 const app = express();
 
-global.onServer =
+global.useHttps =
   config.hasOwnProperty('admin') &&
-  config.admin.hasOwnProperty('onServer') &&
-  config.admin.onServer === true;
+  config.admin.hasOwnProperty('useHttps') &&
+  config.admin.useHttps === true;
 
 let protocol = 'http';
 const hostname = config.admin.hostname;
-if (global.onServer) {
+if (global.useHttps) {
   protocol = 'https';
 }
 
@@ -281,14 +281,14 @@ app.get('*', function (req, res) {
 baseApp.use(app.locals.webPath, app);
 
 // Start server
-if (global.onServer === true) {
-  const server = config.admin.server;
+if (global.useHttps === true) {
+  const httpsCerts = config.admin.httpsCerts;
 
   https
     .createServer(
       {
-        key: fs.readFileSync(server.key),
-        cert: fs.readFileSync(server.cert),
+        key: fs.readFileSync(httpsCerts.key),
+        cert: fs.readFileSync(httpsCerts.cert),
       },
       baseApp,
     )

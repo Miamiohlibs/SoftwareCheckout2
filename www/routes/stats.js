@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const config = require('../../config/appConf');
+const appConf = require('../../config/appConf');
 let protocol = 'https';
-if (!config.admin.onServer) {
+if (!config.admin.useHttps) {
   protocol = 'http';
 }
 const baseUrl =
@@ -150,7 +151,11 @@ router.get('/eachCheckout', async (req, res) => {
       return;
     }
     const files = await response.json();
-    res.render('eachCheckoutList', { files: files, user: req.user || false });
+    res.render('eachCheckoutList', {
+      files: files,
+      user: req.user || false,
+      webPath: appConf.admin.webPath || '',
+    });
   } catch (err) {
     console.log(err);
     res.status(500).send('Error fetching data', err);
