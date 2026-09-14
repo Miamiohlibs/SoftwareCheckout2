@@ -1,18 +1,21 @@
 # Changelog
 
-## 2.5.0 - 2026-09-01
+## 2.5.0 - 2026-09-15
 
 ### Fixed
 
-- fixed bug that crashed the web app if expected data (e.g. stats, logs, etc.) is missing. The app now displays an error message instead of crashing.
+- Fixed bug that crashed the web app if expected data (e.g. stats, logs, etc.) is missing. The app now displays an error message instead of crashing.
+- Fixed a bug preventing the download of eachCheckout stats as a CSV file.
 
 ### Added
 
-- two configs in config/appConf: `admin.webPath` (root-relative) and `admin.webAbsolutePath` (fully qualified) to support installing the web app in a place other than the root path of a domain/port.
+- Two configs in config/appConf: `admin.webPath` (root-relative) and `admin.webAbsolutePath` (fully qualified) to support installing the web app in a place other than the root path of a domain/port (supports NGINX).
 
 ### Changed
 
-- append a final line to the command-line output of getUsageData.js, showing which dates and package the report covered.
+- Append a final line to the command-line output of getUsageData.js, showing which dates and package the report covered.
+- Moved application logs and stats logs to separately defined locations, with paths outside the app defined in the `appConf.js`.
+- Changed the `admin.onServer` and `admin.server` settings in `appConf.js` to be called `admin.useHttps` and `admin.httpsCerts` respectively to accomodate the fact that they are not necessary on NGINX installations (thus being on a server but still set to `false`.)
 
 ## 2.4.1 - 2025-06-30
 
