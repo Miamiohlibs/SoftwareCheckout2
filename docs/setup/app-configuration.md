@@ -41,7 +41,47 @@ This is an array of objects describing the connections between LibCal's names fo
     `{ name: 'Software Checkout Final Cut', id: 3 },` \
     `{ name: 'Software Checkout Logic Pro and Mainstage', id: 7 },` \
     `{ name: 'Software Checkout Procreate', id: 9 },` \
-    `{ name: 'Software Checkout Test', id: 8 },`\
-
+    `{ name: 'Software Checkout Test', id: 8 },`<br>
 
 You will also need to set up LibCal and at least one vendor (Adobe and/or Jamf). See the following sections of this documentation for details on those.
+
+#### `admin` (Admin Web Console configuration — optional)
+
+&#x20;If suing the optional Admin Web Console, you will need to configure the web server. There are four sets of configurations to consider: API key, server setup, authentication, and the visual theming of the interface.
+
+API key:
+
+* `apiKey` - Set this value to any string you like, but please change it from the default value in sample config to something else. This key is used in API calls from the front end to the back end and prevents your stats from being read without authentication. If you ever need to change the API key, just restart the web service afterward and the new key will go into effect. &#x20;
+
+Server setup:
+
+Software Checkout has been used on both Apache and NGINX servers, and each requires a different configuration.
+
+* `useHttps` - if using an Apache server, using the https settings is recommended. However, if you're using a reverse proxy setup such as in NGINX, you will to set this `false` as the https configuration will be handled by the server.
+* `httpsCerts` - if `useHttps` is set to true, include the `httpsCerts` object with properties `key` and `cert` that provide the absolute paths to your key/cert pair.  &#x20;
+* `port` - if using Apache, you may also need to specify a port number for the service; if using NGINX, this will likely be handled outside the software and not require configuration. The customary port for the admin console is :3010.&#x20;
+* `webPath` - root relative path to the web service, e.g. `/softwareCheckout`
+* `webAbsolutePath` - absolute path to the web service, e.g. `https://yourorg.edu/softwareCheckout`
+
+Authentication and authorization:&#x20;
+
+When using Software Checkout on a server, it is recommended that you set up authentication using Google and authorize specific users. To do so you will need to create a client ID and related credentials in the [Google Cloud Console](https://console.developers.google.com/apis/credentials).&#x20;
+
+* `requireLogin` - set to `true` to use Google authentication; setting to `false` is only recommended when running Software Checkout on a personal computer.
+* `allowedUsers` - list the emails of authorized users in an array, e.g. \['user1@yourorg.edu','user2@yourorg.edu']
+* `hostname` - 'localhost', // or 'your.hostname.edu'
+* `googleClientId` - created in the Google Cloud Console,
+* googleClientSecret: created in the Google Cloud Console,
+* authCallback: listed as "Authorized redirect URIs" in the Google Cloud Console — this will begin with the `webAbsolutePath` (the location of the main page of the admin console and then add `/google/callback` . You will add this link in the Google Cloud Console for each place you have Software Checkout running (e.g. on a server and perhaps also on a personal computer at `http://localhost:3010/google/callback` .
+
+Visual theming:&#x20;
+
+The Web Admin Console uses Bootstrap. When using Software Checkout on multiple platforms (such as on a server and on a personal computer) it can be useful to make the two versions of the admin console visually distinct. To do this you can use Bootstrap 5 color values to set the text and background colors of the page headers e.g.:
+
+```
+navbarTheme: {
+      backgroundColor: 'bg-secondary', // opts: bg-primary, bg-secondary, bg-success, bg-danger, bg-warning, bg-info, bg-light, bg-dark
+      textColor: 'navbar-dark', // use 'navbar-light' for light backgrounds, 'navbar-dark' for dark backgrounds
+    },
+```
+
