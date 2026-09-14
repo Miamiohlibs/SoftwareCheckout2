@@ -79,7 +79,7 @@ router.get('/daily', async (req, res) => {
       res.render('statsTable', {
         table: table,
         pageTitle: 'Daily Stats: Licenses in Use per Day',
-        downloadLink: '/stats/daily?format=csv',
+        downloadLink: `${baseUrl}/stats/daily?format=csv`,
         user: req.user || false,
       });
     }
@@ -125,7 +125,7 @@ router.get('/summary', async (req, res) => {
       showDateLimits: true,
       reportStartDate,
       reportEndDate,
-      downloadLink: `/stats/summary?format=csv&${queryString}`,
+      downloadLink: `${baseUrl}/stats/summary?format=csv&${queryString}`,
       user: req.user || false,
       alert,
     });
@@ -159,7 +159,7 @@ router.get('/eachCheckout', async (req, res) => {
 
 router.get('/eachCheckout/:file', async (req, res) => {
   let fileStr = req.params.file;
-  let downloadLink = `/stats/eachCheckout/${fileStr}?format=csv`;
+  let downloadLink = `${baseUrl}/stats/eachCheckout/${fileStr}?format=csv`;
   try {
     const data = await fetch(`${baseUrl}/api/stats/eachCheckout/${fileStr}`, {
       headers: { Authorization: `Bearer ${config.admin.apiKey}` },
