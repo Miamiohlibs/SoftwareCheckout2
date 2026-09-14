@@ -6,6 +6,7 @@ module.exports = {
   logLocation: '/absolute/path/to/logs',
   statsLogLocation: '/absolute/path/to/statslogs',
   admin: {
+    apiKey: 'writeYourOwnKeyHereTheValueIsNotImportant',
     useHttps: false,
     useHttpsNote:
       'if serving behind a reverse proxy (e.g. nginx), set to false',
@@ -17,7 +18,6 @@ module.exports = {
     port: 3010,
     requireLogin: true,
     allowedUsers: [], // list allowed emails here
-    apiKey: 'writeYourOwnKeyHereTheValueIsNotImportant',
     hostname: 'localhost', // or 'your.hostname.edu'
     googleClientId:
       'get a google client id from https://console.developers.google.com/apis/credentials',
