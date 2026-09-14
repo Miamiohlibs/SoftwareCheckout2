@@ -185,7 +185,7 @@ router.get('/eachCheckout/:file', async (req, res) => {
         'Content-Disposition',
         `attachment; filename=eachCheckout-${fileStr}.csv`,
       );
-      res.send(table);
+      res.send(csvData);
     } else {
       res.render('statsTable', {
         table: table,

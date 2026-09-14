@@ -81,7 +81,7 @@ module.exports = class AdobeSavingsCalculator {
     if (files.length > 0) {
       files = files.sort((a, b) => a.name.localeCompare(b.name));
       files.forEach((file) => {
-        console.log(`process file: ${this.conf.dirname} ${file.name}`);
+        // console.log(`process file: ${this.conf.dirname} ${file.name}`);
         this.processFile(this.conf.dirname, file.name);
       });
     }
