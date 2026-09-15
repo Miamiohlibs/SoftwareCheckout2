@@ -12,6 +12,7 @@ const config = require('../config/appConf');
 const port = config.admin.port || 3010;
 let logger = require('../services/logger');
 const { version } = require('../package.json');
+const appConf = require('../config/appConf');
 
 logger.info('starting admin web console');
 const baseApp = express(); // outer app
@@ -71,7 +72,8 @@ function isLoggedIn(req, res, next) {
   if (config.admin.requireLogin) {
     return req.isAuthenticated() && isPermittedUser(req)
       ? next()
-      : res.redirect('/?error=unauthorized');
+      : // : res.redirect('/?error=unauthorized');
+        res.redirect(`${appConf.admin.webAbsolutePath}/auth/google`);
   }
   return next();
   // req.user ? next() : res.sendStatus(401);
