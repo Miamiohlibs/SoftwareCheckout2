@@ -32,7 +32,7 @@ app.locals.version = version;
 app.locals.webPath = config.admin.webPath || '';
 app.locals.webAbsolutePath =
   config.admin.webAbsolutePath ||
-  `${protocol}//${config.admin.hostname}:${port}`;
+  `${protocol}://${config.admin.hostname}:${port}`;
 
 // Session configuration
 app.use(
@@ -105,7 +105,6 @@ app.use(`/api`, apiKeyAuth, apiRouter);
 let logsRouter = require('./routes/logs');
 app.use('/logs', isLoggedIn, logsRouter);
 let statsRouter = require('./routes/stats');
-const { error } = require('console');
 app.use('/stats', isLoggedIn, statsRouter);
 
 app.set('json spaces', 2);
@@ -152,7 +151,9 @@ app.get(`/systemStatus`, isLoggedIn, async (req, res) => {
   } catch (err) {
     res
       .status(500)
-      .send('Error fetching data: ' + JSON.stringify(err) + { json });
+      .send(
+        'Error fetching data in systemsStatus route: ' + JSON.stringify(err),
+      );
   }
 });
 
