@@ -6,6 +6,7 @@
 
 - Fixed bug that crashed the web app if expected data (e.g. stats, logs, etc.) is missing. The app now displays an error message instead of crashing.
 - Fixed a bug preventing the download of eachCheckout stats as a CSV file.
+- More graceful handling of forcing login after restarting the web service.
 
 ### Added
 
