@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const config = require('../../config/appConf');
+const appConf = require('../../config/appConf');
 let protocol = 'https';
-if (!config.admin.onServer) {
+if (!config.admin.useHttps) {
   protocol = 'http';
 }
 const baseUrl =
@@ -79,7 +80,7 @@ router.get('/daily', async (req, res) => {
       res.render('statsTable', {
         table: table,
         pageTitle: 'Daily Stats: Licenses in Use per Day',
-        downloadLink: '/stats/daily?format=csv',
+        downloadLink: `${baseUrl}/stats/daily?format=csv`,
         user: req.user || false,
       });
     }
@@ -125,7 +126,7 @@ router.get('/summary', async (req, res) => {
       showDateLimits: true,
       reportStartDate,
       reportEndDate,
-      downloadLink: `/stats/summary?format=csv&${queryString}`,
+      downloadLink: `${baseUrl}/stats/summary?format=csv&${queryString}`,
       user: req.user || false,
       alert,
     });
@@ -150,7 +151,11 @@ router.get('/eachCheckout', async (req, res) => {
       return;
     }
     const files = await response.json();
-    res.render('eachCheckoutList', { files: files, user: req.user || false });
+    res.render('eachCheckoutList', {
+      files: files,
+      user: req.user || false,
+      webPath: appConf.admin.webPath || '',
+    });
   } catch (err) {
     console.log(err);
     res.status(500).send('Error fetching data', err);
@@ -158,15 +163,12 @@ router.get('/eachCheckout', async (req, res) => {
 });
 
 router.get('/eachCheckout/:file', async (req, res) => {
-  let fileStr = req.params.file.replace('.json', '');
-  let downloadLink = `/stats/eachCheckout/${req.params.file}?format=csv`;
+  let fileStr = req.params.file;
+  let downloadLink = `${baseUrl}/stats/eachCheckout/${fileStr}?format=csv`;
   try {
-    const data = await fetch(
-      `${baseUrl}/api/stats/eachCheckout/${req.params.file}`,
-      {
-        headers: { Authorization: `Bearer ${config.admin.apiKey}` },
-      },
-    );
+    const data = await fetch(`${baseUrl}/api/stats/eachCheckout/${fileStr}`, {
+      headers: { Authorization: `Bearer ${config.admin.apiKey}` },
+    });
     if (data.status !== 200) {
       res.status(data.status).render('error', {
         message: 'Error fetching data',
@@ -183,11 +185,11 @@ router.get('/eachCheckout/:file', async (req, res) => {
         'Content-Disposition',
         `attachment; filename=eachCheckout-${fileStr}.csv`,
       );
-      res.send(table);
+      res.send(csvData);
     } else {
       res.render('statsTable', {
         table: table,
-        pageTitle: `Each Checkout: ${req.params.file}`,
+        pageTitle: `Each Checkout: ${fileStr}`,
         downloadLink,
         user: req.user || false,
       });

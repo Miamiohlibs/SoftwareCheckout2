@@ -3,17 +3,21 @@ module.exports = {
     secret: 'you should replace this with gibberish of your own',
     note: 'this is used to encrypt the user data in the logs',
   },
+  logLocation: '/absolute/path/to/logs',
+  statsLogLocation: '/absolute/path/to/statslogs',
   admin: {
-    onServer: false,
-    server: {
+    apiKey: 'writeYourOwnKeyHereTheValueIsNotImportant',
+    useHttps: false,
+    useHttpsNote:
+      'if serving behind a reverse proxy (e.g. nginx), set to false',
+    httpsCerts: {
       key: '/path/to/public_key.key',
       cert: '/path/to/certificate.crt',
-      note: 'if onServer is true, you need to provide the key and cert paths',
+      note: 'if useHttps is true, you need to provide the key and cert paths; otherwise, comment out this block',
     },
     port: 3010,
     requireLogin: true,
     allowedUsers: [], // list allowed emails here
-    apiKey: 'writeYourOwnKeyHereTheValueIsNotImportant',
     hostname: 'localhost', // or 'your.hostname.edu'
     googleClientId:
       'get a google client id from https://console.developers.google.com/apis/credentials',
@@ -41,18 +45,13 @@ module.exports = {
     test: {
       connection:
         'mongodb://localhost:27017/softwareCheckout?appname=SoftwareCheckoutTest&ssl=false',
-      config: {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      },
+      config: {},
     },
     prod: {
       connection: '',
       config: {
-        sslValidate: true,
-        sslCA: 'ssl-cert.pem', // in certs folder
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
+        tlsAllowInvalidCertificates: false,
+        tlsCAFile: 'ssl-cert.pem', // in certs folder
       },
     },
   },

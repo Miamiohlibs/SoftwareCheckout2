@@ -1,5 +1,22 @@
 # Changelog
 
+## 2.5.0 - 2026-09-15
+
+### Fixed
+
+- Fixed bug that crashed the web app if expected data (e.g. stats, logs, etc.) is missing. The app now displays an error message instead of crashing.
+- Fixed a bug preventing the download of eachCheckout stats as a CSV file.
+
+### Added
+
+- Two configs in config/appConf: `admin.webPath` (root-relative) and `admin.webAbsolutePath` (fully qualified) to support installing the web app in a place other than the root path of a domain/port (supports NGINX).
+
+### Changed
+
+- Append a final line to the command-line output of getUsageData.js, showing which dates and package the report covered.
+- Moved application logs and stats logs to separately defined locations, with paths outside the app defined in the `appConf.js`.
+- Changed the `admin.onServer` and `admin.server` settings in `appConf.js` to be called `admin.useHttps` and `admin.httpsCerts` respectively to accomodate the fact that they are not necessary on NGINX installations (thus being on a server but still set to `false`.)
+
 ## 2.4.1 - 2025-06-30
 
 ### Changed
@@ -12,6 +29,7 @@
 - removed unused ./index.js file.
 
 =======
+
 ## 2.4.0 - 2024-10-30
 
 ### Added
