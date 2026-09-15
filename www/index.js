@@ -105,7 +105,6 @@ app.use(`/api`, apiKeyAuth, apiRouter);
 let logsRouter = require('./routes/logs');
 app.use('/logs', isLoggedIn, logsRouter);
 let statsRouter = require('./routes/stats');
-const { error } = require('console');
 app.use('/stats', isLoggedIn, statsRouter);
 
 app.set('json spaces', 2);
