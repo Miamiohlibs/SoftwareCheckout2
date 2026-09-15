@@ -6,7 +6,7 @@ const appConf = require('../config/appConf');
 
 module.exports = class LogQuerier {
   constructor() {
-    this.logDir = path.resolve(appConf.statsLogLocation);
+    this.logDir = path.resolve(appConf.logLocation);
   }
 
   getLogDates() {
