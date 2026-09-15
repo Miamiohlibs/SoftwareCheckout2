@@ -7,8 +7,9 @@ const util = require('util');
 
 const activeDb = appConf.database.use;
 const connectionString = appConf.database[activeDb].connection;
+let useDb = appConf.database.active;
 let config = appConf.database[activeDb].config;
-if (config.tlsCAFile && typeof config.tlsCAFile == 'string') {
+if (useDb & config.tlsCAFile && typeof config.tlsCAFile == 'string') {
   const certsPath = path.join(__dirname, '..', 'certs', config.tlsCAFile);
 
   try {
