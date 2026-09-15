@@ -6,7 +6,7 @@ if (!config.admin.useHttps) {
   protocol = 'http';
 }
 
-const baseUrl = `${config.admin.webAbsolutePath}`;
+const baseUrl = config.admin.webAbsolutePath;
 
 router.get('/', async (req, res) => {
   try {
