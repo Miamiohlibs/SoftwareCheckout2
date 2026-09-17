@@ -11,3 +11,14 @@ describe('Initialization', () => {
     expect(api.token).toBe('12345'); // value from fakeConf
   });
 });
+
+describe('getAuthHeaders', () => {
+  const api = new MiamiDamApi(fakeConf);
+
+  it('should set the authHeaders', async () => {
+    let authHeaders = api.getAuthHeaders();
+    expect(typeof authHeaders).toBe('object');
+    expect(authHeaders).toHaveProperty('Authorization');
+    expect(authHeaders.Authorization).toMatch(/^Bearer 12345$/);
+  });
+});

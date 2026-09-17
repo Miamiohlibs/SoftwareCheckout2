@@ -8,4 +8,10 @@ module.exports = class AdobeUserMgmtApi {
   constructor(conf) {
     this.token = conf.credentials.token;
   }
+
+  getAuthHeaders() {
+    return {
+      Authorization: `Bearer ${this.token}`,
+    };
+  }
 };
