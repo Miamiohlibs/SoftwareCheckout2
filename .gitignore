@@ -11,6 +11,7 @@ config/libCal.js
 config/appConf.js
 config/campusConf.js
 config/jamf.js
+config/miamiDam.js
 adobe.testConf.js
 www/.next/*
 connection-strings.txt
