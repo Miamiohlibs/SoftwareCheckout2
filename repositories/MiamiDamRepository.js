@@ -22,6 +22,21 @@ module.exports = class MiamiDamRepository {
     }
   }
 
+  async getOneGroupMember(group, memberId) {
+    const queryConf = {
+      method: 'get',
+      url: this.baseUrl + '/members/' + group + '/' + memberId,
+    };
+    try {
+      let res = await this.api.getQueryResults(queryConf);
+      return res;
+    } catch (err) {
+      logger.error(
+        `MiamiDamRepository.getOneGroupMember received error: ${err.message} `,
+      );
+    }
+  }
+
   async addGroupMember(group, memberId) {
     const queryConf = {
       method: 'post',

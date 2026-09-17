@@ -1,8 +1,8 @@
 // select which adobe permissions group to interact with
 
 // select an action: add, remove, list, quit
-// if add, prompt for email address
-// if remove, prompt for email address
+// if add, prompt for uniqueId address
+// if remove, prompt for uniqueId address
 // if list, list all users in the group
 // if quit, exit the program
 const inquirer = require('inquirer');
@@ -43,10 +43,10 @@ const addUser = async () => {
   const groupName = getSoftware.groupName;
   const entry = await inquirer.prompt({
     type: 'input',
-    name: 'email',
-    message: 'Email address?',
+    name: 'uniqueId',
+    message: 'uniqueId?',
   });
-  let res = await vendorRepo.addGroupMember(groupName, entry.email);
+  let res = await vendorRepo.addGroupMember(groupName, entry.uniqueId);
   console.log(JSON.stringify(res));
 };
 
@@ -55,10 +55,10 @@ const removeUsers = async () => {
   const groupName = getSoftware.groupName;
   const entry = await inquirer.prompt({
     type: 'input',
-    name: 'email',
-    message: 'Email address?',
+    name: 'uniqueId',
+    message: 'uniqueId?',
   });
-  let res = await vendorRepo.removeGroupMember(groupName, entry.email);
+  let res = await vendorRepo.removeGroupMember(groupName, entry.uniqueId);
   console.log(JSON.stringify(res, null, 2));
 };
 
@@ -68,18 +68,18 @@ const listUsers = async () => {
   const users = await vendorRepo.getGroupMembers(groupName);
   console.log(JSON.stringify(users, null, 2));
 };
-// const findUser = async () => {
-//   const getSoftware = await chooseGroup('Find');
-//   const groupName = getSoftware.groupName;
-//   const entry = await inquirer.prompt({
-//     type: 'input',
-//     name: 'email',
-//     message: 'Email address?',
-//   });
-//   let all = await adobeRepo.getGroupMembers(groupName, entry.email);
-//   let res = all.filter((item) => item.email == entry.email);
-//   console.log(JSON.stringify(res, null, 2));
-// };
+
+const findUser = async () => {
+  const getSoftware = await chooseGroup('Find');
+  const groupName = getSoftware.groupName;
+  const entry = await inquirer.prompt({
+    type: 'input',
+    name: 'uniqueId',
+    message: 'uniqueId?',
+  });
+  let res = await vendorRepo.getOneGroupMember(groupName, entry.uniqueId);
+  console.log(JSON.stringify(res, null, 2));
+};
 
 const main = async () => {
   const action = await mainMenu();
