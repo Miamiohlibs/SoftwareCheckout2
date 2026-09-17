@@ -10,6 +10,8 @@ describe('Initialization', () => {
     expect(typeof api).toBe('object');
     expect(api).toHaveProperty('token');
     expect(api.token).toBe('12345'); // value from fakeConf
+    expect(api).toHaveProperty('baseUrl');
+    expect(api.baseUrl).toBe('https://fake.org/api'); // value from fakeConf
   });
 });
 

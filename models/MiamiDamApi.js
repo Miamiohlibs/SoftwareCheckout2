@@ -7,6 +7,7 @@ const { axiosLogPrep } = require('../helpers/utils');
 module.exports = class AdobeUserMgmtApi {
   constructor(conf) {
     this.token = conf.credentials.token;
+    this.baseUrl = conf.baseUrl;
   }
 
   getAuthHeaders() {
