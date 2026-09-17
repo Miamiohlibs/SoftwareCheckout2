@@ -1,6 +1,6 @@
 // const realConf = require('../../config/miamiDam');
 const axios = require('axios');
-const fakeConf = require('./sample-data/miamiDamConf.js');
+const fakeConf = require('../sample-data/miamiDamConf.js');
 const MiamiDamApi = require('../../models/MiamiDamApi.js');
 
 describe('Initialization', () => {
