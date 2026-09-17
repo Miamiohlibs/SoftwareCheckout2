@@ -2,11 +2,11 @@ const express = require('express');
 const router = express.Router();
 const config = require('../../config/appConf');
 let protocol = 'https';
-if (!config.admin.onServer) {
+if (!config.admin.useHttps) {
   protocol = 'http';
 }
 
-const baseUrl = `${config.admin.webAbsolutePath}`;
+const baseUrl = config.admin.webAbsolutePath;
 
 router.get('/', async (req, res) => {
   try {

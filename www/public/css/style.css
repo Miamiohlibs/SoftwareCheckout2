@@ -1,3 +1,7 @@
+footer { 
+  bottom: 0;
+  width: 100%;
+}
 .caps {
     text-transform: capitalize;
 }
