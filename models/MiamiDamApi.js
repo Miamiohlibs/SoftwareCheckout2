@@ -14,4 +14,20 @@ module.exports = class AdobeUserMgmtApi {
       Authorization: `Bearer ${this.token}`,
     };
   }
+
+  async getQueryResults(queryConf) {
+    logger.debug('MiamiDamApi: starting getQueryResults with queryConf', {
+      content: queryConf,
+    });
+    queryConf.headers = this.getAuthHeaders();
+    try {
+      let res = await axios.request(queryConf);
+      return { data: res.data };
+    } catch (err) {
+      logger.error(`MiamiDamApi Failed query`, {
+        content: axiosLogPrep(err),
+        status: err.response.status,
+      });
+    }
+  }
 };
