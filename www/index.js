@@ -11,20 +11,29 @@ require('./auth');
 const config = require('../config/appConf');
 const port = config.admin.port || 3010;
 let logger = require('../services/logger');
+const { version } = require('../package.json');
+const appConf = require('../config/appConf');
 
 logger.info('starting admin web console');
+const baseApp = express(); // outer app
 const app = express();
 
-global.onServer =
+global.useHttps =
   config.hasOwnProperty('admin') &&
-  config.admin.hasOwnProperty('onServer') &&
-  config.admin.onServer === true;
+  config.admin.hasOwnProperty('useHttps') &&
+  config.admin.useHttps === true;
 
 let protocol = 'http';
 const hostname = config.admin.hostname;
-if (global.onServer) {
+if (global.useHttps) {
   protocol = 'https';
 }
+
+app.locals.version = version;
+app.locals.webPath = config.admin.webPath || '';
+app.locals.webAbsolutePath =
+  config.admin.webAbsolutePath ||
+  `${protocol}://${config.admin.hostname}:${port}`;
 
 // Session configuration
 app.use(
@@ -32,7 +41,7 @@ app.use(
     secret: 'your-secret-key',
     resave: false,
     saveUninitialized: true,
-  })
+  }),
 );
 
 app.use(passport.initialize());
@@ -63,7 +72,8 @@ function isLoggedIn(req, res, next) {
   if (config.admin.requireLogin) {
     return req.isAuthenticated() && isPermittedUser(req)
       ? next()
-      : res.redirect('/?error=unauthorized');
+      : // : res.redirect('/?error=unauthorized');
+        res.redirect(`${appConf.admin.webAbsolutePath}/auth/google`);
   }
   return next();
   // req.user ? next() : res.sendStatus(401);
@@ -87,32 +97,35 @@ app.set('views', path.resolve(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use(express.static(__dirname + '/public'));
 
-// Routes
+// app.get(`/`, (req, res) => {
+//   res.send('<h1>This is a test</h1>');
+// });
+
+// // Routes
 let apiRouter = require('./routes/api');
-app.use('/api', apiKeyAuth, apiRouter);
+app.use(`/api`, apiKeyAuth, apiRouter);
 let logsRouter = require('./routes/logs');
 app.use('/logs', isLoggedIn, logsRouter);
 let statsRouter = require('./routes/stats');
-const { error } = require('console');
 app.use('/stats', isLoggedIn, statsRouter);
 
 app.set('json spaces', 2);
 
-app.get('/', (req, res) => {
+app.get(`/`, (req, res) => {
   if (config.admin.requireLogin & !isPermittedUser(req)) {
     res.render('landing', { error: req.query.error });
   } else {
-    res.redirect('/systemStatus');
+    res.redirect(`${app.locals.webPath}/systemStatus`);
   }
 });
 
 app.get(
-  '/auth/google',
-  passport.authenticate('google', { scope: ['email', 'profile'] })
+  `/auth/google`,
+  passport.authenticate('google', { scope: ['email', 'profile'] }),
 );
 
 app.get(
-  '/google/callback',
+  `/google/callback`,
   passport.authenticate('google', {
     failureRedirect: '/auth/failure',
   }),
@@ -122,31 +135,32 @@ app.get(
       email: req.user.email,
       name: req.user.displayName,
     };
-    res.redirect('/systemStatus');
-  }
+    res.redirect(`${app.locals.webPath}/systemStatus`);
+  },
 );
 
-app.get('/auth/failure', (req, res) => {
+app.get(`/auth/failure`, (req, res) => {
   res.send('Failed to authenticate');
 });
 
-app.get('/systemStatus', isLoggedIn, async (req, res) => {
+app.get(`/systemStatus`, isLoggedIn, async (req, res) => {
   try {
-    let data = await fetch(
-      `${protocol}://${config.admin.hostname}:${port}/api/groups`,
-      {
-        headers: { Authorization: `Bearer ${config.admin.apiKey}` },
-      }
-    );
+    let data = await fetch(`${app.locals.webAbsolutePath}/api/groups`, {
+      headers: { Authorization: `Bearer ${config.admin.apiKey}` },
+    });
     let json = await data.json();
     res.render('systemStatus', { data: json, user: req.user });
   } catch (err) {
-    res.status(500).send('Error fetching data: ' + JSON.stringify(err));
+    res
+      .status(500)
+      .send(
+        'Error fetching data in systemsStatus route: ' + JSON.stringify(err),
+      );
   }
 });
 
 app.get('/compare', isLoggedIn, async (req, res) => {
-  let url = `${protocol}://${hostname}:${port}/api/${req.query.vendor}/compare?group=${req.query.group}&cid=${req.query.cid}`;
+  let url = `${app.locals.webAbsolutePath}/api/${req.query.vendor}/compare?group=${req.query.group}&cid=${req.query.cid}`;
   try {
     let response = await fetch(url, {
       headers: { Authorization: `Bearer ${config.admin.apiKey}` },
@@ -181,8 +195,8 @@ app.get('/compare', isLoggedIn, async (req, res) => {
 app.get('/fetch', isLoggedIn, async (req, res) => {
   try {
     let response = await fetch(
-      `${protocol}://${hostname}:${port}/api/${req.query.vendor}?group=${req.query.group}`,
-      { headers: { Authorization: `Bearer ${config.admin.apiKey}` } }
+      `${app.locals.webAbsolutePath}/api/${req.query.vendor}?group=${req.query.group}`,
+      { headers: { Authorization: `Bearer ${config.admin.apiKey}` } },
     );
     let json = await response.json();
     if (!response.ok) {
@@ -215,8 +229,8 @@ app.get('/fetch', isLoggedIn, async (req, res) => {
 app.get('/future', isLoggedIn, async (req, res) => {
   try {
     let response = await fetch(
-      `${protocol}://${hostname}:${port}/api/libcal/future/${req.query.group}`,
-      { headers: { Authorization: `Bearer ${config.admin.apiKey}` } }
+      `${app.locals.webAbsolutePath}/api/libcal/future/${req.query.group}`,
+      { headers: { Authorization: `Bearer ${config.admin.apiKey}` } },
     );
     let json = await response.json();
     if (!response.ok) {
@@ -254,7 +268,7 @@ app.get('/logout', function (req, res, next) {
       if (err) {
         return next(err);
       }
-      res.redirect('/');
+      res.redirect(`${app.locals.webAbsolutePath}`);
     });
   });
 });
@@ -267,25 +281,27 @@ app.get('*', function (req, res) {
   });
 });
 
+baseApp.use(app.locals.webPath, app);
+
 // Start server
-if (global.onServer === true) {
-  const server = config.admin.server;
+if (global.useHttps === true) {
+  const httpsCerts = config.admin.httpsCerts;
 
   https
     .createServer(
       {
-        key: fs.readFileSync(server.key),
-        cert: fs.readFileSync(server.cert),
+        key: fs.readFileSync(httpsCerts.key),
+        cert: fs.readFileSync(httpsCerts.cert),
       },
-      app
+      baseApp,
     )
     .listen(port, function () {
       console.log(
-        `Server app listening on port ${port}! Go to https://${hostname}:${port}/`
+        `Server app listening on port ${port}! Go to https://${hostname}:${port}/`,
       );
     });
 } else {
-  app.listen(port, () => {
+  baseApp.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
   });
 }

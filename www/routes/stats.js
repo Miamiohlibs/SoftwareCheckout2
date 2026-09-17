@@ -1,11 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const config = require('../../config/appConf');
+const appConf = require('../../config/appConf');
 let protocol = 'https';
-if (!config.admin.onServer) {
+if (!config.admin.useHttps) {
   protocol = 'http';
 }
-const baseUrl = `${protocol}://${config.admin.hostname}:${config.admin.port}`;
+const baseUrl =
+  config.admin.webAbsolutePath ||
+  `${protocol}://${config.admin.hostname}:${config.admin.port}`;
 
 function stripQuotes(str) {
   return str.replace(/^"(.*)"$/, '$1');
@@ -49,28 +52,38 @@ function csvToHtmlTable(csvData) {
 
 router.get('/daily', async (req, res) => {
   try {
-    const data = await fetch(`${baseUrl}/api/stats/daily`, {
+    const response = await fetch(`${baseUrl}/api/stats/daily`, {
       headers: { Authorization: `Bearer ${config.admin.apiKey}` },
     });
-    const csvData = await data.text();
-    const table = csvToHtmlTable(csvData);
-
-    if (req.query.format === 'csv') {
-      res.setHeader('Content-Type', 'text/csv');
-      res.setHeader(
-        'Content-Disposition',
-        'attachment; filename=dailyStats.csv'
-      );
-      res.send(csvData);
+    if (!response.ok) {
+      const errorText = await response.text();
+      res.render('error', {
+        message: 'Error retrieving data',
+        error: errorText,
+        errorNumber: response.status,
+      });
       return;
-    }
+    } else {
+      const csvData = await response.text();
+      const table = csvToHtmlTable(csvData);
 
-    res.render('statsTable', {
-      table: table,
-      pageTitle: 'Daily Stats: Licenses in Use per Day',
-      downloadLink: '/stats/daily?format=csv',
-      user: req.user || false,
-    });
+      if (req.query.format === 'csv') {
+        res.setHeader('Content-Type', 'text/csv');
+        res.setHeader(
+          'Content-Disposition',
+          'attachment; filename=dailyStats.csv',
+        );
+        res.send(csvData);
+        return;
+      }
+
+      res.render('statsTable', {
+        table: table,
+        pageTitle: 'Daily Stats: Licenses in Use per Day',
+        downloadLink: `${baseUrl}/stats/daily?format=csv`,
+        user: req.user || false,
+      });
+    }
   } catch (err) {
     console.log(err);
     res.status(500).send('Error fetching data', err);
@@ -101,7 +114,7 @@ router.get('/summary', async (req, res) => {
       res.setHeader('Content-Type', 'text/csv');
       res.setHeader(
         'Content-Disposition',
-        'attachment; filename=summaryStats.csv'
+        'attachment; filename=summaryStats.csv',
       );
       res.send(csvData);
       return;
@@ -113,7 +126,7 @@ router.get('/summary', async (req, res) => {
       showDateLimits: true,
       reportStartDate,
       reportEndDate,
-      downloadLink: `/stats/summary?format=csv&${queryString}`,
+      downloadLink: `${baseUrl}/stats/summary?format=csv&${queryString}`,
       user: req.user || false,
       alert,
     });
@@ -125,11 +138,24 @@ router.get('/summary', async (req, res) => {
 
 router.get('/eachCheckout', async (req, res) => {
   try {
-    const data = await fetch(`${baseUrl}/api/stats/eachCheckout`, {
+    const response = await fetch(`${baseUrl}/api/stats/eachCheckout`, {
       headers: { Authorization: `Bearer ${config.admin.apiKey}` },
     });
-    const files = await data.json();
-    res.render('eachCheckoutList', { files: files, user: req.user || false });
+    if (!response.ok) {
+      const errorText = await response.text();
+      res.render('error', {
+        message: 'Error retrieving data',
+        error: errorText,
+        errorNumber: response.status,
+      });
+      return;
+    }
+    const files = await response.json();
+    res.render('eachCheckoutList', {
+      files: files,
+      user: req.user || false,
+      webPath: appConf.admin.webPath || '',
+    });
   } catch (err) {
     console.log(err);
     res.status(500).send('Error fetching data', err);
@@ -137,15 +163,12 @@ router.get('/eachCheckout', async (req, res) => {
 });
 
 router.get('/eachCheckout/:file', async (req, res) => {
-  let fileStr = req.params.file.replace('.json', '');
-  let downloadLink = `/stats/eachCheckout/${req.params.file}?format=csv`;
+  let fileStr = req.params.file;
+  let downloadLink = `${baseUrl}/stats/eachCheckout/${fileStr}?format=csv`;
   try {
-    const data = await fetch(
-      `${baseUrl}/api/stats/eachCheckout/${req.params.file}`,
-      {
-        headers: { Authorization: `Bearer ${config.admin.apiKey}` },
-      }
-    );
+    const data = await fetch(`${baseUrl}/api/stats/eachCheckout/${fileStr}`, {
+      headers: { Authorization: `Bearer ${config.admin.apiKey}` },
+    });
     if (data.status !== 200) {
       res.status(data.status).render('error', {
         message: 'Error fetching data',
@@ -160,13 +183,13 @@ router.get('/eachCheckout/:file', async (req, res) => {
       res.setHeader('Content-Type', 'text/csv');
       res.setHeader(
         'Content-Disposition',
-        `attachment; filename=eachCheckout-${fileStr}.csv`
+        `attachment; filename=eachCheckout-${fileStr}.csv`,
       );
-      res.send(table);
+      res.send(csvData);
     } else {
       res.render('statsTable', {
         table: table,
-        pageTitle: `Each Checkout: ${req.params.file}`,
+        pageTitle: `Each Checkout: ${fileStr}`,
         downloadLink,
         user: req.user || false,
       });
@@ -179,10 +202,18 @@ router.get('/eachCheckout/:file', async (req, res) => {
 
 router.get('/adobeSavings', async (req, res) => {
   try {
-    const data = await fetch(`${baseUrl}/api/stats/adobeSavings`, {
+    const response = await fetch(`${baseUrl}/api/stats/adobeSavings`, {
       headers: { Authorization: `Bearer ${config.admin.apiKey}` },
     });
-    const json = await data.json();
+    if (!response.ok) {
+      res.status(response.status).render('error', {
+        message: 'Error fetching data',
+        error: response.statusText,
+        errorNumber: response.status,
+      });
+      return;
+    }
+    const json = await response.json();
     res.render('adobeSavings', {
       data: json,
       pageTitle: `Estimated Adobe Savings on ${json.conf.dirname}`,

@@ -2,7 +2,9 @@
 
 # relies on "tac" -- you must have coreutils installed for this to work
 # on a mac, do "brew install coreutils"
-tac logs/app.log  | awk '!flag; /Starting update at/{flag = 1};' | tac
+logDir=$(node helpers/getLogLocation.js)
+
+tac ${logDir}/app.log  | awk '!flag; /Starting update at/{flag = 1};' | tac
 
 # This way didn't work well after a while
 #START=`grep -n 'Starting update at' logs/app.log | tail -n1 | cut -d':' -f1`

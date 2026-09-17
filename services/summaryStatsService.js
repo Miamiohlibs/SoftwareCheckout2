@@ -6,6 +6,9 @@ module.exports = (format = 'csv', reportStartDate = '', reportEndDate = '') => {
   const statsSummary = new StatsSummary();
   statsSummary.summarizeEachPkg(reportStartDate, reportEndDate);
   const json = statsSummary.summaries;
+  if (json.length == 0) {
+    throw new Error('No data found');
+  }
   if (format == 'json') {
     return json;
   }

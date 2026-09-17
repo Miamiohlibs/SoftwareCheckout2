@@ -1,11 +1,12 @@
 const fs = require('fs');
 const path = require('path');
+const appConf = require('../config/appConf');
 
 module.exports = class StatsSummary {
   constructor() {
     this.allData = [];
-    let thisDir = path.dirname(__filename);
-    this.statsPath = path.join(thisDir, '../logs/dailyStats');
+    // let thisDir = path.dirname(__filename);
+    this.statsPath = path.join(appConf.statsLogLocation, 'dailyStats');
   }
 
   summarizeStats(softwareTitles) {
@@ -75,7 +76,7 @@ module.exports = class StatsSummary {
     }
     let confirmedBookings = data.filter((item) => item.status == 'Confirmed');
     let skipCheckins = confirmedBookings.filter(
-      (item) => !item.toDate.match(date + 'T00:00:00')
+      (item) => !item.toDate.match(date + 'T00:00:00'),
     );
     let distinctUsers = [...new Set(skipCheckins.map((item) => item.email))];
     let totalUsage = distinctUsers.length;

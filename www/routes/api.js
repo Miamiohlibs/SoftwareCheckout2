@@ -14,6 +14,7 @@ const path = require('path');
 const fs = require('fs');
 const { Parser } = require('json2csv');
 const libCal = require('../../config/libCal');
+const logger = require('../../services/logger');
 
 async function getAdobeBookingsByGroup(group) {
   const adobeConf = require('../../config/adobe');
@@ -54,7 +55,7 @@ async function getLibCalBookingsByCid(cid) {
           dayjs().diff(dayjs(waitTimeStarted), 'seconds') * 1000,
           {
             units: ['d', 'h', 'm', 's'],
-          }
+          },
         )
       : null;
     return i;
@@ -127,7 +128,7 @@ router.get('/adobe/compare', async (req, res) => {
     (i) =>
       parseInt(i.vendorGroupId) === parseInt(group) &&
       parseInt(i.libCalCid) === parseInt(cid) &&
-      i.vendor === 'Adobe'
+      i.vendor === 'Adobe',
   );
   if (matchingGroup.length != 1) {
     res.status(404).send({ error: 'Vendor/Group/CID not found in config' });
@@ -141,11 +142,11 @@ router.get('/adobe/compare', async (req, res) => {
   libCalEmails = await emailConverterService(libCalEmails);
   let emailsToRemove = filterToEntriesMissingFromSecondArray(
     adobeEmails,
-    libCalEmails
+    libCalEmails,
   );
   let emailsToAdd = filterToEntriesMissingFromSecondArray(
     libCalEmails,
-    adobeEmails
+    adobeEmails,
   );
   adobeEmails.sort();
   libCalEmails.sort();
@@ -172,7 +173,7 @@ router.get('/jamf/compare', async (req, res) => {
     (i) =>
       parseInt(i.vendorGroupId) === parseInt(group) &&
       parseInt(i.libCalCid) === parseInt(cid) &&
-      i.vendor === 'Jamf'
+      i.vendor === 'Jamf',
   );
   console.log(matchingGroup);
   if (matchingGroup.length != 1) {
@@ -187,11 +188,11 @@ router.get('/jamf/compare', async (req, res) => {
   libCalEmails = await emailConverterService(libCalEmails);
   let emailsToRemove = filterToEntriesMissingFromSecondArray(
     jamfEmails,
-    libCalEmails
+    libCalEmails,
   );
   let emailsToAdd = filterToEntriesMissingFromSecondArray(
     libCalEmails,
-    jamfEmails
+    jamfEmails,
   );
   libCalEmails.sort();
   jamfEmails.sort();
@@ -210,7 +211,7 @@ router.get('/logs', async (req, res) => {
   res.json(logs);
 });
 
-router.get('/logs/examine/:file/:uid', async (req, res) => {
+router.get(`/logs/examine/:file/:uid`, async (req, res) => {
   const logQuerier = new LogQuerier();
   let logs = logQuerier.readLogFile(req.params.file);
   if (logs === false) {
@@ -219,7 +220,7 @@ router.get('/logs/examine/:file/:uid', async (req, res) => {
     let entries = await logQuerier.selectEntriesByField(
       logs,
       'uid',
-      req.params.uid
+      req.params.uid,
     );
     res.json(entries);
   }
@@ -249,13 +250,24 @@ router.get('/stats/daily', (req, res) => {
   if (req.query.format) {
     format = req.query.format;
   }
-  const data = dailyStatsService(format);
-  if (format === 'json') {
-    res.json(data);
-  } else if (format === 'csv') {
-    res.setHeader('Content-Type', 'text/csv');
-    res.setHeader('Content-Disposition', 'attachment; filename=dailyStats.csv');
-    res.send(data);
+  try {
+    const data = dailyStatsService(format);
+    if (format === 'json') {
+      res.json(data);
+    } else if (format === 'csv') {
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader(
+        'Content-Disposition',
+        'attachment; filename=dailyStats.csv',
+      );
+      res.send(data);
+    }
+  } catch (error) {
+    res
+      .status(500)
+      .json(
+        'No data found -- this can occur when no usage data has been collected yet. This function looks for daily files in the logs/dailyStats folder, with stats for each service. If no stats are present it may be because the service has not yet started or the cronjob that collects daily stats has not yet started.',
+      );
   }
 });
 
@@ -279,10 +291,27 @@ router.get('/stats/summary', async (req, res) => {
 });
 
 router.get('/stats/eachCheckout', async (req, res) => {
-  let folder = 'logs/eachCheckout';
-  let files = fs.readdirSync(path.join(__dirname, '../../', folder));
+  let folder = 'eachCheckout';
+  const statsPath = path.join(appConf.statsLogLocation, folder);
+  if (!fs.existsSync(statsPath)) {
+    res
+      .status(500)
+      .send(
+        `No data found. Directory ${statsPath} not found. Run the logEachCheckout.js script to populate the data.`,
+      );
+    return;
+  }
+  let files = fs.readdirSync(statsPath);
+  if (files.length == 0) {
+    res
+      .status(500)
+      .send(
+        'No data found in directory logs/eachCheckout. Run the logEachCheckout.js script to populate the data.',
+      );
+    return;
+  }
   let fileInfo = files.map((file) => {
-    let filepath = path.join(__dirname, '../../', folder, file);
+    let filepath = path.join(statsPath, file);
     // let filepath = path.resolve(this.logDir + '/' + file);
     let stats = fs.statSync(filepath);
     if (stats.size <= 2) {
@@ -296,10 +325,10 @@ router.get('/stats/eachCheckout', async (req, res) => {
 });
 
 router.get('/stats/eachCheckout/:file', async (req, res) => {
-  let folder = 'logs/eachCheckout';
-  let file = req.params.file;
+  let folder = 'eachCheckout';
+  let file = req.params.file + '.json';
   try {
-    let filepath = path.join(__dirname, '../../', folder, file);
+    let filepath = path.join(appConf.statsLogLocation, folder, file);
     let data = fs.readFileSync(filepath, 'utf8');
     const json = JSON.parse(data);
 
@@ -311,7 +340,7 @@ router.get('/stats/eachCheckout/:file', async (req, res) => {
       res.setHeader('Content-Type', 'text/csv');
       res.setHeader(
         'Content-Disposition',
-        'attachment; filename=eachCheckout.csv'
+        'attachment; filename=eachCheckout.csv',
       );
       const parser = new Parser({});
       const csv = parser.parse(json);
@@ -329,8 +358,15 @@ router.get('/stats/adobeSavings', async (req, res) => {
   let calc = new AdobeSavingsCalculator(savingsConf);
   calc.calculateSavings();
 
-  let firstMonth = calc.monthlySavings[0].month;
-  let lastMonth = calc.monthlySavings[calc.monthlySavings.length - 1].month;
+  if (calc.error) {
+    let message = `Unable to access data: ${calc.errorMessage}`;
+    res.status(500).send(message);
+    logger.error(message);
+    return;
+  }
+
+  let firstMonth = calc.monthlySavings[0]?.month;
+  let lastMonth = calc.monthlySavings[calc.monthlySavings.length - 1]?.month;
 
   let output = {
     conf: calc.conf,

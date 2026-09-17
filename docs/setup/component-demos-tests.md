@@ -8,13 +8,13 @@ SoftwareCheckout relies on several interlocking parts; when setting up the servi
 
 ## libcal.demo.js
 
-On the command-line, run `node demos/libcal.demo.js`
+On the command-line, run `node demo/libcal.demo.js`
 
 This will call up a list of all the software packages and permissions groups configured in `config/appConf.js;` can select one, and the software will return a list of all the users assigned to that permissions group in LibCal. You can select how much information to return about each checkout. From most-to-least information, the format options are: Full, Compressed, Mini, Email only.
 
 ## adobe.demo.js
 
-On the command-line, run `node demos/adobe.demo.js`
+On the command-line, run `node demo/adobe.demo.js`
 
 This will allow you to:
 
@@ -25,7 +25,7 @@ This will allow you to:
 
 ## jamf.demo.js
 
-On the command-line, run `node demos/jamf.demo.js`
+On the command-line, run `node demo/jamf.demo.js`
 
 This will allow you to:
 
@@ -36,7 +36,7 @@ This will allow you to:
 
 ## email.demo.js
 
-On the command-line, run `node demos/email.demo.js`
+On the command-line, run `node demo/email.demo.js`
 
 You can use this if you have set `emailConverter.active: true` in `config/appConf.js` and configured the emailConverter API details (with or without a database setup) to look up the authoritative email address the system will use for your users. This can be an easy way to interact with your email database.
 
