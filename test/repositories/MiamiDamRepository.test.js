@@ -1,6 +1,7 @@
 const { beforeEach } = require('node:test');
 const MiamiDamRepository = require('../../repositories/MiamiDamRepository');
 const fakeConf = require('../sample-data/miamiDamConf');
+const { uniqueId } = require('lodash');
 
 describe('MiamiDamRepository', () => {
   beforeEach(() => {});
@@ -41,3 +42,39 @@ describe('MiamiDamRepository.getOneGroupMember', () => {
     });
   });
 });
+
+describe('addGroupMember', () => {
+  const repo = new MiamiDamRepository(fakeConf);
+
+  it('should call the correct endpoint with the fakeuser as data payload', async () => {
+    const querySpy = jest.spyOn(repo.api, 'getQueryResults').mockResolvedValue({
+      data: { success: true },
+    });
+    const res = await repo.addGroupMember('test-group', 'fakeuser');
+    expect(querySpy).toHaveBeenCalledWith({
+      method: 'post',
+      url: 'https://fake.org/api/members/test-group',
+      data: { uniqueId: 'fakeuser' },
+    });
+  });
+});
+
+// describe('addGroupMembers', () => {});
+
+describe('removeGroupMember', () => {
+  const repo = new MiamiDamRepository(fakeConf);
+  it('should call the correct endpoint with group name and memberId', async () => {
+    const querySpy = jest.spyOn(repo.api, 'getQueryResults').mockResolvedValue({
+      data: { success: true },
+    });
+    const res = await repo.removeGroupMember('test-group', 'fakeuser');
+    expect(querySpy).toHaveBeenCalledWith({
+      method: 'delete',
+      url: 'https://fake.org/api/members/test-group/fakeuser',
+    });
+  });
+});
+
+// describe('removeGroupMembers', () => {});
+
+// describe('getEmailsFromGroupMembers', () => {});
