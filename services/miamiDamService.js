@@ -31,12 +31,10 @@ module.exports = async () => {
 
     // get libCalList based on pkg.libCalCid
     let libCalBookings = await libCal.getCurrentValidBookings(pkg.libCalCid);
-    console.log(`libCalBookings is array? ${Array.isArray(libCalBookings)}`);
-    console.log(`libCalBookings: ${libCalBookings}`);
+
     // console.log(pkg.libCalCid, libCalBookings.length);
     let libCalEmails = libCal.getUniqueEmailsFromBookings(libCalBookings);
-    console.log(`libCalEmails is array? ${Array.isArray(libCalEmails)}`);
-    console.log(`libCalEmails: ${JSON.stringify(libCalEmails)}`);
+    logger.debug(`libCalEmails: ${JSON.stringify(libCalEmails)}`);
     logger.debug(
       `miamiDamService: libCalEmails (miamiDam group:${pkg.vendorGroupName}):(pid:${pid}-${i}):`,
       {
@@ -73,7 +71,8 @@ module.exports = async () => {
       currMiamiDamEmails,
       libCalEmails,
     );
-
+    logger.info(`miamiDamEmails: ${JSON.stringify(currMiamiDamEmails)}`);
+    logger.info(`libCalEmails: ${JSON.stringify(libCalEmails)}`);
     logger.info(
       `miamiDamService: starting miamiDam emailsToAdd (group:${pkg.vendorGroupName}) (pid:${pid}-${i})`,
     );
