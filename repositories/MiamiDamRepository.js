@@ -15,7 +15,7 @@ module.exports = class MiamiDamRepository {
     };
     try {
       let res = await this.api.getQueryResults(queryConf);
-      return res;
+      return res.data;
     } catch (err) {
       logger.error(
         `MiamiDamRepository.getGroupMembers received error: ${err.message} `,
@@ -30,7 +30,7 @@ module.exports = class MiamiDamRepository {
     };
     try {
       let res = await this.api.getQueryResults(queryConf);
-      return res;
+      return res.data;
     } catch (err) {
       logger.error(
         `MiamiDamRepository.getOneGroupMember received error: ${err.message} `,
@@ -49,7 +49,7 @@ module.exports = class MiamiDamRepository {
     };
     try {
       let res = await this.api.getQueryResults(queryConf);
-      return res;
+      return res.data;
     } catch (err) {
       logger.error(
         `MiamiDamRepository.addGroupMember received error: ${err.message} `,
@@ -72,7 +72,7 @@ module.exports = class MiamiDamRepository {
     };
     try {
       let res = await this.api.getQueryResults(queryConf);
-      return res;
+      return res.data;
     } catch (err) {
       logger.error(
         `MiamiDamRepository.removeGroupMember received error: ${err.message} `,
@@ -89,6 +89,9 @@ module.exports = class MiamiDamRepository {
   }
 
   getEmailsFromGroupMembers(groupList) {
+    console.log(
+      `getEmailsFromGroupMembers groupList is array? ${Array.isArray(groupList)}`,
+    );
     return groupList.map((item) => `${item.uniqueId}${this.emailSuffix}`);
   }
 
