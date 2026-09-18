@@ -5,6 +5,7 @@ module.exports = class MiamiDamRepository {
   constructor(conf) {
     this.api = new MiamiDamApi(conf);
     this.baseUrl = this.api.baseUrl;
+    this.emailSuffix = conf.emailSuffix;
   }
 
   async getGroupMembers(group) {
@@ -85,5 +86,9 @@ module.exports = class MiamiDamRepository {
       return await this.removeGroupMember(group, user);
     });
     return await Promise.all(promises);
+  }
+
+  getEmailsFromGroupMembers(groupList) {
+    return groupList.map((item) => `${item.uniqueId}${this.emailSuffix}`);
   }
 };

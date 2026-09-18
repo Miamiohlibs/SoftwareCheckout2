@@ -104,4 +104,9 @@ describe('removeGroupMembers', () => {
   });
 });
 
-// describe('getEmailsFromGroupMembers', () => {});
+describe('getEmailsFromGroupMembers', () => {
+  const repo = new MiamiDamRepository(fakeConf);
+  const groupMembers = require('./sample-data/miamiGroupResponse');
+  const emails = repo.getEmailsFromGroupMembers(groupMembers);
+  expect(emails).toEqual(['irwinkr@fake.org', 'bomholmm@fake.org']);
+});
