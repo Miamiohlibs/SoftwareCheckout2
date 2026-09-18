@@ -38,6 +38,7 @@ module.exports = class MiamiDamRepository {
   }
 
   async addGroupMember(group, memberId) {
+    logger.debug(`addGroupMember: ${memberId}`);
     const queryConf = {
       method: 'post',
       url: this.baseUrl + '/members/' + group,
@@ -56,10 +57,11 @@ module.exports = class MiamiDamRepository {
   }
 
   async addGroupMembers(group, userList) {
+    logger.debug(`addGroupMembers: ${JSON.stringify(userList)}`);
     const promises = userList.map(async (user) => {
       return await this.addGroupMember(group, user);
     });
-    Promise.all(promises);
+    return await Promise.all(promises);
   }
 
   async removeGroupMember(group, memberId) {
