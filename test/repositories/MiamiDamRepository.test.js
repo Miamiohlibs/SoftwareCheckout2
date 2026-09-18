@@ -89,6 +89,19 @@ describe('removeGroupMember', () => {
   });
 });
 
-// describe('removeGroupMembers', () => {});
+describe('removeGroupMembers', () => {
+  const repo = new MiamiDamRepository(fakeConf);
+  const fakeUserList = ['user1', 'user2', 'user3'];
+  it('should call addGroupMember three times', async () => {
+    const querySpy = jest
+      .spyOn(repo, 'removeGroupMember')
+      .mockImplementation(() => Promise.resolve());
+    const res = await repo.removeGroupMembers('test-group', fakeUserList);
+    expect(querySpy).toHaveBeenCalledTimes(3);
+    expect(querySpy).toHaveBeenCalledWith('test-group', 'user1');
+    expect(querySpy).toHaveBeenCalledWith('test-group', 'user2');
+    expect(querySpy).toHaveBeenCalledWith('test-group', 'user3');
+  });
+});
 
 // describe('getEmailsFromGroupMembers', () => {});

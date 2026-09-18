@@ -78,4 +78,12 @@ module.exports = class MiamiDamRepository {
       );
     }
   }
+
+  async removeGroupMembers(group, userList) {
+    logger.debug(`removeGroupMembers: ${JSON.stringify(userList)}`);
+    const promises = userList.map(async (user) => {
+      return await this.removeGroupMember(group, user);
+    });
+    return await Promise.all(promises);
+  }
 };
