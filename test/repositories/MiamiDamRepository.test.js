@@ -2,6 +2,7 @@ const { beforeEach } = require('node:test');
 const MiamiDamRepository = require('../../repositories/MiamiDamRepository');
 const fakeConf = require('../sample-data/miamiDamConf');
 const { uniqueId } = require('lodash');
+const { query } = require('winston');
 
 describe('MiamiDamRepository', () => {
   beforeEach(() => {});
@@ -59,7 +60,20 @@ describe('addGroupMember', () => {
   });
 });
 
-// describe('addGroupMembers', () => {});
+describe('addGroupMembers', () => {
+  const repo = new MiamiDamRepository(fakeConf);
+  const fakeUserList = ['user1', 'user2', 'user3'];
+  it('should call addGroupMember three times', async () => {
+    const querySpy = jest
+      .spyOn(repo, 'addGroupMember')
+      .mockImplementation(() => Promise.resolve());
+    const res = await repo.addGroupMembers('test-group', fakeUserList);
+    expect(querySpy).toHaveBeenCalledTimes(3);
+    expect(querySpy).toHaveBeenCalledWith('test-group', 'user1');
+    expect(querySpy).toHaveBeenCalledWith('test-group', 'user2');
+    expect(querySpy).toHaveBeenCalledWith('test-group', 'user3');
+  });
+});
 
 describe('removeGroupMember', () => {
   const repo = new MiamiDamRepository(fakeConf);
