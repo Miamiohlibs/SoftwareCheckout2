@@ -89,9 +89,6 @@ module.exports = class MiamiDamRepository {
   }
 
   getEmailsFromGroupMembers(groupList) {
-    console.log(
-      `getEmailsFromGroupMembers groupList is array? ${Array.isArray(groupList)}`,
-    );
     return groupList.map((item) => `${item.uniqueId}${this.emailSuffix}`);
   }
 

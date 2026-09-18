@@ -9,11 +9,16 @@ const appConf = require('../config/appConf');
 const LicenseGroup = require('../helpers/LicenseGroup');
 const licenses = new LicenseGroup(appConf);
 const logger = require('./logger');
+const {
+  asyncForEach,
+  filterToEntriesMissingFromSecondArray,
+} = require('../helpers/utils');
 let software = licenses.getLicenseGroupsByVendor('MiamiDam');
 let pid = process.pid;
 
 module.exports = async () => {
   logger.info('miamiDamService: starting miamiDamService');
+  logger.info(`software: ${JSON.stringify(software)}`);
   let i = 0;
   asyncForEach(software, async (pkg) => {
     i++;
@@ -26,28 +31,27 @@ module.exports = async () => {
 
     // get libCalList based on pkg.libCalCid
     let libCalBookings = await libCal.getCurrentValidBookings(pkg.libCalCid);
+    console.log(`libCalBookings is array? ${Array.isArray(libCalBookings)}`);
+    console.log(`libCalBookings: ${libCalBookings}`);
     // console.log(pkg.libCalCid, libCalBookings.length);
     let libCalEmails = libCal.getUniqueEmailsFromBookings(libCalBookings);
+    console.log(`libCalEmails is array? ${Array.isArray(libCalEmails)}`);
+    console.log(`libCalEmails: ${JSON.stringify(libCalEmails)}`);
     logger.debug(
       `miamiDamService: libCalEmails (miamiDam group:${pkg.vendorGroupName}):(pid:${pid}-${i}):`,
       {
         content: libCalEmails,
       },
     );
-    // // get miamiDam list based on pkg.vendorGroupName
-    let group;
-    if (pkg.hasOwnProperty('vendorGroupId')) {
-      group = pkg.vendorGroupId;
-    } else {
-      group = pkg.vendorGroupName;
-    }
-    let currAdobeEntitlements = await miamiDam.getGroupMembers(group);
-    logger.info(
-      `miamiDamService: length of currAdobeEntitlements: ${currAdobeEntitlements.length} (group:${pkg.vendorGroupName}) (pid:${pid}-${i})`,
+    // // get miamiDam list based on pkg.vendorGroupId
+    let currMiamiEntitlements = await miamiDam.getGroupMembers(
+      pkg.vendorGroupId,
     );
-    // console.log('currAdobeEntitlements:', currAdobeEntitlements.length);
+    logger.info(
+      `miamiDamService: length of currMiamiEntitlements: ${currMiamiEntitlements.length} (group:${pkg.vendorGroupName}) (pid:${pid}-${i})`,
+    );
     let currMiamiDamEmails = miamiDam.getEmailsFromGroupMembers(
-      currAdobeEntitlements,
+      currMiamiEntitlements,
     );
     logger.debug(
       `miamiDamService: currMiamiDamEmails (group:${pkg.vendorGroupName}):(pid:${pid}-${i}):`,
@@ -57,24 +61,6 @@ module.exports = async () => {
       `miamiDamService: length of currMiamiDamEmails: ${currMiamiDamEmails.length} (pid:${pid}-${i})`,
     );
 
-    // convert emails if necessary
-    logger.info(
-      `miamiDamService: Adobe starting emailConverterService (pid:${pid}-${i})`,
-    );
-    try {
-      libCalEmails = await emailConverterService(libCalEmails);
-    } catch (err) {
-      logger.error(
-        `miamiDamService: Adobe failed emailConverterService (pid:${pid}-${i})`,
-        {
-          content: err,
-        },
-      );
-    }
-    logger.info(
-      `miamiDamService: finished emailConverterService (pid:${pid}-${i})`,
-    );
-
     logger.info(
       `miamiDamService: length of libCalEmails: ${libCalEmails.length} (pid:${pid}-${i})`,
     );
@@ -82,7 +68,7 @@ module.exports = async () => {
     logger.info(
       `miamiDamService: starting miamiDam emailsToRemove (group:${pkg.vendorGroupName}) (pid:${pid}-${i})`,
     );
-    // compare: get users to remove in Adobe
+    // compare: get users to remove in MiamiDam
     let emailsToRemove = filterToEntriesMissingFromSecondArray(
       currMiamiDamEmails,
       libCalEmails,
@@ -100,7 +86,7 @@ module.exports = async () => {
       `miamiDamService: finished miamiDam emailsToAdd (group:${pkg.vendorGroupName}) (pid:${pid}-${i})`,
     );
 
-    // adobe remove
+    // miamiDam remove
     logger.info(
       `miamiDamService: miamiDam Remove:(group:${pkg.vendorGroupName})(pid:${pid}-${i}):${emailsToRemove.length}`,
       {
@@ -108,10 +94,8 @@ module.exports = async () => {
       },
     );
     if (emailsToRemove.length > 0) {
-      res = await miamiDam.removeGroupMembers(
-        emailsToRemove,
-        pkg.vendorGroupName,
-      );
+      const usersToRemove = miamiDam.getMemberIdsFromEmails(emailsToRemove);
+      res = await miamiDam.removeGroupMembers(pkg.vendorGroupId, usersToRemove);
       logger.info(
         `miamiDamService: Response from miamiDam remove request (group:${pkg.vendorGroupName})(pid:${pid}-${i})`,
         {
@@ -121,7 +105,7 @@ module.exports = async () => {
       );
     }
 
-    // adobe add
+    // miamiDam add
     logger.info(
       `miamiDamService: miamiDam Add:(group:${pkg.vendorGroupName})(pid:${pid}-${i}):${emailsToAdd.length}`,
       {
@@ -129,7 +113,8 @@ module.exports = async () => {
       },
     );
     if (emailsToAdd.length > 0) {
-      res = await miamiDam.addGroupMembers(emailsToAdd, group);
+      const usersToAdd = miamiDam.getMemberIdsFromEmails(emailsToAdd);
+      res = await miamiDam.addGroupMembers(pkg.vendorGroupId, usersToAdd);
       logger.info(
         `miamiDamService: Response from miamiDam add request (group:${pkg.vendorGroupName})(pid:${pid}-${i})`,
         {
