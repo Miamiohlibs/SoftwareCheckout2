@@ -91,4 +91,8 @@ module.exports = class MiamiDamRepository {
   getEmailsFromGroupMembers(groupList) {
     return groupList.map((item) => `${item.uniqueId}${this.emailSuffix}`);
   }
+
+  getMemberIdsFromEmails(emailList) {
+    return emailList.map((email) => email.replace(this.emailSuffix, ''));
+  }
 };
