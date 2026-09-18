@@ -46,7 +46,7 @@ const addUser = async () => {
     name: 'uniqueId',
     message: 'uniqueId?',
   });
-  let res = await vendorRepo.addGroupMember(groupName, entry.uniqueId);
+  let res = await vendorRepo.addGroupMember(entry.uniqueId, groupName);
   console.log(JSON.stringify(res));
 };
 
@@ -58,7 +58,7 @@ const removeUsers = async () => {
     name: 'uniqueId',
     message: 'uniqueId?',
   });
-  let res = await vendorRepo.removeGroupMember(groupName, entry.uniqueId);
+  let res = await vendorRepo.removeGroupMember(entry.uniqueId, groupName);
   console.log(JSON.stringify(res, null, 2));
 };
 
@@ -77,7 +77,7 @@ const findUser = async () => {
     name: 'uniqueId',
     message: 'uniqueId?',
   });
-  let res = await vendorRepo.getOneGroupMember(groupName, entry.uniqueId);
+  let res = await vendorRepo.getOneGroupMember(entry.uniqueId, groupName);
   console.log(JSON.stringify(res, null, 2));
 };
 
