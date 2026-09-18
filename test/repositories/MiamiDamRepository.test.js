@@ -36,7 +36,7 @@ describe('MiamiDamRepository.getOneGroupMember', () => {
     const querySpy = jest.spyOn(repo.api, 'getQueryResults').mockResolvedValue({
       data: { success: true },
     });
-    const res = await repo.getOneGroupMember('test-group', 'fakeuser');
+    const res = await repo.getOneGroupMember('fakeuser', 'test-group');
     expect(querySpy).toHaveBeenCalledWith({
       method: 'get',
       url: 'https://fake.org/api/members/test-group/fakeuser',
@@ -51,7 +51,7 @@ describe('addGroupMember', () => {
     const querySpy = jest.spyOn(repo.api, 'getQueryResults').mockResolvedValue({
       data: { success: true },
     });
-    const res = await repo.addGroupMember('test-group', 'fakeuser');
+    const res = await repo.addGroupMember('fakeuser', 'test-group');
     expect(querySpy).toHaveBeenCalledWith({
       method: 'post',
       url: 'https://fake.org/api/members/test-group',
@@ -67,11 +67,11 @@ describe('addGroupMembers', () => {
     const querySpy = jest
       .spyOn(repo, 'addGroupMember')
       .mockImplementation(() => Promise.resolve());
-    const res = await repo.addGroupMembers('test-group', fakeUserList);
+    const res = await repo.addGroupMembers(fakeUserList, 'test-group');
     expect(querySpy).toHaveBeenCalledTimes(3);
-    expect(querySpy).toHaveBeenCalledWith('test-group', 'user1');
-    expect(querySpy).toHaveBeenCalledWith('test-group', 'user2');
-    expect(querySpy).toHaveBeenCalledWith('test-group', 'user3');
+    expect(querySpy).toHaveBeenCalledWith('user1', 'test-group');
+    expect(querySpy).toHaveBeenCalledWith('user2', 'test-group');
+    expect(querySpy).toHaveBeenCalledWith('user3', 'test-group');
   });
 });
 
@@ -81,7 +81,7 @@ describe('removeGroupMember', () => {
     const querySpy = jest.spyOn(repo.api, 'getQueryResults').mockResolvedValue({
       data: { success: true },
     });
-    const res = await repo.removeGroupMember('test-group', 'fakeuser');
+    const res = await repo.removeGroupMember('fakeuser', 'test-group');
     expect(querySpy).toHaveBeenCalledWith({
       method: 'delete',
       url: 'https://fake.org/api/members/test-group/fakeuser',
@@ -96,11 +96,11 @@ describe('removeGroupMembers', () => {
     const querySpy = jest
       .spyOn(repo, 'removeGroupMember')
       .mockImplementation(() => Promise.resolve());
-    const res = await repo.removeGroupMembers('test-group', fakeUserList);
+    const res = await repo.removeGroupMembers(fakeUserList, 'test-group');
     expect(querySpy).toHaveBeenCalledTimes(3);
-    expect(querySpy).toHaveBeenCalledWith('test-group', 'user1');
-    expect(querySpy).toHaveBeenCalledWith('test-group', 'user2');
-    expect(querySpy).toHaveBeenCalledWith('test-group', 'user3');
+    expect(querySpy).toHaveBeenCalledWith('user1', 'test-group');
+    expect(querySpy).toHaveBeenCalledWith('user2', 'test-group');
+    expect(querySpy).toHaveBeenCalledWith('user3', 'test-group');
   });
 });
 
