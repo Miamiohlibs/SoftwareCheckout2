@@ -23,10 +23,10 @@ module.exports = class MiamiDamRepository {
     }
   }
 
-  async getOneGroupMember(memberId, group) {
+  async getOneGroupMember(uniqueId, group) {
     const queryConf = {
       method: 'get',
-      url: this.baseUrl + '/members/' + group + '/' + memberId,
+      url: this.baseUrl + '/members/' + group + '/' + uniqueId,
     };
     try {
       let res = await this.api.getQueryResults(queryConf);
@@ -38,13 +38,13 @@ module.exports = class MiamiDamRepository {
     }
   }
 
-  async addGroupMember(memberId, group) {
-    logger.debug(`addGroupMember: ${memberId}`);
+  async addGroupMember(uniqueId, group) {
+    logger.debug(`addGroupMember: ${uniqueId}`);
     const queryConf = {
       method: 'post',
       url: this.baseUrl + '/members/' + group,
       data: {
-        uniqueId: memberId,
+        uniqueId: uniqueId,
       },
     };
     try {
@@ -65,10 +65,10 @@ module.exports = class MiamiDamRepository {
     return await Promise.all(promises);
   }
 
-  async removeGroupMember(memberId, group) {
+  async removeGroupMember(uniqueId, group) {
     const queryConf = {
       method: 'delete',
-      url: this.baseUrl + '/members/' + group + '/' + memberId,
+      url: this.baseUrl + '/members/' + group + '/' + uniqueId,
     };
     try {
       let res = await this.api.getQueryResults(queryConf);
@@ -92,7 +92,7 @@ module.exports = class MiamiDamRepository {
     return groupList.map((item) => `${item.uniqueId}${this.emailSuffix}`);
   }
 
-  getMemberIdsFromEmails(emailList) {
+  getUniqueIdsFromEmails(emailList) {
     return emailList.map((email) => email.replace(this.emailSuffix, ''));
   }
 };

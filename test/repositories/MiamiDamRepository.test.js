@@ -111,9 +111,9 @@ describe('getEmailsFromGroupMembers', () => {
   expect(emails).toEqual(['irwinkr@fake.org', 'bomholmm@fake.org']);
 });
 
-describe('getMemberIdsFromEmails', () => {
+describe('getUniqueIdsFromEmails', () => {
   const repo = new MiamiDamRepository(fakeConf);
   const emails = ['irwinkr@fake.org', 'bomholmm@fake.org'];
-  const memberIds = repo.getMemberIdsFromEmails(emails);
+  const memberIds = repo.getUniqueIdsFromEmails(emails);
   expect(memberIds).toEqual(['irwinkr', 'bomholmm']);
 });
