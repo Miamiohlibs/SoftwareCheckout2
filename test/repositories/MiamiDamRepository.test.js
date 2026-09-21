@@ -44,14 +44,14 @@ describe('MiamiDamRepository.getOneGroupMember', () => {
   });
 });
 
-describe('addGroupMember', () => {
+describe('addOneGroupMember', () => {
   const repo = new MiamiDamRepository(fakeConf);
 
   it('should call the correct endpoint with the fakeuser as data payload', async () => {
     const querySpy = jest.spyOn(repo.api, 'getQueryResults').mockResolvedValue({
       data: { success: true },
     });
-    const res = await repo.addGroupMember('fakeuser', 'test-group');
+    const res = await repo.addOneGroupMember('fakeuser', 'test-group');
     expect(querySpy).toHaveBeenCalledWith({
       method: 'post',
       url: 'https://fake.org/api/members/test-group',
@@ -63,9 +63,9 @@ describe('addGroupMember', () => {
 describe('addGroupMembers', () => {
   const repo = new MiamiDamRepository(fakeConf);
   const fakeUserList = ['user1', 'user2', 'user3'];
-  it('should call addGroupMember three times', async () => {
+  it('should call addOneGroupMember three times', async () => {
     const querySpy = jest
-      .spyOn(repo, 'addGroupMember')
+      .spyOn(repo, 'addOneGroupMember')
       .mockImplementation(() => Promise.resolve());
     const res = await repo.addGroupMembers(fakeUserList, 'test-group');
     expect(querySpy).toHaveBeenCalledTimes(3);
@@ -75,13 +75,13 @@ describe('addGroupMembers', () => {
   });
 });
 
-describe('removeGroupMember', () => {
+describe('removeOneGroupMember', () => {
   const repo = new MiamiDamRepository(fakeConf);
   it('should call the correct endpoint with group name and memberId', async () => {
     const querySpy = jest.spyOn(repo.api, 'getQueryResults').mockResolvedValue({
       data: { success: true },
     });
-    const res = await repo.removeGroupMember('fakeuser', 'test-group');
+    const res = await repo.removeOneGroupMember('fakeuser', 'test-group');
     expect(querySpy).toHaveBeenCalledWith({
       method: 'delete',
       url: 'https://fake.org/api/members/test-group/fakeuser',
@@ -92,9 +92,9 @@ describe('removeGroupMember', () => {
 describe('removeGroupMembers', () => {
   const repo = new MiamiDamRepository(fakeConf);
   const fakeUserList = ['user1', 'user2', 'user3'];
-  it('should call addGroupMember three times', async () => {
+  it('should call removeOneGroupMember three times', async () => {
     const querySpy = jest
-      .spyOn(repo, 'removeGroupMember')
+      .spyOn(repo, 'removeOneGroupMember')
       .mockImplementation(() => Promise.resolve());
     const res = await repo.removeGroupMembers(fakeUserList, 'test-group');
     expect(querySpy).toHaveBeenCalledTimes(3);
