@@ -4,7 +4,7 @@ const logger = require('../services/logger');
 module.exports = class MiamiDamRepository {
   constructor(conf) {
     this.api = new MiamiDamApi(conf);
-    this.baseUrl = this.api.baseUrl;
+    this.baseUrl = conf.baseUrl;
     this.emailSuffix = conf.emailSuffix;
   }
 
