@@ -15,7 +15,17 @@ module.exports = class MiamiDamRepository {
     };
     try {
       let res = await this.api.getQueryResults(queryConf);
-      return res.data;
+      if (res.status == 200) {
+        return res.data;
+      } else {
+        const message = `Could not get group members for ${group}`;
+        logger.error(`status: ${res.status}; message: ${message}`);
+        return {
+          success: false,
+          status: res.status,
+          error: message,
+        };
+      }
     } catch (err) {
       logger.error(
         `MiamiDamRepository.getGroupMembers received error: ${err.message} `,
@@ -30,7 +40,20 @@ module.exports = class MiamiDamRepository {
     };
     try {
       let res = await this.api.getQueryResults(queryConf);
-      return res.data;
+      logger.debug(
+        `result status ${res.status} for lookup user ${uniqueId} in group ${group}`,
+      );
+      if (res.status == 200) {
+        return res.data;
+      } else {
+        const message = `Could not find group member ${uniqueId} in group ${group}`;
+        logger.error(`status: ${res.status}; message: ${message}`);
+        return {
+          success: false,
+          status: res.status,
+          error: message,
+        };
+      }
     } catch (err) {
       logger.error(
         `MiamiDamRepository.getOneGroupMember received error: ${err.message} `,
@@ -39,7 +62,7 @@ module.exports = class MiamiDamRepository {
   }
 
   async addOneGroupMember(uniqueId, group) {
-    logger.debug(`addGroupMember: ${uniqueId}`);
+    logger.debug(`addGroupMember: ${uniqueId} to group ${group}`);
     const queryConf = {
       method: 'post',
       url: this.baseUrl + '/members/' + group,
@@ -48,12 +71,24 @@ module.exports = class MiamiDamRepository {
       },
     };
     try {
-      let res = await this.api.getQueryResults(queryConf);
-      return res.data;
+      const res = await this.api.getQueryResults(queryConf);
+      logger.debug(
+        `Response adding user ${uniqueId} to group ${group} - status: ${res.status}}`,
+      );
+      if (res.status == 202) {
+        logger.debug(`successfully added user ${uniqueId} to group ${group}`);
+        return { success: true };
+      } else {
+        logger.debug(`failed to add user ${uniqueId} to group ${group}`);
+        return { success: false };
+      }
+      // return res.data;
     } catch (err) {
       logger.error(
         `MiamiDamRepository.addGroupMember received error: ${err.message} `,
       );
+      logger.debug(`failed to add user ${uniqueId} to group ${group}`);
+      return { success: false };
     }
   }
 
@@ -72,7 +107,14 @@ module.exports = class MiamiDamRepository {
     };
     try {
       let res = await this.api.getQueryResults(queryConf);
-      return res.data;
+      if (res.status == 202) {
+        // that's the success condition
+        return { success: true, status: res.status };
+      } else {
+        logger.error(
+          `Failed to remove group member ${uniqueId} from group ${group}`,
+        );
+      }
     } catch (err) {
       logger.error(
         `MiamiDamRepository.removeGroupMember received error: ${err.message} `,

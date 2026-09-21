@@ -23,12 +23,16 @@ module.exports = class AdobeUserMgmtApi {
     queryConf.headers = this.getAuthHeaders();
     try {
       let res = await axios.request(queryConf);
-      return { data: res.data };
+      logger.debug(
+        `API getQueryResults status: ${res.status}, data: ${JSON.stringify(res.data)}`,
+      );
+      return res;
     } catch (err) {
       logger.error(`MiamiDamApi Failed query`, {
         content: axiosLogPrep(err),
         status: err.response.status,
       });
+      return { success: false, status: err.response.status };
     }
   }
 };
