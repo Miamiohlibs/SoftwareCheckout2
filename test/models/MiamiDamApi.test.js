@@ -37,8 +37,6 @@ describe('getQueryResults', () => {
       status: 200,
       statusText: 'OK',
       data: { success: true },
-      headers: {},
-      config: {},
     });
     await api.getQueryResults(queryConf);
     expect(axiosSpy).toHaveBeenCalledWith({

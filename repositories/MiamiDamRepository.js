@@ -62,7 +62,7 @@ module.exports = class MiamiDamRepository {
   }
 
   async addOneGroupMember(uniqueId, group) {
-    logger.debug(`addGroupMember: ${uniqueId}`);
+    logger.debug(`addGroupMember: ${uniqueId} to group ${group}`);
     const queryConf = {
       method: 'post',
       url: this.baseUrl + '/members/' + group,
@@ -71,11 +71,11 @@ module.exports = class MiamiDamRepository {
       },
     };
     try {
-      const data = await this.api.getQueryResults(queryConf);
+      const res = await this.api.getQueryResults(queryConf);
       logger.debug(
-        `adding user ${uniqueId} to group ${group} - status: ${res.status}, ${JSON.stringify(res)}`,
+        `Response adding user ${uniqueId} to group ${group} - status: ${res.status}}`,
       );
-      if (data.status == 202) {
+      if (res.status == 202) {
         logger.debug(`successfully added user ${uniqueId} to group ${group}`);
         return { success: true };
       } else {
@@ -107,7 +107,14 @@ module.exports = class MiamiDamRepository {
     };
     try {
       let res = await this.api.getQueryResults(queryConf);
-      return res.data;
+      if (res.status == 202) {
+        // that's the success condition
+        return { success: true, status: res.status };
+      } else {
+        logger.error(
+          `Failed to remove group member ${uniqueId} from group ${group}`,
+        );
+      }
     } catch (err) {
       logger.error(
         `MiamiDamRepository.removeGroupMember received error: ${err.message} `,
