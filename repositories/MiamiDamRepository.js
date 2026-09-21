@@ -88,8 +88,8 @@ module.exports = class MiamiDamRepository {
     return await Promise.all(promises);
   }
 
-  getEmailsFromGroupMembers(groupList) {
-    return groupList.map((item) => `${item.uniqueId}${this.emailSuffix}`);
+  getEmailsFromGroupMembers(uniqueIdList) {
+    return uniqueIdList.map((item) => `${item.uniqueId}${this.emailSuffix}`);
   }
 
   getUniqueIdsFromEmails(emailList) {
