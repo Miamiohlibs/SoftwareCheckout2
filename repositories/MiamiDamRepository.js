@@ -57,9 +57,9 @@ module.exports = class MiamiDamRepository {
     }
   }
 
-  async addGroupMembers(userList, group) {
-    logger.debug(`addGroupMembers: ${JSON.stringify(userList)}`);
-    const promises = userList.map(async (user) => {
+  async addGroupMembers(uniqueIdList, group) {
+    logger.debug(`addGroupMembers: ${JSON.stringify(uniqueIdList)}`);
+    const promises = uniqueIdList.map(async (user) => {
       return await this.addGroupMember(user, group);
     });
     return await Promise.all(promises);
@@ -80,9 +80,9 @@ module.exports = class MiamiDamRepository {
     }
   }
 
-  async removeGroupMembers(userList, group) {
-    logger.debug(`removeGroupMembers: ${JSON.stringify(userList)}`);
-    const promises = userList.map(async (user) => {
+  async removeGroupMembers(uniqueIdList, group) {
+    logger.debug(`removeGroupMembers: ${JSON.stringify(uniqueIdList)}`);
+    const promises = uniqueIdList.map(async (user) => {
       return await this.removeGroupMember(user, group);
     });
     return await Promise.all(promises);
