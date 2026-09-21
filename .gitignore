@@ -6,12 +6,8 @@ package-lock.json
 certs/*
 logs/*
 run.sh
-config/adobe.js
-config/libCal.js
-config/appConf.js
-config/campusConf.js
-config/jamf.js
-config/miamiDam.js
+config/*
+!config/*sample.js
 adobe.testConf.js
 www/.next/*
 connection-strings.txt
