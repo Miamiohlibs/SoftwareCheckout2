@@ -34,7 +34,11 @@ describe('getQueryResults', () => {
   };
   it('should mock-get list members', async () => {
     const axiosSpy = jest.spyOn(axios, 'request').mockResolvedValue({
+      status: 200,
+      statusText: 'OK',
       data: { success: true },
+      headers: {},
+      config: {},
     });
     await api.getQueryResults(queryConf);
     expect(axiosSpy).toHaveBeenCalledWith({
