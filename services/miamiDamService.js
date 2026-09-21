@@ -93,7 +93,7 @@ module.exports = async () => {
       },
     );
     if (emailsToRemove.length > 0) {
-      const usersToRemove = miamiDam.getMemberIdsFromEmails(emailsToRemove);
+      const usersToRemove = miamiDam.getUniqueIdsFromEmails(emailsToRemove);
       res = await miamiDam.removeGroupMembers(usersToRemove, pkg.vendorGroupId);
       logger.info(
         `miamiDamService: Response from miamiDam remove request (group:${pkg.vendorGroupName})(pid:${pid}-${i})`,
