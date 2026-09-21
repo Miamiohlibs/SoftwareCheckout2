@@ -112,7 +112,7 @@ module.exports = async () => {
       },
     );
     if (emailsToAdd.length > 0) {
-      const usersToAdd = miamiDam.getMemberIdsFromEmails(emailsToAdd);
+      const usersToAdd = miamiDam.getUniqueIdsFromEmails(emailsToAdd);
       res = await miamiDam.addGroupMembers(usersToAdd, pkg.vendorGroupId);
       logger.info(
         `miamiDamService: Response from miamiDam add request (group:${pkg.vendorGroupName})(pid:${pid}-${i})`,
