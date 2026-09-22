@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.6.0 -
+
+### Fixed
+
+### Added
+
+- Added support for Miami University's Directory Accounts Manager (DAM) tool as a vendor for license assignments.
+
+### Changed
+
 ## 2.5.0 - 2026-09-17
 
 ### Fixed
