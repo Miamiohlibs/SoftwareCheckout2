@@ -1,6 +1,6 @@
 {
   "name": "software-checkout",
-  "version": "2.5.0",
+  "version": "2.6.0-dev",
   "description": "Use LibCal to assign software licenses in Adobe and Jamf",
   "main": "app.js",
   "scripts": {
