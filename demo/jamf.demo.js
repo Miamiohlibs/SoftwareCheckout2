@@ -43,6 +43,7 @@ const listUsers = async () => {
   console.log('groupId: ' + groupId);
   const users = await jamfRepo.getGroupMembers(groupId);
   console.log(JSON.stringify(users, null, 2));
+  console.log(`List length: ${users.length}`);
 };
 const findUser = async () => {
   const getSoftware = await chooseGroup('Find');

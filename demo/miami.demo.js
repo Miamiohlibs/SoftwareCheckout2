@@ -67,6 +67,7 @@ const listUsers = async () => {
   const groupName = getSoftware.groupName;
   const users = await vendorRepo.getGroupMembers(groupName);
   console.log(JSON.stringify(users, null, 2));
+  console.log(`List length: ${users.length}`);
 };
 
 const findUser = async () => {
