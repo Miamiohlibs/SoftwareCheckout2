@@ -93,7 +93,7 @@ module.exports = async () => {
       },
     );
     if (emailsToRemove.length > 0) {
-      const usersToRemove = miamiDam.getMemberIdsFromEmails(emailsToRemove);
+      const usersToRemove = miamiDam.getUniqueIdsFromEmails(emailsToRemove);
       res = await miamiDam.removeGroupMembers(usersToRemove, pkg.vendorGroupId);
       logger.info(
         `miamiDamService: Response from miamiDam remove request (group:${pkg.vendorGroupName})(pid:${pid}-${i})`,
@@ -112,7 +112,7 @@ module.exports = async () => {
       },
     );
     if (emailsToAdd.length > 0) {
-      const usersToAdd = miamiDam.getMemberIdsFromEmails(emailsToAdd);
+      const usersToAdd = miamiDam.getUniqueIdsFromEmails(emailsToAdd);
       res = await miamiDam.addGroupMembers(usersToAdd, pkg.vendorGroupId);
       logger.info(
         `miamiDamService: Response from miamiDam add request (group:${pkg.vendorGroupName})(pid:${pid}-${i})`,
