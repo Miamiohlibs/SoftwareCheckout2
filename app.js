@@ -3,6 +3,7 @@ const LicenseGroup = require('./helpers/LicenseGroup');
 const lg = new LicenseGroup(appConf);
 const adobe = require('./services/adobeService');
 const jamf = require('./services/jamfService');
+const miami = require('./services/miamiDamService');
 let vendors = lg.getActiveVendors();
 let logger = require('./services/logger');
 
@@ -21,5 +22,10 @@ logger.info(`vendors activated in config/appConf.js: ${vendorString}`);
     logger.info('starting jamf service from app.js');
     await jamf();
     // logger.info('jamf service finished from app.js');
+  }
+
+  if (vendors.includes('MiamiDam')) {
+    logger.info('starting MiamiDam service from app.js');
+    await miami();
   }
 })();
