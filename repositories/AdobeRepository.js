@@ -19,7 +19,7 @@ module.exports = class AdobeUserMgmtService {
     this.maxActionsPerReq = 10;
     this.actionThrottle = new Throttle(
       actionsReqPerCycle,
-      secondsPerActionCycle
+      secondsPerActionCycle,
     );
   }
 
@@ -33,6 +33,7 @@ module.exports = class AdobeUserMgmtService {
     let lastPage = false;
     while (lastPage == false) {
       await this.userThrottle.pauseIfNeeded();
+      logger.info(`AdobeRepo: getting next page of ${group}`);
       let res = await this.api.getQueryResults(this.queryConf);
       this.userThrottle.increment();
       try {
@@ -42,7 +43,7 @@ module.exports = class AdobeUserMgmtService {
           `AdobeRepo: Error in getPaginatedResults for ${container} in group ${group}`,
           {
             content: err,
-          }
+          },
         );
         return [];
       }
@@ -157,7 +158,7 @@ module.exports = class AdobeUserMgmtService {
     let jsonBody = [];
     emails.forEach((email) => {
       jsonBody.push(
-        this.createActionReqBody(addOrRemove, email, [listName], i)
+        this.createActionReqBody(addOrRemove, email, [listName], i),
       );
       i++;
     });
