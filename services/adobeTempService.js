@@ -21,16 +21,16 @@ let pid = process.pid;
 // software = software.filter((i) => parseInt(i.libCalCid) > 20000);
 
 module.exports = async () => {
-  logger.info('adobeService: starting AdobeService');
+  logger.info('adobeTempService: starting AdobeService');
   let i = 0;
 
   asyncForEach(software, async (pkg) => {
     i++;
     logger.info(
-      `adobeService: starting AdobeService for ${pkg.vendorGroupName} (pid:${pid}-${i})`,
+      `adobeTempService: starting AdobeService for ${pkg.vendorGroupName} (pid:${pid}-${i})`,
     );
     logger.info(
-      `adobeService: Getting libCalCid (pid:${pid}): ${pkg.libCalCid}, vendorGroupName: ${pkg.vendorGroupName}, vendorGroupId: ${pkg.vendorGroupId}`,
+      `adobeTempService: Getting libCalCid (pid:${pid}): ${pkg.libCalCid}, vendorGroupName: ${pkg.vendorGroupName}, vendorGroupId: ${pkg.vendorGroupId}`,
     );
 
     // get libCalList based on pkg.libCalCid
@@ -38,7 +38,7 @@ module.exports = async () => {
     // console.log(pkg.libCalCid, libCalBookings.length);
     let libCalEmails = libCal.getUniqueEmailsFromBookings(libCalBookings);
     logger.debug(
-      `adobeService: libCalEmails (Adobe group:${pkg.vendorGroupName}):(pid:${pid}-${i}):`,
+      `adobeTempService: libCalEmails (Adobe group:${pkg.vendorGroupName}):(pid:${pid}-${i}):`,
       {
         content: libCalEmails,
       },
@@ -52,29 +52,29 @@ module.exports = async () => {
     }
     let currAdobeEntitlements = await adobe.getGroupMembers(group);
     console.log(
-      `adobeService: length of currAdobeEntitlements: ${currAdobeEntitlements.length} (group:${pkg.vendorGroupName}) (pid:${pid}-${i})`,
+      `adobeTempService: length of currAdobeEntitlements: ${currAdobeEntitlements.length} (group:${pkg.vendorGroupName}) (pid:${pid}-${i})`,
     );
     // console.log('currAdobeEntitlements:', currAdobeEntitlements.length);
     let currAdobeEmails = adobe.getEmailsFromGroupMembers(
       currAdobeEntitlements,
     );
     console.log(
-      `adobeService: currAdobeEmails (group:${pkg.vendorGroupName}):(pid:${pid}-${i}):`,
+      `adobeTempService: currAdobeEmails (group:${pkg.vendorGroupName}):(pid:${pid}-${i}):`,
       { content: currAdobeEmails },
     );
     console.log(
-      `adobeService: length of currAdobeEmails: ${currAdobeEmails.length} (pid:${pid}-${i})`,
+      `adobeTempService: length of currAdobeEmails: ${currAdobeEmails.length} (pid:${pid}-${i})`,
     );
     // Fake Data: to use this, comment out the code above and uncomment these two lines
     // let libCalBookings = ['irwinkr@miamioh.edu', 'bomholmm@miamioh.edu'];
     // let currAdobeEmails = ['irwinkr@miamioh.edu', 'qum@miamioh.edu'];
 
     logger.info(
-      `adobeService: length of libCalEmails: ${libCalEmails.length} (pid:${pid}-${i})`,
+      `adobeTempService: length of libCalEmails: ${libCalEmails.length} (pid:${pid}-${i})`,
     );
 
     logger.info(
-      `adobeService: starting Adobe emailsToRemove (group:${pkg.vendorGroupName}) (pid:${pid}-${i})`,
+      `adobeTempService: starting Adobe emailsToRemove (group:${pkg.vendorGroupName}) (pid:${pid}-${i})`,
     );
     // compare: get users to remove in Adobe
     let emailsToRemove = filterToEntriesMissingFromSecondArray(
@@ -83,7 +83,7 @@ module.exports = async () => {
     );
 
     console.log(
-      `adobeService: starting Adobe emailsToAdd (group:${pkg.vendorGroupName}) (pid:${pid}-${i})`,
+      `adobeTempService: starting Adobe emailsToAdd (group:${pkg.vendorGroupName}) (pid:${pid}-${i})`,
     );
     // compare: get users to add in Adobe
     let emailsToAdd = filterToEntriesMissingFromSecondArray(
@@ -94,11 +94,11 @@ module.exports = async () => {
       `adobeTempService: emailsToAdd (group:${pkg.vendorGroupName}): ${JSON.stringify(emailsToAdd)}`,
     );
     logger.info(
-      `adobeService: finished Adobe emailsToAdd (group:${pkg.vendorGroupName}) (pid:${pid}-${i})`,
+      `adobeTempService: finished Adobe emailsToAdd (group:${pkg.vendorGroupName}) (pid:${pid}-${i})`,
     );
 
     logger.info(
-      `adobeService: AdobeService finished for ${pkg.vendorGroupName} (pid:${pid}-${i})`,
+      `adobeTempService: AdobeService finished for ${pkg.vendorGroupName} (pid:${pid}-${i})`,
     );
   });
 };
