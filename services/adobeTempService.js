@@ -82,13 +82,16 @@ module.exports = async () => {
       libCalEmails,
     );
 
-    logger.info(
+    console.log(
       `adobeService: starting Adobe emailsToAdd (group:${pkg.vendorGroupName}) (pid:${pid}-${i})`,
     );
     // compare: get users to add in Adobe
     let emailsToAdd = filterToEntriesMissingFromSecondArray(
       libCalEmails,
       currAdobeEmails,
+    );
+    console.log(
+      `adobeTempService: emailsToAdd (group:${pkg.vendorGroupName}): ${JSON.stringify(emailsToAdd)}`,
     );
     logger.info(
       `adobeService: finished Adobe emailsToAdd (group:${pkg.vendorGroupName}) (pid:${pid}-${i})`,
