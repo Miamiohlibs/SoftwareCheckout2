@@ -51,18 +51,18 @@ module.exports = async () => {
       group = pkg.vendorGroupName;
     }
     let currAdobeEntitlements = await adobe.getGroupMembers(group);
-    logger.info(
+    console.log(
       `adobeService: length of currAdobeEntitlements: ${currAdobeEntitlements.length} (group:${pkg.vendorGroupName}) (pid:${pid}-${i})`,
     );
     // console.log('currAdobeEntitlements:', currAdobeEntitlements.length);
     let currAdobeEmails = adobe.getEmailsFromGroupMembers(
       currAdobeEntitlements,
     );
-    logger.debug(
+    console.log(
       `adobeService: currAdobeEmails (group:${pkg.vendorGroupName}):(pid:${pid}-${i}):`,
       { content: currAdobeEmails },
     );
-    logger.info(
+    console.log(
       `adobeService: length of currAdobeEmails: ${currAdobeEmails.length} (pid:${pid}-${i})`,
     );
     // Fake Data: to use this, comment out the code above and uncomment these two lines
