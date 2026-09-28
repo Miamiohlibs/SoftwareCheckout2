@@ -21,15 +21,15 @@ let pid = process.pid;
 // software = software.filter((i) => parseInt(i.libCalCid) > 20000);
 
 module.exports = async () => {
-  logger.info('adobeTempService: starting AdobeService');
+  console.log('adobeTempService: starting AdobeService');
   let i = 0;
 
   asyncForEach(software, async (pkg) => {
     i++;
-    logger.info(
+    console.log(
       `adobeTempService: starting AdobeService for ${pkg.vendorGroupName} (pid:${pid}-${i})`,
     );
-    logger.info(
+    console.log(
       `adobeTempService: Getting libCalCid (pid:${pid}): ${pkg.libCalCid}, vendorGroupName: ${pkg.vendorGroupName}, vendorGroupId: ${pkg.vendorGroupId}`,
     );
 
@@ -69,11 +69,11 @@ module.exports = async () => {
     // let libCalBookings = ['irwinkr@miamioh.edu', 'bomholmm@miamioh.edu'];
     // let currAdobeEmails = ['irwinkr@miamioh.edu', 'qum@miamioh.edu'];
 
-    logger.info(
+    console.log(
       `adobeTempService: length of libCalEmails: ${libCalEmails.length} (pid:${pid}-${i})`,
     );
 
-    logger.info(
+    console.log(
       `adobeTempService: starting Adobe emailsToRemove (group:${pkg.vendorGroupName}) (pid:${pid}-${i})`,
     );
     // compare: get users to remove in Adobe
@@ -93,11 +93,11 @@ module.exports = async () => {
     console.log(
       `adobeTempService: emailsToAdd (group:${pkg.vendorGroupName}): ${JSON.stringify(emailsToAdd)}`,
     );
-    logger.info(
+    console.log(
       `adobeTempService: finished Adobe emailsToAdd (group:${pkg.vendorGroupName}) (pid:${pid}-${i})`,
     );
 
-    logger.info(
+    console.log(
       `adobeTempService: AdobeService finished for ${pkg.vendorGroupName} (pid:${pid}-${i})`,
     );
   });
