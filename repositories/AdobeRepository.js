@@ -11,16 +11,16 @@ module.exports = class AdobeUserMgmtService {
     this.credentials = conf.credentials;
     this.actionUrl = this.baseUrl + 'action' + '/' + conf.credentials.orgId;
     this.queryConf = {};
-    let userReqsPerCycle = 25;
+    let userReqsPerCycle = 5;
     let secondsPerUserCycle = 60;
     this.userThrottle = new Throttle(userReqsPerCycle, secondsPerUserCycle);
-    let actionsReqPerCycle = 10;
-    let secondsPerActionCycle = 60;
-    this.maxActionsPerReq = 10;
-    this.actionThrottle = new Throttle(
-      actionsReqPerCycle,
-      secondsPerActionCycle,
-    );
+    // let actionsReqPerCycle = 10;
+    // let secondsPerActionCycle = 60;
+    // this.maxActionsPerReq = 10;
+    // this.actionThrottle = new Throttle(
+    //   actionsReqPerCycle,
+    //   secondsPerActionCycle,
+    // );
   }
 
   clearQueryConf() {
@@ -121,13 +121,13 @@ module.exports = class AdobeUserMgmtService {
 
       await asyncForEach(reqBodyChunks, async (data) => {
         this.queryConf.data = data;
-        await this.actionThrottle.pauseIfNeeded();
+        await this.userThrottle.pauseIfNeeded();
         this.queryConf.timeout = 10000; // 10 seconds
         logger.debug('AdobeRepo: submitting action with queryConf', {
           content: this.queryConf,
         });
         let res = await this.api.getQueryResults(this.queryConf);
-        this.actionThrottle.increment();
+        this.userThrottle.increment();
         this.concatActionResults(res);
       });
       logger.debug('action summary results', {
