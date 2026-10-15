@@ -5,8 +5,8 @@ const express = require('express');
 const session = require('express-session');
 const passport = require('passport');
 const fetch = require('node-fetch');
-const sslRootCAs = require('ssl-root-cas');
-sslRootCAs.inject();
+// const sslRootCAs = require('ssl-root-cas');
+// sslRootCAs.inject();
 require('./auth');
 const config = require('../config/appConf');
 const port = config.admin.port || 3010;
@@ -15,6 +15,7 @@ const { version } = require('../package.json');
 const appConf = require('../config/appConf');
 
 logger.info('starting admin web console');
+logger.info(`Node version: ${process.version}`);
 const baseApp = express(); // outer app
 const app = express();
 
