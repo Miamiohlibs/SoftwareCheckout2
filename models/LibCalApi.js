@@ -77,10 +77,18 @@ module.exports = class LibCalApi {
   }
 
   async getToken() {
-    const oauth2 = require('simple-oauth2').create(this.conf.credentials);
+    const { ClientCredentials } = require('simple-oauth2');
     try {
-      const result = await oauth2.clientCredentials.getToken();
-      this.accessToken = result.access_token;
+      // simple-oauth2 v5 rejects unknown keys (e.g. auth.authorizeHost/Path,
+      // which only apply to the authorization-code flow), so drop them
+      const { authorizeHost, authorizePath, ...auth } =
+        this.conf.credentials.auth;
+      const client = new ClientCredentials({
+        ...this.conf.credentials,
+        auth,
+      });
+      const result = await client.getToken({});
+      this.accessToken = result.token.access_token;
       logger.debug(`LibCalApi Token: ${this.accessToken}`);
       return true;
     } catch (err) {
