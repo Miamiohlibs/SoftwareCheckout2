@@ -58,9 +58,9 @@ module.exports = class LibCalApi {
       await this.getToken();
     }
     this.queryConf.headers = this.getAuthHeaders();
-    logger.debug('LibCalApi getQueryResults with queryConf', {
-      content: this.queryConf,
-    });
+    // logger.debug('LibCalApi getQueryResults with queryConf', {
+    //   content: this.queryConf,
+    // });
     try {
       let res = await axios.request(this.queryConf);
       let log = axiosLogPrep(res);
