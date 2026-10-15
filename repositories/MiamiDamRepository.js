@@ -16,7 +16,11 @@ module.exports = class MiamiDamRepository {
     try {
       let res = await this.api.getQueryResults(queryConf);
       if (res.status == 200) {
-        return res.data;
+        const dataWithEmails = res.data.map((item) => ({
+          ...item,
+          email: `${item.uniqueId}${this.emailSuffix}`,
+        }));
+        return dataWithEmails;
       } else {
         const message = `Could not get group members for ${group}`;
         logger.error(`status: ${res.status}; message: ${message}`);
