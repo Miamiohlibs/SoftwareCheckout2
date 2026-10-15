@@ -47,7 +47,7 @@ module.exports = class LibCalApi {
     logger.debug('LibCal API response status', res);
     logger.debug(
       `LibCal API received getBookings for ${cid}`,
-      axiosLogPrep(res)
+      axiosLogPrep(res),
     );
     return res;
   }
@@ -89,7 +89,7 @@ module.exports = class LibCalApi {
       });
       const result = await client.getToken({});
       this.accessToken = result.token.access_token;
-      logger.debug(`LibCalApi Token: ${this.accessToken}`);
+      // logger.debug(`LibCalApi Token: ${this.accessToken}`);
       return true;
     } catch (err) {
       logger.error(`LibCalApi Access Token Error: ${err.message}`, {
