@@ -30,10 +30,13 @@ module.exports = class AdobeUserMgmtApi {
     } catch (err) {
       // err.response is undefined for network-level failures (DNS, TLS, timeout)
       const status = err.response?.status;
-      logger.error(`MiamiDamApi Failed query: ${err.code || ''} ${err.message}`, {
-        content: axiosLogPrep(err),
-        status: status,
-      });
+      logger.error(
+        `MiamiDamApi Failed query: ${err.code || ''} ${err.message}`,
+        {
+          content: axiosLogPrep(err),
+          status: status,
+        },
+      );
       return { success: false, status: status };
     }
   }
