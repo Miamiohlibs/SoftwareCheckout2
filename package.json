@@ -8,9 +8,9 @@
     "test:watch": "jest --watch",
     "start": "node app",
     "server": "node app --listen --name=software-checkout >> \"$(node helpers/getLogLocation.js)/app.log\" 2>&1 &",
-    "dev": "nodemon app",
+    "dev": "node --watch app",
     "web": "node www/index --name=software-checkout-webconsole >> \"$(node helpers/getLogLocation.js)/web.log\" 2>&1 &",
-    "webdev": "nodemon www/index --name=software-checkout-webconsole >> \"$(node helpers/getLogLocation.js)/web.log\" 2>&1 &"
+    "webdev": "node --watch www/index --name=software-checkout-webconsole >> \"$(node helpers/getLogLocation.js)/web.log\" 2>&1 &"
   },
   "author": "Ken Irwin",
   "license": "MIT",
@@ -50,8 +50,7 @@
   },
   "devDependencies": {
     "jest": "^30.5.2",
-    "minify-xml": "^2.5.0",
-    "nodemon": "^3.1.7"
+    "minify-xml": "^2.5.0"
   },
   "allowScripts": {
     "node-jq@6.3.1": true
