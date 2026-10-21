@@ -34,6 +34,17 @@ if (global.useHttps) {
 const navbarBackground =
   config.admin.navbarTheme?.backgroundColor || 'bg-primary';
 const navbarTextColor = config.admin.navbarTheme?.textColor || 'navbar-dark';
+const faviconPath = path.join(
+  __dirname,
+  'public',
+  'favicon',
+  navbarBackground,
+  'favicon.ico',
+);
+logger.info(
+  `favicon path: ${faviconPath} (exists: ${fs.existsSync(faviconPath)})`,
+);
+
 app.locals.version = version;
 app.locals.webPath = config.admin.webPath || '';
 app.locals.webAbsolutePath =
@@ -59,17 +70,11 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(
-  favicon(
-    path.join(
-      __dirname,
-      'public',
-      'favicon',
-      navbarBackground,
-      'favicon.ico',
-    ),
-  ),
-);
+app.use(favicon(faviconPath));
+app.use((req, res, next) => {
+  if (/favicon/.test(req.path)) logger.info(`icon request: ${req.originalUrl}`);
+  next();
+});
 
 function isPermittedUser(req) {
   if (!req.user) {
