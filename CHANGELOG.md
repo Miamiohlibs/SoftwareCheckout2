@@ -7,6 +7,7 @@
 ### Added
 
 - Added support for Miami University's Directory Accounts Manager (DAM) tool as a vendor for license assignments.
+- Added favicon with background color matching appConfig: admin.navbarTheme.backgroundColor
 
 ### Changed
 
