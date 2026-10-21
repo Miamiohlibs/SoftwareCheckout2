@@ -75,6 +75,10 @@ app.use((req, res, next) => {
   if (/favicon/.test(req.path)) logger.info(`icon request: ${req.originalUrl}`);
   next();
 });
+app.use(
+  '/favicon',
+  express.static(path.join(__dirname, 'public', 'favicon', navbarBackground)),
+);
 
 function isPermittedUser(req) {
   if (!req.user) {
