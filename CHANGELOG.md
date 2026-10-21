@@ -10,6 +10,10 @@
 
 ### Changed
 
+- Bumped `simple-oauth2` to ^5.10.
+- Bumped `jest` to ^30.5.2.
+- Replaced `nodemon` with `node --watch`
+
 ## 2.5.0 - 2026-09-17
 
 ### Fixed

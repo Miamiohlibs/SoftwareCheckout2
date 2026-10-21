@@ -3,6 +3,7 @@ const https = require('https');
 const fs = require('fs');
 const express = require('express');
 const session = require('express-session');
+const favicon = require('serve-favicon');
 const passport = require('passport');
 const fetch = require('node-fetch');
 // const sslRootCAs = require('ssl-root-cas');
@@ -30,6 +31,9 @@ if (global.useHttps) {
   protocol = 'https';
 }
 
+const navbarBackground =
+  config.admin.navbarTheme?.backgroundColor || 'bg-primary';
+const navbarTextColor = config.admin.navbarTheme?.textColor || 'navbar-dark';
 app.locals.version = version;
 app.locals.webPath = config.admin.webPath || '';
 app.locals.webAbsolutePath =
@@ -50,18 +54,22 @@ app.use(passport.session());
 
 // apply theme color to navbar from config
 app.use((req, res, next) => {
-  if (config.admin.navbarTheme) {
-    res.locals.navbarBackground =
-      config.admin.navbarTheme.backgroundColor || 'bg-primary';
-    res.locals.navbarTextColor =
-      config.admin.navbarTheme.textColor || 'navbar-dark';
-    next();
-  } else {
-    res.locals.navbarBackground = 'bg-primary';
-    res.locals.navbarTextColor = 'navbar-dark';
-    next();
-  }
+  res.locals.navbarBackground = navbarBackground;
+  res.locals.navbarTextColor = navbarTextColor;
+  next();
 });
+
+app.use(
+  favicon(
+    path.join(
+      __dirname,
+      'public',
+      'favicon',
+      navbarBackground,
+      'favicon.ico',
+    ),
+  ),
+);
 
 function isPermittedUser(req) {
   if (!req.user) {
