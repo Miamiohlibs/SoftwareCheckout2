@@ -1,15 +1,16 @@
 {
   "name": "software-checkout",
-  "version": "2.5.0",
+  "version": "2.6.0-dev",
   "description": "Use LibCal to assign software licenses in Adobe and Jamf",
   "main": "app.js",
   "scripts": {
-    "test": "jest --watch",
+    "test": "jest",
+    "test:watch": "jest --watch",
     "start": "node app",
     "server": "node app --listen --name=software-checkout >> \"$(node helpers/getLogLocation.js)/app.log\" 2>&1 &",
-    "dev": "nodemon app",
+    "dev": "node --watch app",
     "web": "node www/index --name=software-checkout-webconsole >> \"$(node helpers/getLogLocation.js)/web.log\" 2>&1 &",
-    "webdev": "nodemon www/index --name=software-checkout-webconsole >> \"$(node helpers/getLogLocation.js)/web.log\" 2>&1 &"
+    "webdev": "node --watch www/index --name=software-checkout-webconsole >> \"$(node helpers/getLogLocation.js)/web.log\" 2>&1 &"
   },
   "author": "Ken Irwin",
   "license": "MIT",
@@ -40,16 +41,19 @@
     "passport-google-oauth2": "^0.2.0",
     "process": "^0.11.10",
     "querystring": "^0.2.0",
+    "serve-favicon": "^2.5.1",
     "sha256": "^0.2.0",
-    "simple-oauth2": "^3.3.0",
+    "simple-oauth2": "^5.1.0",
     "ssl-root-cas": "^1.3.1",
     "uid": "^2.0.2",
     "winston": "^3.3.3",
     "yargs": "^17.7.2"
   },
   "devDependencies": {
-    "jest": "^29.6.2",
-    "minify-xml": "^2.5.0",
-    "nodemon": "^3.1.7"
+    "jest": "^30.5.2",
+    "minify-xml": "^2.5.0"
+  },
+  "allowScripts": {
+    "node-jq@6.3.1": true
   }
 }

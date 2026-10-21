@@ -3,10 +3,11 @@ const https = require('https');
 const fs = require('fs');
 const express = require('express');
 const session = require('express-session');
+const favicon = require('serve-favicon');
 const passport = require('passport');
 const fetch = require('node-fetch');
-const sslRootCAs = require('ssl-root-cas');
-sslRootCAs.inject();
+// const sslRootCAs = require('ssl-root-cas');
+// sslRootCAs.inject();
 require('./auth');
 const config = require('../config/appConf');
 const port = config.admin.port || 3010;
@@ -15,6 +16,7 @@ const { version } = require('../package.json');
 const appConf = require('../config/appConf');
 
 logger.info('starting admin web console');
+logger.info(`Node version: ${process.version}`);
 const baseApp = express(); // outer app
 const app = express();
 
@@ -28,6 +30,20 @@ const hostname = config.admin.hostname;
 if (global.useHttps) {
   protocol = 'https';
 }
+
+const navbarBackground =
+  config.admin.navbarTheme?.backgroundColor || 'bg-primary';
+const navbarTextColor = config.admin.navbarTheme?.textColor || 'navbar-dark';
+const faviconPath = path.join(
+  __dirname,
+  'public',
+  'favicon',
+  navbarBackground,
+  'favicon.ico',
+);
+logger.info(
+  `favicon path: ${faviconPath} (exists: ${fs.existsSync(faviconPath)})`,
+);
 
 app.locals.version = version;
 app.locals.webPath = config.admin.webPath || '';
@@ -49,18 +65,20 @@ app.use(passport.session());
 
 // apply theme color to navbar from config
 app.use((req, res, next) => {
-  if (config.admin.navbarTheme) {
-    res.locals.navbarBackground =
-      config.admin.navbarTheme.backgroundColor || 'bg-primary';
-    res.locals.navbarTextColor =
-      config.admin.navbarTheme.textColor || 'navbar-dark';
-    next();
-  } else {
-    res.locals.navbarBackground = 'bg-primary';
-    res.locals.navbarTextColor = 'navbar-dark';
-    next();
-  }
+  res.locals.navbarBackground = navbarBackground;
+  res.locals.navbarTextColor = navbarTextColor;
+  next();
 });
+
+app.use(favicon(faviconPath));
+app.use((req, res, next) => {
+  if (/favicon/.test(req.path)) logger.info(`icon request: ${req.originalUrl}`);
+  next();
+});
+app.use(
+  '/favicon',
+  express.static(path.join(__dirname, 'public', 'favicon', navbarBackground)),
+);
 
 function isPermittedUser(req) {
   if (!req.user) {
