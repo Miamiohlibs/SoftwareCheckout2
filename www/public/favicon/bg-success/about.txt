@@ -1,0 +1,6 @@
+This favicon was generated using the following font:
+
+- Font Title: Acme
+- Font Author: undefined
+- Font Source: https://fonts.gstatic.com/s/acme/v29/RrQfboBx-C5_bx3Lb23lzLk.ttf
+- Font License: undefined)
