@@ -15,12 +15,20 @@ const fs = require('fs');
 const { Parser } = require('json2csv');
 const libCal = require('../../config/libCal');
 const logger = require('../../services/logger');
+const MiamiDamRepository = require('../../repositories/MiamiDamRepository');
 
 async function getAdobeBookingsByGroup(group) {
   const adobeConf = require('../../config/adobe');
   const AdobeRepository = require('../../repositories/AdobeRepository');
   const adobe = new AdobeRepository(adobeConf);
   let bookings = await adobe.getGroupMembers(group);
+  return bookings;
+}
+
+async function getMiamiDamBookingsByGroup(group) {
+  const miamiDamConf = require('../../config/miamiDam');
+  const miami = new MiamiDamRepository(miamiDamConf);
+  let bookings = await miami.getGroupMembers(group);
   return bookings;
 }
 
@@ -120,6 +128,12 @@ router.get('/adobe', async (req, res) => {
   res.json(bookings);
 });
 
+router.get('/miamidam', async (req, res) => {
+  logger.debug(`Fetching miamiDam bookings for ${req.query.group}`);
+  const bookings = await getMiamiDamBookingsByGroup(req.query.group);
+  res.json(bookings);
+});
+
 router.get('/adobe/compare', async (req, res) => {
   let group = req.query.group;
   let cid = req.query.cid;
@@ -201,6 +215,55 @@ router.get('/jamf/compare', async (req, res) => {
     emailsToRemove: emailsToRemove,
     bookingsToAdd: bookingsToAdd,
     vendorEmails: jamfEmails,
+    libCalEmails: libCalEmails,
+  });
+});
+
+router.get('/miamidam/compare', async (req, res) => {
+  let group = req.query.group;
+  let cid = req.query.cid;
+  // check to see that group/cid/vendor are in config
+  let matchingGroup = appConf.software.filter(
+    (i) =>
+      i.vendorGroupId === group &&
+      parseInt(i.libCalCid) === parseInt(cid) &&
+      i.vendor === 'MiamiDam',
+  );
+  if (matchingGroup.length != 1) {
+    res.status(404).send({
+      error: `Vendor(MiamiDam)/Group(${group})/CID(${cid}) not found in config`,
+    });
+    return;
+  }
+
+  const miamiDamBookings = await getMiamiDamBookingsByGroup(group);
+  if (!Array.isArray(miamiDamBookings)) {
+    res.status(502).send({
+      error: `Could not get MiamiDam members for group ${group}`,
+      details: miamiDamBookings,
+    });
+    return;
+  }
+  const miamiDamEmails = miamiDamBookings.map((i) => i.email);
+  const libCalBookings = await getLibCalBookingsByCid(cid);
+
+  let libCalEmails = libCalBookings.map((i) => i.email);
+  libCalEmails = await emailConverterService(libCalEmails);
+  let emailsToRemove = filterToEntriesMissingFromSecondArray(
+    miamiDamEmails,
+    libCalEmails,
+  );
+  let emailsToAdd = filterToEntriesMissingFromSecondArray(
+    libCalEmails,
+    miamiDamEmails,
+  );
+  miamiDamEmails.sort();
+  libCalEmails.sort();
+  bookingsToAdd = libCalBookings.filter((i) => emailsToAdd.includes(i.email));
+  res.json({
+    emailsToRemove: emailsToRemove,
+    bookingsToAdd: bookingsToAdd,
+    vendorEmails: miamiDamEmails,
     libCalEmails: libCalEmails,
   });
 });

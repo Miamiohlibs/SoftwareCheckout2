@@ -1,0 +1,6 @@
+Favicons generated at: https://favicon.io/favicon-generator/
+Text: SC 
+Background: Rounded
+Font Family: Acme
+Font Variant Regular 400 Normal
+Font Size: 110

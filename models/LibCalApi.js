@@ -47,7 +47,7 @@ module.exports = class LibCalApi {
     logger.debug('LibCal API response status', res);
     logger.debug(
       `LibCal API received getBookings for ${cid}`,
-      axiosLogPrep(res)
+      axiosLogPrep(res),
     );
     return res;
   }
@@ -58,9 +58,9 @@ module.exports = class LibCalApi {
       await this.getToken();
     }
     this.queryConf.headers = this.getAuthHeaders();
-    logger.debug('LibCalApi getQueryResults with queryConf', {
-      content: this.queryConf,
-    });
+    // logger.debug('LibCalApi getQueryResults with queryConf', {
+    //   content: this.queryConf,
+    // });
     try {
       let res = await axios.request(this.queryConf);
       let log = axiosLogPrep(res);
@@ -77,11 +77,19 @@ module.exports = class LibCalApi {
   }
 
   async getToken() {
-    const oauth2 = require('simple-oauth2').create(this.conf.credentials);
+    const { ClientCredentials } = require('simple-oauth2');
     try {
-      const result = await oauth2.clientCredentials.getToken();
-      this.accessToken = result.access_token;
-      logger.debug(`LibCalApi Token: ${this.accessToken}`);
+      // simple-oauth2 v5 rejects unknown keys (e.g. auth.authorizeHost/Path,
+      // which only apply to the authorization-code flow), so drop them
+      const { authorizeHost, authorizePath, ...auth } =
+        this.conf.credentials.auth;
+      const client = new ClientCredentials({
+        ...this.conf.credentials,
+        auth,
+      });
+      const result = await client.getToken({});
+      this.accessToken = result.token.access_token;
+      // logger.debug(`LibCalApi Token: ${this.accessToken}`);
       return true;
     } catch (err) {
       logger.error(`LibCalApi Access Token Error: ${err.message}`, {

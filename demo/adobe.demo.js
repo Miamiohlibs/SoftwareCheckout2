@@ -34,7 +34,7 @@ const chooseGroup = async (verb) => {
       itemNameProp: 'vendorGroupName', // display this
       itemValueProp: 'vendorGroupId', // return this
       outputLabel: 'groupName',
-    })
+    }),
   );
 };
 
@@ -65,9 +65,10 @@ const listUsers = async () => {
   const getSoftware = await chooseGroup('List');
   const groupName = getSoftware.groupName;
   const users = (await adobeRepo.getGroupMembers(groupName)).map(
-    ({ email, firstname, lastname }) => ({ email, firstname, lastname })
+    ({ email, firstname, lastname }) => ({ email, firstname, lastname }),
   );
   console.log(JSON.stringify(users, null, 2));
+  console.log(`List length: ${users.length}`);
 };
 const findUser = async () => {
   const getSoftware = await chooseGroup('Find');

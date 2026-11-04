@@ -12,8 +12,10 @@
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse<%= i %>" aria-expanded="false" aria-controls="flush-collapse<%= i %>">
                             <% if (typeof data[i] == 'string') { %>
                                 <%= data[i] %>
-                            <% } else { %>
+                            <% } else if(typeof data[i].email == 'string') { %>
                                 <%= data[i].email %>
+                            <% } else if(typeof data[i].uniqueId == 'string') { %>
+                                <%= data[i].uniqueId %>
                             <% } %>
                         </button>
                     </h2>
